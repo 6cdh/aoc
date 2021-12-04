@@ -44,7 +44,7 @@
        (let [len# (- (length lst#) (- from# 1))]
          (if (< len# n#) result#
              (do
-               ,(M.append `result# (M.first `lst# `n# `from#))
+               ,(M.append 'result# (M.first 'lst# 'n# 'from#))
                (windows!# lst# n# (+ from# 1) result#)))))
      (windows!# ,(M.copy lst) ,n 1 [])))
 
