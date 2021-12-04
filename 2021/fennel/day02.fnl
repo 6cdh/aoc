@@ -1,6 +1,4 @@
-(local fennel (require :fennel))
-
-(import-macros {: iter->list : filter : map : fold : run : debug} :utils)
+(import-macros {: iter->list : filter : map : fold : run} :utils)
 
 (local rules {:up (fn [acc cmd]
                     (set acc.y (- acc.y cmd.dist)))
@@ -18,7 +16,7 @@
                    (set acc.x (+ acc.x cmd.dist))
                    (set acc.y (+ acc.y (* acc.aim cmd.dist))))})
 
-(fn todir [str]
+(fn parse [str]
   (let [(dir dist) ((str:gmatch "(%a+) (%d+)"))]
     (when dir
       {: dir :dist (tonumber dist)})))
@@ -36,6 +34,6 @@
 
 (run (->> (io.lines)
           (iter->list)
-          (map todir)
+          (map parse)
           (solve)))
 

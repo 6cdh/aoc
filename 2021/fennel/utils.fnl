@@ -1,16 +1,16 @@
 (var M {})
 
 (fn M.debug [...]
-  `(do
-     (print (fennel.view ,...))
+  `(let [fennel# (require :fennel)]
+     (print (fennel#.view ,...))
      ,...))
 
 (fn M.run [expr]
-  `(do
+  `(let [fennel# (require :fennel)]
      (local start# (os.clock))
      (local result# ,expr)
      (local end# (os.clock))
-     (print (string.format "result: %s in %.2fms" (fennel.view result#)
+     (print (string.format "result: %s in %.2fms" (fennel#.view result#)
                            (* 1000 (- end# start#))))))
 
 (fn M.enum [name types]

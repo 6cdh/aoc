@@ -1,5 +1,4 @@
-(local fennel (require :fennel))
-(import-macros {: iter->list : windows : filter : map : run : debug} :utils)
+(import-macros {: iter->list : windows : filter : map : run} :utils)
 
 (fn solve [input]
   [(length (filter #(> (. $1 2) (. $1 1)) (windows input 2)))
