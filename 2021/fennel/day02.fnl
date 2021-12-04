@@ -1,20 +1,4 @@
-(import-macros {: iter->list : filter : map : fold : run} :utils)
-
-(local rules {:up (fn [acc cmd]
-                    (set acc.y (- acc.y cmd.dist)))
-              :down (fn [acc cmd]
-                      (set acc.y (+ acc.y cmd.dist)))
-              :forward (fn [acc cmd]
-                         (set acc.x (+ acc.x cmd.dist)))})
-
-(local rules2
-       {:up (fn [acc cmd]
-              (set acc.aim (- acc.aim cmd.dist)))
-        :down (fn [acc cmd]
-                (set acc.aim (+ acc.aim cmd.dist)))
-        :forward (fn [acc cmd]
-                   (set acc.x (+ acc.x cmd.dist))
-                   (set acc.y (+ acc.y (* acc.aim cmd.dist))))})
+(import-macros {: iter->list : map : fold : run} :utils)
 
 (fn parse [str]
   (let [(dir dist) ((str:gmatch "(%a+) (%d+)"))]
@@ -22,15 +6,18 @@
       {: dir :dist (tonumber dist)})))
 
 (fn solve [input]
-  (fn mul [tbl]
-    (* tbl.x tbl.y))
+  (fn solve-part [init result]
+    (result (fold input init
+                  (fn [acc cmd]
+                    (match cmd.dir
+                      :up {:aim (- acc.aim cmd.dist) :x acc.x :y acc.y}
+                      :down {:aim (+ acc.aim cmd.dist) :x acc.x :y acc.y}
+                      :forward {:aim acc.aim
+                                :x (+ acc.x cmd.dist)
+                                :y (+ acc.y (* acc.aim cmd.dist))})))))
 
-  (fn solve-part [init rules]
-    (mul (fold input init (fn [acc cmd]
-                            ((. rules cmd.dir) acc cmd)
-                            acc))))
-
-  [(solve-part {:x 0 :y 0} rules) (solve-part {:aim 0 :x 0 :y 0} rules2)])
+  [(solve-part {:aim 0 :x 0 :y 0} #(* $1.x $1.aim))
+   (solve-part {:aim 0 :x 0 :y 0} #(* $1.x $1.y))])
 
 (run (->> (io.lines)
           (iter->list)
