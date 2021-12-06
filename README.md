@@ -4,13 +4,13 @@
 
 ## Clone
 
-```shell
+``` shell
 git clone https://github.com/6cdh/aoc.git
 ```
 
 ## Run
 
-```shell
+``` shell
 # run fennel solutions
 cd ./2021/fennel/
 fennel day01.fnl < ../input/day01.txt
@@ -25,4 +25,3 @@ cargo r --bin day02 < ../input/day02.txt
 ## Explanation
 
 The solution code would read input from stdin and output to stdout.
-

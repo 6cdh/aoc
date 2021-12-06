@@ -1,4 +1,5 @@
-(import-macros {: iter->list : map : fold : run} :utils)
+(import-macros {: run} :macros)
+(local {: map : fold} (require :utils))
 
 (fn parse [str]
   (let [(dir dist) ((str:gmatch "(%a+) (%d+)"))]
@@ -20,7 +21,6 @@
    (solve-part {:aim 0 :x 0 :y 0} #(* $1.x $1.y))])
 
 (run (->> (io.lines)
-          (iter->list)
           (map parse)
           (solve)))
 
