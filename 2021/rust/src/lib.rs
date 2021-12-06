@@ -5,7 +5,7 @@ pub fn readlines() -> Vec<String> {
     stdin.lock().lines().map(|line| line.unwrap()).collect()
 }
 
-pub fn tonumbers(str: &str, dim: char) -> Vec<i32> {
+pub fn read_numbers(str: &str, dim: char) -> Vec<i32> {
     str.split(dim).flat_map(|s| s.parse::<i32>()).collect()
 }
 

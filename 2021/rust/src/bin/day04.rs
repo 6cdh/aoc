@@ -1,6 +1,6 @@
+use aoc2021::read_numbers;
 use aoc2021::readlines;
 use aoc2021::run;
-use aoc2021::tonumbers;
 
 struct Board(Vec<Vec<i32>>);
 
@@ -12,7 +12,7 @@ impl Board {
             lines6
                 .iter()
                 .skip(1)
-                .map(|line| tonumbers(line, ' '))
+                .map(|line| read_numbers(line, ' '))
                 .collect(),
         )
     }
@@ -46,12 +46,12 @@ type Input = (Vec<i32>, Vec<Board>);
 
 fn read() -> Input {
     let lines = readlines();
-    let numbers = tonumbers(&lines[0], ',');
+    let numbers = read_numbers(&lines[0], ',');
     let boards = lines[1..].chunks(6).map(Board::from).collect();
     (numbers, boards)
 }
 
-fn part1(input: &mut Input) -> (i32, i32) {
+fn solve(input: &mut Input) -> (i32, i32) {
     let boards = &mut input.1;
     let mut first_win = 0;
     let mut last_win = 0;
@@ -84,6 +84,6 @@ fn part1(input: &mut Input) -> (i32, i32) {
 fn main() {
     run!({
         let mut input = read();
-        part1(&mut input)
+        solve(&mut input)
     });
 }
