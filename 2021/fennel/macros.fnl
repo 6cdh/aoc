@@ -16,11 +16,20 @@
 
 (fn M.printd [...]
   `(let [fennel# (require :fennel)]
-     (print (fennel#.view ,...))))
+     (each [_# arg# (ipairs [,...])]
+       (print (fennel#.view arg#)))))
 
 (fn M.debug [...]
   `(let [result# ,...]
      ,(M.printd `result#)
+     result#))
+
+(fn M.timeit [form]
+  `(do
+     (local start# (os.clock))
+     (local result# ,form)
+     (local end# (os.clock))
+     (print (string.format "%.3fms %s" (* 1000 (- end# start#)) ,(view form)))
      result#))
 
 M
