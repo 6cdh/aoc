@@ -258,18 +258,19 @@
   (M.fold lst 0 (fn [acc v]
                   (+ acc v))))
 
-(fn M.flatten [lst]
-  (fn flatten-iter [result it lst k]
-    (let [(next-k v) (it lst k)]
-      (if (= nil v)
-          result
-          (not= :table (type v))
-          (flatten-iter (M.append result v) it lst next-k)
-          (do
-            (flatten-iter result (M.iter v))
-            (flatten-iter result it lst next-k)))))
+(fn M.flatten [lst level]
+  (default level 1000000.0)
 
-  (flatten-iter [] (M.iter lst)))
+  (fn flatten-iter [result depth it lst k]
+    (let [(next-k v) (it lst k)]
+      (if (= nil v) result
+          (= depth level) (flatten-iter (M.append result v) depth it lst next-k)
+          (not= :table (type v)) (flatten-iter (M.append result v) depth it lst next-k)
+          (do
+            (flatten-iter result (M.inc depth) (M.iter v))
+            (flatten-iter result depth it lst next-k)))))
+
+  (flatten-iter [] 0 (M.iter lst)))
 
 (fn M.replace-flat [lst t p]
   (fn replace-flat-iter [it lst k]
