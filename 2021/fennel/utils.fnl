@@ -89,6 +89,9 @@
 (fn M.dec [n]
   (- n 1))
 
+(fn M.tinc [tbl key val]
+  (tset tbl key (+ val (. tbl key))))
+
 (fn M.abs [n]
   (math.abs n))
 

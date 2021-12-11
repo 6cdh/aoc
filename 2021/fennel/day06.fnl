@@ -1,4 +1,4 @@
-(import-macros {: run : repeat : tinc} :macros)
+(import-macros {: run : repeat} :macros)
 
 (local ut (require :utils))
 
@@ -10,7 +10,7 @@
     (let [fish-count (ut.freq input)]
       (repeat days
         (ut.rotatel! fish-count 9 1)
-        (tinc fish-count 7 (. fish-count 9)))
+        (ut.tinc fish-count 7 (. fish-count 9)))
       (ut.sum fish-count)))
   [(solve-part 80)
    (solve-part 256)])

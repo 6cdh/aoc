@@ -36,8 +36,5 @@
   `(for [_# 1 ,n]
      ,...))
 
-(fn M.tinc [tbl key val]
-  `(tset ,tbl ,key (+ ,val (. ,tbl ,key))))
-
 M
 
