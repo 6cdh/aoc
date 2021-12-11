@@ -14,7 +14,8 @@
 
 (fn M.readonly [tbl]
   (let [wrapper {}
-        mt {:__index tbl :__newindex #(error "can't modify read only table" 2)}]
+        mt {:__index tbl
+            :__newindex #(error "can't modify read only table" 2)}]
     (setmetatable wrapper mt)
     wrapper))
 
@@ -38,7 +39,8 @@
     (setmetatable {: end : beg : step} mt))
 
   (fn M.range? [tbl]
-    (and (= :table (type tbl)) (= (getmetatable tbl) mt))))
+    (and (= :table (type tbl))
+         (= (getmetatable tbl) mt))))
 
 (let [placeholder {}]
   (fn M.iter-range [state]
@@ -75,7 +77,9 @@
     :function (M.iter-function obj)))
 
 (fn M.list? [tbl]
-  (and (= :table (type tbl)) (not= nil (. tbl 1)) (= nil (. tbl 0))))
+  (and (= :table (type tbl))
+       (not= nil (. tbl 1))
+       (= nil (. tbl 0))))
 
 ;; functions
 
@@ -122,8 +126,7 @@
 (fn M.windows [lst n]
   (fn windows! [lst n from result]
     (let [len (M.length lst from)]
-      (if (< len n)
-          result
+      (if (< len n) result
           (do
             (M.append result (M.first lst n from))
             (windows! lst n (+ from 1) result)))))
@@ -227,14 +230,15 @@
 
 (fn M.split [str sep]
   (default sep "%s")
-  (M.make-list (string.gmatch str (string.format "([^%s]+)" sep))))
+  (->> (string.format "([^%s]+)" sep)
+       (string.gmatch str)
+       (M.make-list)))
 
 (fn M.chunks [n lst]
   (fn chunks-iter [n lst from result]
     (when (not= 0 (M.length lst from))
       (M.append result (M.first lst n from)))
-    (if (< (M.length lst from) n)
-        result
+    (if (< (M.length lst from) n) result
         (chunks-iter n lst (+ from n) result)))
 
   (chunks-iter n lst 1 []))
@@ -275,13 +279,11 @@
 (fn M.replace-flat [lst t p]
   (fn replace-flat-iter [it lst k]
     (let [(next-k v) (it lst k)]
-      (if (= nil v)
-          nil
-          (not= :table (type v))
-          (do
-            (when (= v t)
-              (tset lst next-k p))
-            (replace-flat-iter it lst next-k))
+      (if (= nil v) nil
+          (not= :table (type v)) (do
+                                   (when (= v t)
+                                     (tset lst next-k p))
+                                   (replace-flat-iter it lst next-k))
           (do
             (replace-flat-iter (M.iter v))
             (replace-flat-iter it lst next-k)))))

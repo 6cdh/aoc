@@ -1,52 +1,40 @@
 (import-macros {: run : printd : debug : timeit} :macros)
-(local {: chunks
-        : car
-        : cdr
-        : map
-        : filter
-        : flatten
-        : for-each
-        : for-each-key
-        : split
-        : any
-        : all=
-        : transpose
-        : replace-flat
-        : append
-        : last
-        : sum} (require :utils))
+(local ut (require :utils))
 
 (fn read-numbers [str sep]
-  (map tonumber (split str sep)))
+  (ut.map tonumber (ut.split str sep)))
 
 (fn read-board [lines6]
-  (map #(read-numbers $ " ") (cdr lines6)))
+  (ut.map #(read-numbers $ " ") (ut.cdr lines6)))
 
 (fn win? [b]
-  (or (any #(all= -1 $) b) (any #(all= -1 $) (transpose b))))
+  (or (ut.any #(ut.all= -1 $) b)
+      (ut.any #(ut.all= -1 $) (ut.transpose b))))
 
 (fn score [b n]
-  (* n (->> (flatten b)
-            (filter #(not= -1 $))
-            (sum))))
+  (* n (->> (ut.flatten b)
+            (ut.filter #(not= -1 $))
+            (ut.sum))))
 
 (fn solve [numbers boards]
   (let [win-order []
         board-number {}]
     (each [_ n (ipairs numbers)]
-      (for-each-key (fn [i b]
-                      (when (= nil (. board-number i))
-                        (replace-flat b n -1)
-                        (when (win? b)
-                          (append win-order i)
-                          (tset board-number i n)))) boards))
-    (let [no1 (car win-order)
-          no-1 (car (last win-order))]
+      (each [i b (ipairs boards)]
+        (when (= nil (. board-number i))
+          (ut.replace-flat b n -1)
+          (when (win? b)
+            (ut.append win-order i)
+            (tset board-number i n)))) boards)
+    (let [no1 (ut.car win-order)
+          no-1 (ut.car (ut.last win-order))]
       [(score (. boards no1) (. board-number no1))
        (score (. boards no-1) (. board-number no-1))])))
 
-(run (let [lines (map #$ (io.lines))
-           numbers (read-numbers (car lines) ",")
-           boards (map read-board (chunks 6 (cdr lines)))]
+(run (let [lines (ut.map #$ (io.lines))
+           numbers (read-numbers (ut.car lines) ",")
+           boards (->> (ut.cdr lines)
+                       (ut.chunks 6)
+                       (ut.map read-board))]
        (solve numbers boards)))
 
