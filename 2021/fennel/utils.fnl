@@ -290,5 +290,24 @@
 
   (replace-flat-iter (M.iter lst)))
 
+(fn M.swap [lst i j]
+  (let [t (. lst i)]
+    (tset lst i (. lst j))
+    (tset lst j t)))
+
+(fn M.reverse! [lst from to]
+  (var from from)
+  (var to to)
+  (while (< from to)
+    (M.swap lst from to)
+    (set from (M.inc from))
+    (set to (M.dec to))))
+
+(fn M.rotatel! [lst n i]
+  (M.reverse! lst 1 i)
+  (M.reverse! lst (M.inc i) n)
+  (M.reverse! lst 1 n))
+
+
 M
 

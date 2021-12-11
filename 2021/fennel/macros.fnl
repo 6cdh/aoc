@@ -32,5 +32,12 @@
      (print (string.format "%.3fms %s" (* 1000 (- end# start#)) ,(view form)))
      result#))
 
+(fn M.repeat [n ...]
+  `(for [_# 1 ,n]
+     ,...))
+
+(fn M.tinc [tbl key val]
+  `(tset ,tbl ,key (+ ,val (. ,tbl ,key))))
+
 M
 
