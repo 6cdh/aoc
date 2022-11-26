@@ -1,6 +1,6 @@
 # AOC
 
-[advent of code](https://adventofcode.com/) solutions in Rust/Fennel
+[advent of code](https://adventofcode.com/) solutions
 
 ## Clone
 
@@ -8,22 +8,15 @@
 git clone https://github.com/6cdh/aoc.git
 ```
 
-## Run
+## How
 
-``` shell
-# run fennel solutions
-cd ./2021/fennel/
-fennel day01.fnl < ../input/day01.txt
-fennel day02.fnl < ../input/day02.txt
-# run with luajit backend # require luajit installed
-fennel --lua luajit day04.fnl < ../input/day04.txt
+The solution code read input from stdin and output to stdout.
 
-# run rust solutions
-cd ./2021/rust/
-cargo r --bin day01 < ../input/day01.txt
-cargo r --bin day02 < ../input/day02.txt
-```
+## 2022
 
-## Explanation
+Racket/Julia 0/25
 
-The solution code would read input from stdin and output to stdout.
+## 2021
+
+Fennel/Rust 6/25
+
