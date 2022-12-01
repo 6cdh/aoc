@@ -1,4 +1,4 @@
-function puzzle()
+function day01()
     lines = readlines()
     calories::Vector{Int} = [0]
 
@@ -15,4 +15,4 @@ function puzzle()
     println(sum(calories[1:3]))
 end
 
-@time puzzle()
+@time day01()
