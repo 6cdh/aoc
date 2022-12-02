@@ -1,7 +1,8 @@
 #lang racket
 
 (provide read-lines
-         list-sum)
+         list-sum
+         $)
 
 (define (read-lines)
   (let ([line (read-line)])
@@ -11,5 +12,13 @@
 
 (define (list-sum lst)
   (foldl + 0 lst))
+
+(define-syntax $
+  (syntax-rules ()
+    [($ v)
+     v]
+    [($ v op v2 args ...)
+     ($ (op v v2) args ...)]))
+
 
 

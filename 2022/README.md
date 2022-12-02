@@ -19,7 +19,7 @@ cpu time: 4 real time: 4 gc time: 0
 ## Julia
 
 ```bash
-$ julia julia/day01.jl < ./input/day01.txt
+$ julia --project=./julia julia/day01.jl < ./input/day01.txt
 71300
 209691
   0.048664 seconds (20.97 k allocations: 1010.854 KiB, 98.84% compilation time)
