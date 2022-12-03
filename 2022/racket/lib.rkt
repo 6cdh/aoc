@@ -1,8 +1,21 @@
 #lang racket
 
+(require (for-syntax syntax/parse))
+
 (provide read-lines
          list-sum
-         $)
+         $
+         ~>
+         string->set
+         groups)
+
+(define-syntax (~> stx)
+  (syntax-parse stx
+    #:datum-literals (%)
+    [(_ v)
+     #'v]
+    [(_ v (fn args1 ... % args2 ...) rems ...)
+     #'(~> (fn args1 ... v args2 ...) rems ...)]))
 
 (define (read-lines)
   (let ([line (read-line)])
@@ -20,5 +33,14 @@
     [($ v op v2 args ...)
      ($ (op v v2) args ...)]))
 
+(define (string->set str)
+  (~> str
+      (string->list %)
+      (list->set %)))
 
+(define (groups lst k)
+  "groups the list `seq` with `k` element as a group"
+  (~> (map cons lst (range 0 (length lst)))
+      (group-by (λ (p) (quotient (cdr p) k)) %)
+      (map (λ (g) (map car g)) %)))
 
