@@ -7,7 +7,7 @@
          $
          ~>
          string->set
-         groups)
+         chunks)
 
 (define-syntax (~> stx)
   (syntax-parse stx
@@ -38,7 +38,7 @@
       (string->list %)
       (list->set %)))
 
-(define (groups lst k)
+(define (chunks k lst)
   "groups the list `seq` with `k` element as a group"
   (~> (map cons lst (range 0 (length lst)))
       (group-by (λ (p) (quotient (cdr p) k)) %)
