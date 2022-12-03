@@ -10,7 +10,7 @@ git clone https://github.com/6cdh/aoc.git
 
 ## 2022
 
-Racket/Julia 2/25
+Racket/Julia 3/25
 
 ## 2021
 
