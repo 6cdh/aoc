@@ -1,11 +1,10 @@
-#lang racket
+#lang typed/racket/no-check
 
 (require "lib.rkt")
 
-(define/contract (parse-stacks lines)
-  (-> (listof string?)
-      (vectorof (listof char?)))
-
+(: parse-stacks (-> (Listof String)
+                    (Vectorof (Listof Char))))
+(define (parse-stacks lines)
   (let* ([strs (takef lines (λ (line) (not (equal? line ""))))]
          [n (length (string-split (last strs)))]
          [stacks (make-vector n '())])
@@ -18,10 +17,9 @@
     (vector-map! reverse stacks)
     stacks))
 
-(define/contract (parse-proc lines)
-  (-> (listof string?)
-      (listof (listof number?)))
-
+(: parse-proc (-> (Listof String)
+                  (Listof (Listof Integer))))
+(define (parse-proc lines)
   (let* ([strs (cdr (member "" lines))])
     (for/list ([line strs])
       (let ([words (string-split line)])
@@ -29,12 +27,11 @@
               (sub1 (string->number (list-ref words 3)))
               (sub1 (string->number (list-ref words 5))))))))
 
-(define/contract (puzzle stacks procedure transformer)
-  (-> (vectorof (listof char?))
-      (listof (listof number?))
-      procedure?
-      string?)
-
+(: puzzle (-> (Vectorof (Listof Char))
+              (Listof (Listof Number))
+              (-> (Listof Char) (Listof Char))
+              String))
+(define (puzzle stacks procedure transformer)
   (for ([p procedure])
     (match-let ([(list cnt from to) p])
       (let* ([moved (take (vector-ref stacks from) cnt)]
@@ -51,7 +48,4 @@
     (displayln (puzzle (parse-stacks lines) procedure identity))))
 
 (time (day05))
-
-
-
 
