@@ -32,8 +32,8 @@ function day05()
         push!(procs, (k, from, to))
     end
 
-    rearrange(deepcopy(stacks), procs, identity)
     rearrange(deepcopy(stacks), procs, reverse)
+    rearrange(deepcopy(stacks), procs, identity)
 end
 
 @time day05()
