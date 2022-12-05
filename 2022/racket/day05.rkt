@@ -1,9 +1,9 @@
-#lang typed/racket/no-check
+#lang racket
 
 (require "lib.rkt")
 
-(: parse-stacks (-> (Listof String)
-                    (Vectorof (Listof Char))))
+;; (-> (Listof String)
+;;     (Vectorof (Listof Char)))
 (define (parse-stacks lines)
   (let* ([strs (takef lines (λ (line) (not (equal? line ""))))]
          [n (length (string-split (last strs)))]
@@ -17,8 +17,8 @@
     (vector-map! reverse stacks)
     stacks))
 
-(: parse-proc (-> (Listof String)
-                  (Listof (Listof Integer))))
+;; (-> (Listof String)
+;;     (Listof (Listof Integer))))
 (define (parse-proc lines)
   (let* ([strs (cdr (member "" lines))])
     (for/list ([line strs])
@@ -27,10 +27,10 @@
               (sub1 (string->number (list-ref words 3)))
               (sub1 (string->number (list-ref words 5))))))))
 
-(: puzzle (-> (Vectorof (Listof Char))
-              (Listof (Listof Number))
-              (-> (Listof Char) (Listof Char))
-              String))
+;; (-> (Vectorof (Listof Char))
+;;     (Listof (Listof Number))
+;;     (-> (Listof Char) (Listof Char))
+;;     String))
 (define (puzzle stacks procedure transformer)
   (for ([p procedure])
     (match-let ([(list cnt from to) p])
