@@ -28,30 +28,26 @@
               (sub1 (string->number (list-ref words 3)))
               (sub1 (string->number (list-ref words 5))))))))
 
-(define/contract (puzzle stacks procedure #:pack pack)
+(define/contract (puzzle stacks procedure transformer)
   (-> (vectorof (listof char?))
       (listof (listof number?))
-      #:pack boolean?
+      procedure?
       string?)
 
   (for ([p procedure])
     (match-let ([(list cnt from to) p])
-      (for ([_ cnt])
-        (let ([v (car (vector-ref stacks from))])
-          (vector-update! stacks from cdr)
-          (vector-update! stacks to (λ (old) (cons v old)))))
-      (when pack
-        (vector-update! stacks to
-                        (λ (old) (append (reverse (take old cnt))
-                                         (drop old cnt)))))))
+      (let* ([moved (take (vector-ref stacks from) cnt)]
+             [transformed (transformer moved)])
+        (vector-update! stacks from (λ (old) (drop old cnt)))
+        (vector-update! stacks to (λ (old) (append transformed old))))))
 
   (apply string (map car (vector->list stacks))))
 
 (define (day05)
   (let* ([lines (read-lines)]
          [procedure (parse-proc lines)])
-    (displayln (puzzle (parse-stacks lines) procedure #:pack false))
-    (displayln (puzzle (parse-stacks lines) procedure #:pack true))))
+    (displayln (puzzle (parse-stacks lines) procedure reverse))
+    (displayln (puzzle (parse-stacks lines) procedure identity))))
 
 (time (day05))
 
