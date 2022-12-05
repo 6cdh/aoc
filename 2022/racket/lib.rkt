@@ -7,7 +7,8 @@
          $
          ~>
          string->set
-         chunks)
+         chunks
+         vector-update!)
 
 (define-syntax (~> stx)
   (syntax-parse stx
@@ -44,3 +45,5 @@
       (group-by (λ (p) (quotient (cdr p) k)) %)
       (map (λ (g) (map car g)) %)))
 
+(define (vector-update! vec i updater)
+  (vector-set! vec i (updater (vector-ref vec i))))
