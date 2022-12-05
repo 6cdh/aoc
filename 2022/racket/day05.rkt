@@ -9,11 +9,12 @@
   (let* ([strs (takef lines (λ (line) (not (equal? line ""))))]
          [n (length (string-split (last strs)))]
          [stacks (make-vector n '())])
-    (for* ([line (take strs (sub1 (length strs)))]
+    (for* ([line strs]
            [i (range 1 (string-length line) 4)])
-      (when (char-upper-case? (string-ref line i))
-        (vector-update! stacks (quotient i 4)
-                        (λ (old) (cons (string-ref line i) old)))))
+      (let ([c (string-ref line i)])
+        (when (char-upper-case? c)
+          (vector-update! stacks (quotient i 4)
+                          (λ (old) (cons c old))))))
     (vector-map! reverse stacks)
     stacks))
 
@@ -50,5 +51,7 @@
     (displayln (puzzle (parse-stacks lines) procedure identity))))
 
 (time (day05))
+
+
 
 
