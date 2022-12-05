@@ -8,7 +8,10 @@
          ~>
          string->set
          chunks
-         vector-update!)
+         make-array
+         aref
+         aset!
+         aupd!)
 
 (define-syntax (~> stx)
   (syntax-parse stx
@@ -45,5 +48,24 @@
       (group-by (λ (p) (quotient (cdr p) k)) %)
       (map (λ (g) (map car g)) %)))
 
-(define (vector-update! vec i updater)
-  (vector-set! vec i (updater (vector-ref vec i))))
+(define-syntax make-array
+  (syntax-rules ()
+    [(_ n init)
+     (make-vector n init)]
+    [(_ m n dims ... init)
+     (build-vector m (λ (_) (make-array n dims ... init)))]))
+
+(define-syntax aref
+  (syntax-rules ()
+    [(_ arr)
+     arr]
+    [(_ arr i idx ...)
+     (aref (vector-ref arr i) idx ...)]))
+
+(define-syntax-rule (aset! arr idx ... i v)
+  (vector-set! (aref arr idx ...) i v))
+
+(define-syntax-rule (aupd! arr idx ... updater)
+  (aset! arr idx ...
+         (updater (aref arr idx ...))))
+
