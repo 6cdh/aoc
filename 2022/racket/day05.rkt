@@ -20,7 +20,7 @@
 
 (define/contract (parse-proc lines)
   (-> (listof string?)
-      (listof (listof integer?)))
+      (listof (listof exact-nonnegative-integer?)))
 
   (let* ([strs (cdr (member "" lines))])
     (for/list ([line strs])
@@ -31,7 +31,7 @@
 
 (define/contract (puzzle stacks procedure transformer)
   (-> (vectorof (listof char?))
-      (listof (listof integer?))
+      (listof (listof exact-nonnegative-integer?))
       (-> (listof char?) (listof char?))
       string?)
 
