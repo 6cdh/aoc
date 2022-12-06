@@ -3,8 +3,9 @@
 (require "lib.rkt")
 
 (define (parse-stack lines)
-  (let* ([m (length (takef lines (λ (line)
-                                   (char=? #\[ (string-ref line 0)))))]
+  (let* ([m (sub1 (length
+                   (takef lines (λ (line)
+                                  (not (equal? line ""))))))]
          [n ($ (string-length (car lines)) + 1 / 4)]
          [stacks (make-array n '())])
     (for* ([line (reverse (take lines m))]
@@ -37,4 +38,7 @@
     (displayln (rearrange (parse-stack lines) procs identity))))
 
 (time (day05))
+
+
+
 
