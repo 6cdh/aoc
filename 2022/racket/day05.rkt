@@ -6,7 +6,7 @@
   (let* ([m (sub1 (length
                    (takef lines (λ (line)
                                   (not (equal? line ""))))))]
-         [n ($ (string-length (car lines)) + 1 / 4)]
+         [n ($ (string-length (car lines)) + 1 quotient 4)]
          [stacks (make-array n '())])
     (for* ([line (reverse (take lines m))]
            [i n])
