@@ -25,8 +25,8 @@
 
 (define (day03)
   (let ([lines (read-lines)])
-    (println (list-sum (map puzzle1 lines)))
-    (println (list-sum (map puzzle2 (chunks 3 lines))))))
+    (println (sum (map puzzle1 lines)))
+    (println (sum (map puzzle2 (chunks 3 lines))))))
 
 (time (day03))
 

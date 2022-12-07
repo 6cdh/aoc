@@ -45,8 +45,8 @@
 
 (define (day02)
   (let ([lines (read-lines)])
-    (println (list-sum (map round1 lines)))
-    (println (list-sum (map round2 lines)))))
+    (println (sum (map round1 lines)))
+    (println (sum (map round2 lines)))))
 
 (time (day02))
 

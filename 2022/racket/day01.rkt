@@ -13,7 +13,7 @@
                                (cdr calories)))))
     (let ([sorted (sort calories >)])
       (println (car sorted))
-      (println (list-sum (take sorted 3))))))
+      (println (sum (take sorted 3))))))
 
 (time (day01))
 

@@ -40,7 +40,7 @@
 
     (println (~> dir-sizes
                  (filter (λ (s) (<= s #e1e5)) %)
-                 (list-sum %)))
+                 (sum %)))
 
     (let* ([root (maximum dir-sizes)]
            [at-least-free (- #e3e7 (- #e7e7 root))])

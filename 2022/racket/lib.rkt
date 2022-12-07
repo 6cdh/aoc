@@ -3,7 +3,7 @@
 (require (for-syntax syntax/parse))
 
 (provide read-lines
-         list-sum
+         sum
          $
          ~>
          string->set
@@ -29,7 +29,7 @@
         '()
         (cons line (read-lines)))))
 
-(define (list-sum lst)
+(define (sum lst)
   (foldl + 0 lst))
 
 (define-syntax $
