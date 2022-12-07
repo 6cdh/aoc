@@ -1,7 +1,7 @@
 using Match
 
 struct FS
-    size_or_subdirs::Dict{String,Union{Int,FS}}
+    name2data::Dict{String,Union{Int,FS}}
 end
 
 function day07()
@@ -44,9 +44,9 @@ end
 
 function insert(fs, i, pwd, name, val)
     if i == length(pwd) + 1
-        fs.size_or_subdirs[name] = val
+        fs.name2data[name] = val
     else
-        insert(fs.size_or_subdirs[pwd[i]], i + 1, pwd, name, val)
+        insert(fs.name2data[pwd[i]], i + 1, pwd, name, val)
     end
 end
 
@@ -56,7 +56,7 @@ end
 
 function for_each_dir_size(fs::FS, fn)
     size = 0
-    for p in fs.size_or_subdirs
+    for p in fs.name2data
         val = p[2]
         size += for_each_dir_size(val, fn)
     end
