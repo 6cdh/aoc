@@ -1,3 +1,9 @@
+using Match
+
+struct FS
+    size_or_subdirs::Dict{String,Union{Int,FS}}
+end
+
 function day07()
     fs = read_fs()
 
@@ -22,26 +28,15 @@ function read_fs()
     lines = readlines()
 
     pwd::Vector{String} = ["/"]
-    fs = Dict("/" => Dict())
+    fs::FS = FS(Dict("/" => FS(Dict())))
     for line in lines
-        if line[1] == '$'
-            if line[3] == 'c' # cd
-                dir = line[6:end]
-                if dir == ".."
-                    pop!(pwd)
-                elseif dir == "/"
-                    pwd = ["/"]
-                else
-                    push!(pwd, dir)
-                end
-            end
-        elseif line[1] == 'd' # dir
-            insert(fs, 1, pwd, line[5:end], Dict())
-        else
-            ws = split(line)
-            size = parse(Int, ws[1])
-            name = ws[2]
-            insert(fs, 1, pwd, name, size)
+        @match split(line) begin
+            ["\$", "cd", "/"] => (pwd = ["/"])
+            ["\$", "cd", ".."] => pop!(pwd)
+            ["\$", "cd", dir] => push!(pwd, dir)
+            ["\$", "ls"] => ()
+            ["dir", dir] => insert(fs, 1, pwd, dir, FS(Dict()))
+            [size, file] => insert(fs, 1, pwd, file, parse(Int, size))
         end
     end
     fs
@@ -49,17 +44,19 @@ end
 
 function insert(fs, i, pwd, name, val)
     if i == length(pwd) + 1
-        fs[name] = val
+        fs.size_or_subdirs[name] = val
     else
-        insert(fs[pwd[i]], i + 1, pwd, name, val)
+        insert(fs.size_or_subdirs[pwd[i]], i + 1, pwd, name, val)
     end
 end
 
-for_each_dir_size(fs::Int, fn) = fs
+function for_each_dir_size(size::Int, fn)
+    size
+end
 
-function for_each_dir_size(fs, fn)
+function for_each_dir_size(fs::FS, fn)
     size = 0
-    for p in fs
+    for p in fs.size_or_subdirs
         val = p[2]
         size += for_each_dir_size(val, fn)
     end
