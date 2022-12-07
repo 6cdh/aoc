@@ -18,10 +18,11 @@
 (define (parse-procs lines)
   (let ([text (cdr (memf (curry equal? "") lines))])
     (for/list ([line text])
-      (let ([words (string-split line)])
-        (list (string->number (list-ref words 1))
-              (sub1 (string->number (list-ref words 3)))
-              (sub1 (string->number (list-ref words 5))))))))
+      (match (string-split line)
+        [(list "move" k "from" from "to" to)
+         (list (string->number k)
+               (sub1 (string->number from))
+               (sub1 (string->number to)))]))))
 
 (define (rearrange stacks procs transformer)
   (for ([p procs])
@@ -38,7 +39,5 @@
     (displayln (rearrange (parse-stack lines) procs identity))))
 
 (time (day05))
-
-
 
 
