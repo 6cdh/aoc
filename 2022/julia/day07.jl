@@ -7,21 +7,14 @@ end
 function day07()
     fs = read_fs()
 
-    ans1 = 0
-    for_each_dir_size(fs, dir_size ->
-        if dir_size <= 100000
-            ans1 += dir_size
-        end)
-    println(ans1)
+    dir_sizes::Vector{Int} = []
+    for_each_dir_size(fs, s -> push!(dir_sizes, s))
 
-    root_size = for_each_dir_size(fs, identity)
-    at_least_free = 30_000_000 - (70_000_000 - root_size)
-    ans2 = root_size
-    for_each_dir_size(fs, dir_size ->
-        if dir_size >= at_least_free
-            ans2 = min(ans2, dir_size)
-        end)
-    println(ans2)
+    println(sum(filter(s -> s <= 100_000, dir_sizes)))
+
+    root = maximum(dir_sizes)
+    at_least_free = 30_000_000 - (70_000_000 - root)
+    println(minimum(filter(s -> s >= at_least_free, dir_sizes)))
 end
 
 function read_fs()

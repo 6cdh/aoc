@@ -27,27 +27,26 @@
 (define (for-each-dir-size fs fn)
   (if (number? fs)
       fs
-      (let ([size (for/sum ([(_ val) fs])
-                    (for-each-dir-size val fn))])
+      (let ([size
+             (for/sum ([(_ val) fs])
+               (for-each-dir-size val fn))])
         (fn size)
         size)))
 
 (define (day07)
-  (let ([fs (read-fs)])
-    (let ([ans 0])
-      (for-each-dir-size fs
-                         (λ (s) (when (<= s #e1e5)
-                                  (set! ans (+ ans s)))))
-      (println ans))
-    (let* ([root (for-each-dir-size fs identity)]
-           [at-least-free (- #e3e7 (- #e7e7 root))]
-           [ans root])
-      (for-each-dir-size fs
-                         (λ (s) (when (>= s at-least-free)
-                                  (set! ans (min ans s)))))
-      (println ans))))
+  (let* ([fs (read-fs)]
+         [dir-sizes '()])
+    (for-each-dir-size fs (λ (s) (set! dir-sizes (cons s dir-sizes))))
+
+    (println (~> dir-sizes
+                 (filter (λ (s) (<= s #e1e5)) %)
+                 (list-sum %)))
+
+    (let* ([root (maximum dir-sizes)]
+           [at-least-free (- #e3e7 (- #e7e7 root))])
+      (println (~> dir-sizes
+                   (filter (λ (s) (>= s at-least-free)) %)
+                   (minimum %))))))
 
 (time (day07))
-
-
 

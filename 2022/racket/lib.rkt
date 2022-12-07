@@ -11,7 +11,9 @@
          make-array
          aref
          aset!
-         aupd!)
+         aupd!
+         maximum
+         minimum)
 
 (define-syntax (~> stx)
   (syntax-parse stx
@@ -69,3 +71,8 @@
   (aset! arr idx ...
          (updater (aref arr idx ...))))
 
+(define (maximum lst)
+  (foldl max (car lst) lst))
+
+(define (minimum lst)
+  (foldl min (car lst) lst))
