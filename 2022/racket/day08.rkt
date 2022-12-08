@@ -12,12 +12,12 @@
 
     (define (fields-of i j)
       (let ([row (vector->list (aref forest i))]
-            [col (~> (vector-map (λ (line) (aref line j)) forest)
-                     (vector->list %))])
-        (list (reverse (take row j))
-              (drop row (add1 j))
-              (reverse (take col i))
-              (drop col (add1 i)))))
+            [col (for/list ([row forest])
+                   (aref row j))])
+        (list (reverse (take row j)) ; left
+              (drop row (add1 j)) ; right
+              (reverse (take col i)) ; up
+              (drop col (add1 i))))) ; down
 
     (define (score-of tall d)
       (let ([rem (memf (λ (x) (>= x tall)) d)])
@@ -44,5 +44,8 @@
       (println max-score))))
 
 (time (day08))
+
+
+
 
 
