@@ -13,7 +13,8 @@
          aset!
          aupd!
          maximum
-         minimum)
+         minimum
+         product)
 
 (define-syntax (~> stx)
   (syntax-parse stx
@@ -76,3 +77,8 @@
 
 (define (minimum lst)
   (foldl min (car lst) lst))
+
+(define (product lst)
+  (foldl * 1 lst))
+
+
