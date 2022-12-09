@@ -8,8 +8,8 @@
         (+ (cdr old) (cdr dir))))
 
 ;; return the new position of `cur`
-;; prev: new position of the previous knots
-;; cur: old position of the current knots
+;; prev: new position of the previous knot
+;; cur: old position of the current knot
 (define (adjust prev cur)
   (let ([Δx (- (car prev) (car cur))]
         [Δy (- (cdr prev) (cdr cur))])

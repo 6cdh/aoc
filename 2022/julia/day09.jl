@@ -12,31 +12,31 @@ function adjust_tail(prev, cur)
     end
 end
 
-function move(ropes, Δ, k, visited)
-    n = length(ropes)
+function move(rope, Δ, k, visited)
+    n = length(rope)
     for _ in 1:k
-        ropes[1] = (ropes[1][1] + Δ[1], ropes[1][2] + Δ[2])
+        rope[1] = (rope[1][1] + Δ[1], rope[1][2] + Δ[2])
         for i in 2:n
-            ropes[i] = adjust_tail(ropes[i-1], ropes[i])
+            rope[i] = adjust_tail(rope[i-1], rope[i])
         end
-        push!(visited, ropes[n])
+        push!(visited, rope[n])
     end
-    ropes
+    rope
 end
 
 function emulate(lines, n)
     visited::Set{NTuple{2,Int}} = Set([(0, 0)])
-    ropes = fill((0, 0), n)
+    rope = fill((0, 0), n)
     for line in lines
         words = split(line)
         dir, steps = words[1], parse(Int, words[2])
 
         ropes =
             @match dir begin
-                "L" => move(ropes, (-1, 0), steps, visited)
-                "R" => move(ropes, (1, 0), steps, visited)
-                "U" => move(ropes, (0, 1), steps, visited)
-                "D" => move(ropes, (0, -1), steps, visited)
+                "L" => move(rope, (-1, 0), steps, visited)
+                "R" => move(rope, (1, 0), steps, visited)
+                "U" => move(rope, (0, 1), steps, visited)
+                "D" => move(rope, (0, -1), steps, visited)
             end
     end
     length(visited)
