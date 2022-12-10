@@ -3,7 +3,7 @@
 (require "lib.rkt")
 
 (define (run-cpu)
-  (let* ([instructions (read-lines)])
+  (let ([instructions (read-lines)])
     (for/fold ([x 1]
                [xs '()]
                #:result (list->vector (reverse xs)))
@@ -11,8 +11,8 @@
       (let ([ws (string-split ins)])
         (match (first ws)
           ["noop" (values x (cons x xs))]
-          ["addx" (let ([v (string->number (second ws))])
-                    (values (+ x v) (append (list x x) xs)))])))))
+          ["addx" (values (+ x (string->number (second ws)))
+                          (append (list x x) xs))])))))
 
 (define (day10)
   (let ([xs (run-cpu)])
