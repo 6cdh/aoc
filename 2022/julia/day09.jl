@@ -1,27 +1,24 @@
 using Match
 
-function adjust_tail(prev, cur)
+function adjust_knot(prev, cur)
     Δx = prev[1] - cur[1]
     Δy = prev[2] - cur[2]
     if abs(Δx) <= 1 && abs(Δy) <= 1
         cur
     else
-        sx = sign(Δx)
-        sy = sign(Δy)
-        (cur[1] + sx, cur[2] + sy)
+        (cur[1] + sign(Δx), cur[2] + sign(Δy))
     end
 end
 
-function move(rope, Δ, k, visited)
+function move!(rope, Δ, k, visited)
     n = length(rope)
     for _ in 1:k
         rope[1] = (rope[1][1] + Δ[1], rope[1][2] + Δ[2])
         for i in 2:n
-            rope[i] = adjust_tail(rope[i-1], rope[i])
+            rope[i] = adjust_knot(rope[i-1], rope[i])
         end
         push!(visited, rope[n])
     end
-    rope
 end
 
 function emulate(lines, n)
@@ -31,13 +28,12 @@ function emulate(lines, n)
         words = split(line)
         dir, steps = words[1], parse(Int, words[2])
 
-        ropes =
-            @match dir begin
-                "L" => move(rope, (-1, 0), steps, visited)
-                "R" => move(rope, (1, 0), steps, visited)
-                "U" => move(rope, (0, 1), steps, visited)
-                "D" => move(rope, (0, -1), steps, visited)
-            end
+        @match dir begin
+            "L" => move!(rope, (-1, 0), steps, visited)
+            "R" => move!(rope, (1, 0), steps, visited)
+            "U" => move!(rope, (0, 1), steps, visited)
+            "D" => move!(rope, (0, -1), steps, visited)
+        end
     end
     length(visited)
 end
