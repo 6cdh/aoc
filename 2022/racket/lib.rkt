@@ -14,7 +14,8 @@
          aupd!
          maximum
          minimum
-         product)
+         product
+         divisible)
 
 (define-syntax (~> stx)
   (syntax-parse stx
@@ -81,4 +82,5 @@
 (define (product lst)
   (foldl * 1 lst))
 
-
+(define (divisible n k)
+  (= 0 (modulo n k)))
