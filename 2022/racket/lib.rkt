@@ -15,7 +15,8 @@
          maximum
          minimum
          product
-         divisible)
+         divisible
+         list2d->vector2d)
 
 (define-syntax (~> stx)
   (syntax-parse stx
@@ -84,3 +85,8 @@
 
 (define (divisible n k)
   (= 0 (modulo n k)))
+
+(define (list2d->vector2d lstlst)
+  (for/vector ([lst lstlst])
+    (for/vector ([v lst])
+      v)))
