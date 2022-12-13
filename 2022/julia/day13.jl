@@ -41,6 +41,13 @@ function parse_val(line, i)
     end
 end
 
+# drop in replacement in parse/eval
+# NOTE: much slower
+# function parse_val(line, _)
+#     res = Meta.eval(Meta.parse(line))
+#     res, 1
+# end
+
 function parse_input()
     lines = readlines()
 
