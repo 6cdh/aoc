@@ -16,10 +16,10 @@
          (let* ([c (string-ref str i)]
                 [v (char->number c)]
                 [rem (parse-number str (add1 i))])
-           (if (eq? #f rem)
-               (cons v (add1 i))
+           (if rem
                (cons (+ (* 10 v) (car rem))
-                     (cdr rem))))]))
+                     (cdr rem))
+               (cons v (add1 i))))]))
 
 (define (parse-list str i)
   (define (parse-loop i)
@@ -77,7 +77,7 @@
 (define (puzzle2 packets)
   (let* ([divider1 '((2))]
          [divider2 '((6))]
-         [pkts (append (list '((2)) '((6))) packets)]
+         [pkts (append (list divider1 divider2) packets)]
          [sorted (list->vector (sort pkts (λ (a b) (eq? '< (my< a b)))))])
     (* (add1 (vector-member divider1 sorted))
        (add1 (vector-member divider2 sorted)))))
@@ -88,6 +88,4 @@
     (println (puzzle2 packets))))
 
 (time (day13))
-
-
 

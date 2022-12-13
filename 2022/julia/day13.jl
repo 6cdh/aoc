@@ -18,19 +18,15 @@ function parse_list(line, i)
     if line[i] == '['
         i += 1
         list = []
-        while true
+        while line[i] != ']'
             if line[i] in ", "
                 i += 1
-            elseif line[i] == ']'
-                i += 1
-                break
             else
-                val, newi = parse_val(line, i)
-                i = newi
+                val, i = parse_val(line, i)
                 push!(list, val)
             end
         end
-        (list, i)
+        (list, i + 1)
     else
         nothing
     end
