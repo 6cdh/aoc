@@ -1,6 +1,6 @@
 # val = int | list;
 # int = ('0'..'9')+;
-# list = "[", (val, ",")*, [val] "]";
+# list = "[", [(val, ",")*, val] "]";
 function parse_int(line, i)
     if isdigit(line[i])
         val = 0

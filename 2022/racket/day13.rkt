@@ -6,7 +6,7 @@
 
 ;; val = int | list;
 ;; int = ('0'..'9')+;
-;; list = "[", (val, ",")*, [val] "]";
+;; list = "[", [(val, ",")*, val] "]";
 
 (define (parse-number str i)
   (cond [(or (= i (string-length str))
