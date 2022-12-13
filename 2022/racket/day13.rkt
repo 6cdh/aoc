@@ -35,10 +35,8 @@
       #f))
 
 (define (parse-val str i)
-  (let ([number (parse-number str i)])
-    (if (eq? #f number)
-        (parse-list str i)
-        number)))
+  (or (parse-number str i)
+      (parse-list str i)))
 
 ;; parser END
 
@@ -90,4 +88,6 @@
     (println (puzzle2 packets))))
 
 (time (day13))
+
+
 
