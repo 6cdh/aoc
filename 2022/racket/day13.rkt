@@ -38,6 +38,13 @@
   (or (parse-number str i)
       (parse-list str i)))
 
+;; readtable implementation
+;; drop in replacement
+;; (define (parse-val str _)
+;;   (parameterize ([current-readtable (make-readtable #f #\, #\space #f)])
+;;     (cons (read (open-input-string str))
+;;           'for-compatibility)))
+
 ;; parser END
 
 ;; comparator BEGIN
@@ -88,4 +95,7 @@
     (println (puzzle2 packets))))
 
 (time (day13))
+
+
+
 
