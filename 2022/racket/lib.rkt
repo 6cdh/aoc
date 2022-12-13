@@ -16,7 +16,8 @@
          minimum
          product
          divisible
-         list2d->vector2d)
+         list2d->vector2d
+         char->number)
 
 (define-syntax (~> stx)
   (syntax-parse stx
@@ -90,3 +91,9 @@
   (for/vector ([lst lstlst])
     (for/vector ([v lst])
       v)))
+
+(define (char->number c)
+  (- (char->integer c)
+     (char->integer #\0)))
+
+
