@@ -17,7 +17,9 @@
          product
          divisible
          list2d->vector2d
-         char->number)
+         char->number
+         string-empty?
+         minmax)
 
 (define-syntax (~> stx)
   (syntax-parse stx
@@ -96,4 +98,9 @@
   (- (char->integer c)
      (char->integer #\0)))
 
+(define (string-empty? str)
+  (string=? "" str))
 
+(define-syntax-rule (minmax vals ...)
+  (list (min vals ...)
+        (max vals ...)))
