@@ -32,8 +32,6 @@
     (cons barriers floor)))
 
 (define (emulate barriers floor ∞?)
-  (define source '(500 0))
-
   (define (trace-sand pos-lst)
     (let ([pos (car pos-lst)])
       (cond [(= floor (second pos)) pos-lst] ; with abyss
@@ -45,11 +43,11 @@
                  pos-lst)])))
 
   (let count-sands ([cnt 0]
-                    [pos-lst (list source)])
+                    [pos-lst (list '(500 0))])
     (let* ([new-pos-lst (trace-sand pos-lst)]
            [pos (car new-pos-lst)])
       (cond [(= floor (second pos)) cnt] ; with abyss
-            [(equal? source pos) (add1 cnt)] ; with infinity floor
+            [(= 0 (second pos)) (add1 cnt)] ; with infinity floor
             [else
              (hash-set! barriers pos #t)
              (count-sands (add1 cnt) (cdr new-pos-lst))]))))
