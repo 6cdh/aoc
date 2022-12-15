@@ -23,50 +23,31 @@ function read_barriers()
     (barriers, floor)
 end
 
-function trace_sand(poses, floor, barriers, isinf)
-    pos = last(poses)
-    if pos[2] == floor # with abyss
-        poses
-    elseif isinf && pos[2] == floor - 1 # with infinity floor
-        poses
-    else
+function emulate(node, barriers, floor, recode)
+    if node ∉ barriers && node[2] < floor
+        recode(node, barriers)
         for dx in (0, -1, 1)
-            next = (pos[1] + dx, pos[2] + 1)
-            if next ∉ barriers
-                push!(poses, next)
-                return trace_sand(poses, floor, barriers, isinf)
-            end
+            emulate((node[1] + dx, node[2] + 1), barriers, floor, recode)
         end
-        poses
-    end
-end
-
-function emulate(barriers, floor, isinf)
-    source = (500, 0)
-    cnt = 0
-    poses = [source]
-    while true
-        poses = trace_sand(poses, floor, barriers, isinf)
-
-        pos = last(poses)
-        if pos[2] == floor # with abyss
-            return cnt
-        elseif pos == source # with infinity floor
-            return cnt + 1
-        end
-        push!(barriers, pos)
-
-        pop!(poses)
-        cnt += 1
+        push!(barriers, node)
     end
 end
 
 function day14()
     barriers, floor = read_barriers()
 
-    res1 = emulate(barriers, floor, false)
-    println(res1)
-    println(emulate(barriers, floor + 2, true) + res1)
+    rocks = length(barriers)
+    first_abyss = -1
+
+    emulate((500, 0), barriers, floor + 2,
+        (node, bs) -> begin
+            if node[2] == floor && first_abyss == -1
+                first_abyss = length(bs) - rocks
+            end
+        end)
+
+    println(first_abyss)
+    println(length(barriers) - rocks)
 end
 
 @time day14()
