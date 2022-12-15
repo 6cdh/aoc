@@ -44,11 +44,10 @@
     (let ([rocks (hash-count barriers)]
           [first-abyss -1])
       (emulate '(500 0) barriers (+ 2 floor)
-               (λ (node bs)
+               (λ (node barriers)
                  (when (and (= floor (second node))
                             (= first-abyss -1))
-                   (set! first-abyss
-                         (- (hash-count bs) rocks)))))
+                   (set! first-abyss (- (hash-count barriers) rocks)))))
 
       (println first-abyss)
       (println (- (hash-count barriers) rocks)))))
