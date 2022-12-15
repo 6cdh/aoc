@@ -31,31 +31,26 @@
           (add-line! barriers from to))))
     (cons barriers floor)))
 
-(define (emulate barriers floor ∞?)
-  (define (trace-sand pos-lst)
-    (let ([pos (car pos-lst)])
-      (cond [(= floor (second pos)) pos-lst] ; with abyss
-            [(and ∞? (= (sub1 floor) (second pos))) pos-lst] ; with infinity floor
-            [else
-             (or (for/first ([Δ '((0 1) (-1 1) (1 1))]
-                             #:when (not (hash-has-key? barriers (move1 pos Δ))))
-                   (trace-sand (cons (move1 pos Δ) pos-lst)))
-                 pos-lst)])))
-
-  (let count-sands ([cnt 0]
-                    [pos-lst (list '(500 0))])
-    (let* ([new-pos-lst (trace-sand pos-lst)]
-           [pos (car new-pos-lst)])
-      (cond [(= floor (second pos)) cnt] ; with abyss
-            [(= 0 (second pos)) (add1 cnt)] ; with infinity floor
-            [else
-             (hash-set! barriers pos #t)
-             (count-sands (add1 cnt) (cdr new-pos-lst))]))))
+(define (emulate node barriers inf-floor record)
+  (when (and (not (hash-has-key? barriers node))
+             (not (= inf-floor (second node))))
+    (record node barriers)
+    (for ([Δ '((0 1) (-1 1) (1 1))])
+      (emulate (move1 node Δ) barriers inf-floor record))
+    (hash-set! barriers node #t)))
 
 (define (day14)
   (match-let ([(cons barriers floor) (read-barriers)])
-    (let ([res1 (emulate barriers floor #f)])
-      (println res1)
-      (println (+ res1 (emulate barriers (+ 2 floor) #t))))))
+    (let ([rocks (hash-count barriers)]
+          [first-abyss -1])
+      (emulate '(500 0) barriers (+ 2 floor)
+               (λ (node bs)
+                 (when (and (= floor (second node))
+                            (= first-abyss -1))
+                   (set! first-abyss
+                         (- (hash-count bs) rocks)))))
+
+      (println first-abyss)
+      (println (- (hash-count barriers) rocks)))))
 
 (time (day14))
