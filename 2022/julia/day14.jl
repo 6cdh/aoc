@@ -1,3 +1,11 @@
+function add_line!(from, to, barriers)
+    for xi in min(from[1], to[1]):max(from[1], to[1])
+        for yi in min(from[2], to[2]):max(from[2], to[2])
+            push!(barriers, (xi, yi))
+        end
+    end
+end
+
 function read_barriers()
     lines = readlines()
 
@@ -6,47 +14,49 @@ function read_barriers()
     for line in lines
         ints = parse.(Int, split(line, x -> x in " ->,"; keepempty=false))
         for i in 3:2:length(ints)
-            fromx, fromy = ints[i-2], ints[i-1]
-            tox, toy = ints[i], ints[i+1]
-            floor = max(floor, fromy, toy)
-            for xi in min(fromx, tox):max(fromx, tox)
-                for yi in min(fromy, toy):max(fromy, toy)
-                    push!(barriers, (xi, yi))
-                end
-            end
+            from = (ints[i-2], ints[i-1])
+            to = (ints[i], ints[i+1])
+            floor = max(floor, from[2], to[2])
+            add_line!(from, to, barriers)
         end
     end
     (barriers, floor)
 end
 
+function trace_sand(poses, floor, barriers, isinf)
+    pos = last(poses)
+    if pos[2] == floor # with abyss
+        poses
+    elseif isinf && pos[2] == floor - 1 # with infinity floor
+        poses
+    else
+        for dx in (0, -1, 1)
+            next = (pos[1] + dx, pos[2] + 1)
+            if next ∉ barriers
+                push!(poses, next)
+                return trace_sand(poses, floor, barriers, isinf)
+            end
+        end
+        poses
+    end
+end
+
 function emulate(barriers, floor, isinf)
     source = (500, 0)
     cnt = 0
-
-    function fall_sand(pos)
-        if pos[2] == floor
-            pos
-        elseif isinf && pos[2] == floor - 1
-            pos
-        else
-            for dx in (0, -1, 1)
-                next = (pos[1] + dx, pos[2] + 1)
-                if next ∉ barriers
-                    return fall_sand(next)
-                end
-            end
-            pos
-        end
-    end
-
+    poses = [source]
     while true
-        pos = fall_sand(source)
-        if pos[2] == floor
+        poses = trace_sand(poses, floor, barriers, isinf)
+
+        pos = last(poses)
+        if pos[2] == floor # with abyss
             return cnt
-        elseif pos == source
+        elseif pos == source # with infinity floor
             return cnt + 1
         end
         push!(barriers, pos)
+
+        pop!(poses)
         cnt += 1
     end
 end
@@ -54,8 +64,9 @@ end
 function day14()
     barriers, floor = read_barriers()
 
-    println(emulate(copy(barriers), floor, false))
-    println(emulate(copy(barriers), floor + 2, true))
+    res1 = emulate(barriers, floor, false)
+    println(res1)
+    println(emulate(barriers, floor + 2, true) + res1)
 end
 
 @time day14()
