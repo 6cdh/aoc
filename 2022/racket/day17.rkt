@@ -39,7 +39,6 @@
         (cond [succ
                (rec pos2 (next-j j) room)]
               [else
-               ; TODO
                (let* ([extra (max 0 (- (first pos1)))]
                       [new-room (append (build-list extra
                                                     (λ _ (make-string 7 #\.)))
