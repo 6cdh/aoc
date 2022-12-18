@@ -19,6 +19,9 @@ cpu time: 4 real time: 4 gc time: 0
 ## Julia
 
 ```bash
+# install packages
+$ julia --project=./julia -e "using Pkg; Pkg.instantiate()"
+# run day01
 $ julia --project=./julia julia/day01.jl < ./input/day01.txt
 71300
 209691
