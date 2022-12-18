@@ -61,15 +61,21 @@
                     [cycle-to (sub1 i)]
                     [cycle-len (- i cycle-from)])
                (for/list ([q queries])
-                 (let-values ([(repeats rem)
-                               (quotient/remainder
-                                (- q (sub1 cycle-from)) cycle-len)]
+                 (let-values ([(repeats rem) (quotient/remainder
+                                              (- q (sub1 cycle-from)) cycle-len)]
                               [(height) (length lens)])
-                   (+ (list-ref lens (- height (sub1 cycle-from)))
-                      (* repeats (- (list-ref lens (- height cycle-to))
-                                    (list-ref lens (- height (sub1 cycle-from)))))
-                      (- (list-ref lens (- height (+ cycle-from rem -1)))
-                         (list-ref lens (- height (sub1 cycle-from))))))))]
+                   (define (height-of i)
+                     (list-ref lens (- height i)))
+                   ;; some math to get lens[q] that is the height after `q` times simulations
+                   ;; Let's say Δq = lens[q] - lens[q-1], then
+                   ;; lens[q] = Δ1 + Δ(from-1) + repeats * (Δ(from) + ... + Δ(to))
+                   ;;                          + Δ(from) + ... + Δ(from+rem-1)
+                   ;;         = lens[from-1] + repeats * (lens[to] - lens[from-1])
+                   ;;                        + lens[from+rem-1] - lens[from-1]
+                   (+ (height-of (sub1 cycle-from))
+                      (* repeats (- (height-of cycle-to) (height-of (sub1 cycle-from))))
+                      (- (height-of (+ cycle-from rem -1))
+                         (height-of (sub1 cycle-from)))))))]
             [else
              (faster-simulate (add1 i)
                               new-j
