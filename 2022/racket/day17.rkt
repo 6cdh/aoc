@@ -68,8 +68,8 @@
                      (list-ref lens (- height i)))
                    ;; some math to get lens[q] that is the height after `q` times simulations
                    ;; Let's say Δq = lens[q] - lens[q-1], then
-                   ;; lens[q] = Δ1 + Δ(from-1) + repeats * (Δ(from) + ... + Δ(to))
-                   ;;                          + Δ(from) + ... + Δ(from+rem-1)
+                   ;; lens[q] = Δ1 + ... + Δ(from-1) + repeats * (Δ(from) + ... + Δ(to))
+                   ;;                                + Δ(from) + ... + Δ(from+rem-1)
                    ;;         = lens[from-1] + repeats * (lens[to] - lens[from-1])
                    ;;                        + lens[from+rem-1] - lens[from-1]
                    (+ (height-of (sub1 cycle-from))
