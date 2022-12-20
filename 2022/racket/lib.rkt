@@ -19,7 +19,10 @@
          list2d->vector2d
          char->number
          string-empty?
-         minmax)
+         minmax
+         memoize
+         memoize!
+         $cmp)
 
 (define-syntax (~> stx)
   (syntax-parse stx
@@ -104,3 +107,18 @@
 (define-syntax-rule (minmax vals ...)
   (list (min vals ...)
         (max vals ...)))
+
+(define-syntax-rule (memoize! fn)
+  (set! fn (memoize fn)))
+
+(define (memoize fn)
+  (let ([cache (make-hash)])
+    (λ args
+      (cond [(hash-has-key? cache args) (hash-ref cache args)]
+            [else
+             (hash-set! cache args (apply fn args))
+             (hash-ref cache args)]))))
+
+(define-syntax-rule ($cmp lower op v op2 upper)
+  (and (op lower v)
+       (op2 v upper)))
