@@ -1,6 +1,9 @@
 #lang racket
 
 (require (for-syntax syntax/parse))
+(require (rename-in racket/unsafe/ops
+                    [unsafe-vector-ref vector-ref]
+                    [unsafe-vector-set! vector-set!]))
 
 (provide read-lines
          sum
