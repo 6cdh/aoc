@@ -8,15 +8,15 @@ function solve_relation(x, op, y, result)
     op1 = Dict([
         (+, -),
         (-, +),
-        (*, ÷),
-        (÷, *),
+        (*, //),
+        (//, *),
         (==, (r, x) -> x)])
     # map op to op2 that y = result op2 x
     op2 = Dict([
         (+, -),
         (-, (r, x) -> x - r),
-        (*, ÷),
-        (÷, (r, x) -> x ÷ r),
+        (*, //),
+        (//, (r, x) -> x // r),
         (==, (r, x) -> x)])
 
     if isnothing(result) && !isnothing(x) && !isnothing(y)
@@ -44,7 +44,7 @@ function readinput()
                     "+" => +
                     "-" => -
                     "*" => *
-                    "/" => ÷
+                    "/" => //
                     op => error("unknown operator: ", op)
                 end
             monkeys[words[1][1:end-1]] = (fn, words[2], words[4])
@@ -84,13 +84,13 @@ end
 function day21()
     monkeys = readinput()
 
-    println(solve_equations("root", monkeys, nothing))
+    println(Int(solve_equations("root", monkeys, nothing)))
 
     root_action = monkeys["root"]
     monkeys["root"] = (==, root_action[2], root_action[3])
     delete!(monkeys, "humn")
 
-    println(solve_equations("root", monkeys, true))
+    println(Int(solve_equations("root", monkeys, true)))
 end
 
 @time day21()

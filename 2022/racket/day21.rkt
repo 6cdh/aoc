@@ -15,17 +15,17 @@
   (let ([to-result (list (list "+" +)
                          (list "-" -)
                          (list "*" *)
-                         (list "/" quotient)
+                         (list "/" /)
                          (list "=" =))]
         [to-x (list (list "+" -)
                     (list "-" +)
-                    (list "*" quotient)
+                    (list "*" /)
                     (list "/" *)
                     (list "=" (λ (_ y) y)))]
         [to-y (list (list "+" -)
                     (list "-" (λ (r x) (- x r)))
-                    (list "*" quotient)
-                    (list "/" (λ (r x) (quotient x r)))
+                    (list "*" /)
+                    (list "/" (λ (r x) (/ x r)))
                     (list "=" (λ (_ x) x)))])
     (match* (x y result)
       [('() '() _) null]
