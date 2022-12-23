@@ -30,7 +30,7 @@ function simulate1(elves, dirs, surrounding)
 
     new_elves_cnt::Dict{NTuple{2,Int},Int} = Dict()
     for ne in new_elves
-        new_elves_cnt[ne] = get!(new_elves_cnt, ne, 0) + 1
+        new_elves_cnt[ne] = get(new_elves_cnt, ne, 0) + 1
     end
     for e in 1:length(new_elves)
         ne = new_elves[e]
@@ -66,11 +66,11 @@ function simulate(lines, k)
         end
     end
 
-    for th in 1:k
+    for i in 1:k
         old_elves = elves
         elves, dirs = simulate1(elves, dirs, surrounding)
         if old_elves == elves
-            return elves, th
+            return elves, i
         end
     end
 
