@@ -1,14 +1,33 @@
 using Match
 
-struct FS
-    name2data::Dict{String,Union{Int,FS}}
+function read_fs()
+    lines = readlines()
+
+    pwd::Vector{String} = ["/"]
+    dirs::Dict{Vector{String},Int} = Dict()
+    for line in lines
+        @match split(line) begin
+            ["\$", "cd", "/"] => (pwd = ["/"])
+            ["\$", "cd", ".."] => pop!(pwd)
+            ["\$", "cd", dir] => push!(pwd, dir)
+            ["\$", "ls"] => ()
+            ["dir", dir] => ()
+            [size, file] => begin
+                for i in 1:length(pwd)
+                    prefix = pwd[1:i]
+                    get!(dirs, prefix, 0)
+                    dirs[prefix] += parse(Int, size)
+                end
+            end
+        end
+    end
+    dirs
 end
 
 function day07()
-    fs = read_fs()
+    dirs = read_fs()
 
-    dir_sizes::Vector{Int} = []
-    for_each_dir_size(fs, s -> push!(dir_sizes, s))
+    dir_sizes::Vector{Int} = collect(values(dirs))
 
     println(sum(filter(s -> s <= 100_000, dir_sizes)))
 
@@ -17,44 +36,5 @@ function day07()
     println(minimum(filter(s -> s >= at_least_free, dir_sizes)))
 end
 
-function read_fs()
-    lines = readlines()
-
-    pwd::Vector{String} = ["/"]
-    fs::FS = FS(Dict("/" => FS(Dict())))
-    for line in lines
-        @match split(line) begin
-            ["\$", "cd", "/"] => (pwd = ["/"])
-            ["\$", "cd", ".."] => pop!(pwd)
-            ["\$", "cd", dir] => push!(pwd, dir)
-            ["\$", "ls"] => ()
-            ["dir", dir] => insert(fs, 1, pwd, dir, FS(Dict()))
-            [size, file] => insert(fs, 1, pwd, file, parse(Int, size))
-        end
-    end
-    fs
-end
-
-function insert(fs, i, pwd, name, val)
-    if i == length(pwd) + 1
-        fs.name2data[name] = val
-    else
-        insert(fs.name2data[pwd[i]], i + 1, pwd, name, val)
-    end
-end
-
-function for_each_dir_size(size::Int, fn)
-    size
-end
-
-function for_each_dir_size(fs::FS, fn)
-    size = 0
-    for p in fs.name2data
-        val = p[2]
-        size += for_each_dir_size(val, fn)
-    end
-    fn(size)
-    size
-end
-
 @time day07()
+

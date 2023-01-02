@@ -12,15 +12,13 @@
          [half1 (substring line 0 (/ n 2))]
          [half2 (substring line (/ n 2))])
     (~> (set-intersect (string->set half1) (string->set half2))
-        (set->list %)
-        (car %)
+        (set-first %)
         (priority %))))
 
 (define (puzzle2 group)
   (~> (map string->set group)
       (apply set-intersect %)
-      (set->list %)
-      (car %)
+      (set-first %)
       (priority %)))
 
 (define (day03)
@@ -29,6 +27,4 @@
     (println (sum (map puzzle2 (chunks 3 lines))))))
 
 (time (day03))
-
-
 

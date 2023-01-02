@@ -25,7 +25,10 @@
          minmax
          memoize
          memoize!
-         $cmp)
+         $cmp
+         debugv
+         mod
+         &)
 
 (define-syntax (~> stx)
   (syntax-parse stx
@@ -125,3 +128,13 @@
 (define-syntax-rule ($cmp lower op v op2 upper)
   (and (op lower v)
        (op2 v upper)))
+
+(define (debugv v)
+  (println v)
+  v)
+
+(define (mod a b)
+  (modulo a b))
+
+(define (& lst idx)
+  (list-ref lst idx))

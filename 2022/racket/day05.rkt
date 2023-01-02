@@ -4,8 +4,7 @@
 
 (define (parse-stack lines)
   (let* ([m (sub1 (length
-                   (takef lines (λ (line)
-                                  (not (equal? line ""))))))]
+                   (takef lines (negate string-empty?))))]
          [n ($ (string-length (car lines)) + 1 quotient 4)]
          [stacks (make-array n '())])
     (for* ([line (reverse (take lines m))]
@@ -16,7 +15,7 @@
     stacks))
 
 (define (parse-procs lines)
-  (let ([text (cdr (memf (curry equal? "") lines))])
+  (let ([text (cdr (memf string-empty? lines))])
     (for/list ([line text])
       (match (string-split line)
         [(list "move" k "from" from "to" to)
@@ -39,5 +38,4 @@
     (displayln (rearrange (parse-stack lines) procs identity))))
 
 (time (day05))
-
 

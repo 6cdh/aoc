@@ -8,10 +8,10 @@ which_win(shape) = (shape + 1) % 3
 which_lose(shape) = (shape + 3 - 1) % 3
 score_of(shape) = shape + 1
 
-function outcome(opp, my)
-    if opp == my
+function outcome(opp, me)
+    if opp == me
         3
-    elseif which_lose(my) == opp
+    elseif which_lose(me) == opp
         6
     else
         0
@@ -33,8 +33,16 @@ function day02()
     score2 = 0
 
     for line in lines
-        opp = Dict('A' => rock, 'B' => paper, 'C' => scissor)[line[1]]
-        me = Dict('X' => rock, 'Y' => paper, 'Z' => scissor)[line[3]]
+        opp::Int = @match line[1] begin
+            'A' => rock
+            'B' => paper
+            'C' => scissor
+        end
+        me::Int = @match line[3] begin
+            'X' => rock
+            'Y' => paper
+            'Z' => scissor
+        end
 
         me2 = which_shape(opp, line[3])
 

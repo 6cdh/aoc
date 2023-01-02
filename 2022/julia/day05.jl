@@ -6,7 +6,7 @@ function rearrange(stacks, procedure, transformer)
         append!(stacks[to], moved)
     end
 
-    println(join(map(last, stacks)))
+    join(map(last, stacks))
 end
 
 function day05()
@@ -32,8 +32,8 @@ function day05()
         push!(procs, (k, from, to))
     end
 
-    rearrange(deepcopy(stacks), procs, reverse)
-    rearrange(deepcopy(stacks), procs, identity)
+    println(rearrange(deepcopy(stacks), procs, reverse))
+    println(rearrange(deepcopy(stacks), procs, identity))
 end
 
 @time day05()
