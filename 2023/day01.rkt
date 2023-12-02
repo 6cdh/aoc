@@ -2,22 +2,19 @@
 
 (require "lib.rkt")
 
-(define (string-search-first-in-set str search-set)
+(define (string-search-all-matches str search-set)
   (define n (string-length str))
-  (for*/first ([i (in-range 0 n)]
-               [substr (in-value (substring str i))]
-               [search-str search-set]
-               #:when (string-prefix? substr search-str))
+  (for*/list ([i (in-range 0 n)]
+              [substr (in-value (substring str i))]
+              [search-str search-set]
+              #:when (string-prefix? substr search-str))
     search-str))
 
 (define (solve strs spells)
   (for/sum ([str strs])
-    (+ (* 10 (hash-ref spells
-                       (string-search-first-in-set str (hash-keys spells))))
-       (hash-ref spells
-                 (string-reverse (string-search-first-in-set
-                                  (string-reverse str)
-                                  (map string-reverse (hash-keys spells))))))))
+    (define all-matches (string-search-all-matches str (hash-keys spells)))
+    (+ (* 10 (hash-ref spells (first all-matches)))
+       (hash-ref spells (last all-matches)))))
 
 (define (main)
   (define lines (read-lines))
