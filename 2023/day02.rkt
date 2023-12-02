@@ -25,9 +25,7 @@
   (println (for/sum ([game games]
                      [id (in-naturals 1)]
                      #:when (for/and ([record game])
-                              (and (<= (first record) (first have))
-                                   (<= (second record) (second have))
-                                   (<= (third record) (third have)))))
+                              (andmap <= record have)))
              id))
   (println (for/sum ([game games])
              (product (apply map max game)))))
