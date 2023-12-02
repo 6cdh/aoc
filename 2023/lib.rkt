@@ -3,6 +3,7 @@
 (provide digit-char->integer
          read-lines
          string-reverse
+         product
          debugv)
 
 (define (read-lines)
@@ -21,3 +22,6 @@
   (let ([res expr])
     (println res)
     res))
+
+(define (product lst)
+  (foldl * 1 lst))
