@@ -32,11 +32,10 @@
   (λ (pos) (is? (aref input (first pos) (second pos)))))
 
 (define (part1 input part-numbers)
+  (define schematic-symbol?
+    (input-is input (λ (c) (not (or (char-numeric? c) (char=? c #\.))))))
   (for/sum ([pn part-numbers]
-            #:when (ormap (input-is input
-                                    (λ (c)
-                                      (not (or (char-numeric? c) (char=? c #\.)))))
-                          (neighbors input pn)))
+            #:when (ormap schematic-symbol? (neighbors input pn)))
     (PartNum-num pn)))
 
 (define (part2 input part-numbers)
