@@ -11,9 +11,12 @@
          sum
          absdiff
          list->number
+         vector->string
+         ~>
          first
          second
-         third)
+         third
+         fourth)
 
 (define (read-lines)
   (let ([line (read-line)])
@@ -59,8 +62,16 @@
 (define (list->number lst)
   (string->number (list->string lst)))
 
+(define (vector->string vec)
+  (list->string (vector->list vec)))
+
+(define-syntax-rule (~> x exprs ...)
+  (let* ([x exprs] ...)
+    x))
+
 ;; fast version of builtin functions
 (define first car)
 (define second cadr)
 (define third caddr)
+(define fourth cadddr)
 
