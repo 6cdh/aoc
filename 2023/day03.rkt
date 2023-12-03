@@ -6,7 +6,7 @@
   (x y0 y1 num)
   #:transparent)
 
-(define (get-all-loc input)
+(define (parse-all-part-numbers input)
   (for*/list ([(line-vec x) (in-indexed input)]
               [line (in-value (vector->string line-vec))]
               [pos (regexp-match-positions* #px"[0-9]+" line)])
@@ -54,7 +54,7 @@
 
 (define (main)
   (define input (read-lines-as-vector2d))
-  (define part-numbers (get-all-loc input))
+  (define part-numbers (parse-all-part-numbers input))
 
   (println (part1 input part-numbers))
   (println (part2 input part-numbers)))
