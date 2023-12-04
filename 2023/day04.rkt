@@ -6,8 +6,8 @@
   (for/list ([line (read-lines)])
     (match (string-split line #px"[:|]")
       [(list _id str1 str2)
-       (list (map string->number (string-split str1 #px" +"))
-             (map string->number (string-split str2 #px" +")))]
+       (list (map string->number (string-split str1 " " #:repeat? #t))
+             (map string->number (string-split str2 " " #:repeat? #t)))]
       [_ (error "invalid input format")])))
 
 (define (get-win-count cards)
