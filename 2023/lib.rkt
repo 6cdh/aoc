@@ -13,6 +13,7 @@
          list->number
          vector->string
          ~>
+         vector-update!
          first
          second
          third
@@ -68,6 +69,9 @@
 (define-syntax-rule (~> x exprs ...)
   (let* ([x exprs] ...)
     x))
+
+(define (vector-update! vec i updater)
+  (vector-set! vec i (updater (vector-ref vec i))))
 
 ;; fast version of builtin functions
 (define first car)
