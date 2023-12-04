@@ -25,11 +25,12 @@
      (expt 2 (sub1 win))))
 
   (define card-counter (make-vector (length win-count) 1))
-  (for/sum ([(win id) (in-indexed win-count)]
-            [cnt card-counter])
-    (for ([Δ win])
-      (vector-update! card-counter (+ id Δ 1)
-                      (λ (old) (+ old cnt))))
-    cnt))
+  (println
+   (for/sum ([(win id) (in-indexed win-count)]
+             [cnt card-counter])
+     (for ([Δ win])
+       (vector-update! card-counter (+ id Δ 1)
+                       (λ (old) (+ old cnt))))
+     cnt)))
 
 (main)
