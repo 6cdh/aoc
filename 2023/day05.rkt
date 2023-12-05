@@ -73,13 +73,13 @@
     ;; and use the missed ranges for next rule
     (for ([rule converters])
       (match-define (list dst src len) rule)
-      (define new-rest-rngs '())
+      (define missed-rngs '())
       (for ([r rest-rngs])
         (define hit (range-intersect r (Range src len)))
         (define miss (range-subtract r hit))
         (list-push-head! result (Range (+ dst (- (Range-start hit) src)) (Range-len hit)))
-        (list-append-head! new-rest-rngs miss))
-      (set! rest-rngs new-rest-rngs))
+        (list-append-head! missed-rngs miss))
+      (set! rest-rngs missed-rngs))
     (list-append-head! result rest-rngs))
   (simplify-ranges result))
 
