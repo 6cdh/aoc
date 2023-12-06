@@ -20,12 +20,15 @@
          read-and-split-in-empty-line
          list-append-head!
          list-push-head!
+         for/count
+         string-split-in-spaces
+         solve-quadratic-equation
          first
          second
          third
          fourth)
 
-(define (read-lines in)
+(define (read-lines [in (current-input-port)])
   (let ([line (read-line in)])
     (if (eof-object? line)
         '()
@@ -110,6 +113,27 @@
 
 (define-syntax-rule (list-append-head! lst val)
   (set! lst (append val lst)))
+
+(define-syntax-rule
+  (for/count iter
+    body ...
+    lastexpr)
+  (for/sum iter
+    body ...
+    (if lastexpr
+        1
+        0)))
+
+(define (string-split-in-spaces str)
+  (string-split str " " #:repeat? #t))
+
+(define (solve-quadratic-equation a b c)
+  (sort (map (λ (+-)
+               (/ (+- (- b)
+                      (sqrt (- (* b b) (* 4 a c))))
+                  (* 2 a)))
+             (list + -))
+        <))
 
 ;; fast version of builtin functions
 (define first car)
