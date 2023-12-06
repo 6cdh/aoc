@@ -27,8 +27,8 @@
   (match-define (list times-str distances-str) (read-input))
   (println (solve (map string->number times-str)
                   (map string->number distances-str)))
-  (println (solve (list (string->number (string-join times-str "")))
-                  (list (string->number (string-join distances-str ""))))))
+  (println (solve (list (string->number (string-append* times-str)))
+                  (list (string->number (string-append* distances-str))))))
 
 (main)
 
