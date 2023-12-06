@@ -16,7 +16,7 @@
   ;; fast method: solve quadratic equation
   (match-let ([(list left right)
                (solve-quadratic-equation -1 total-time (- best))])
-    (- (exact-ceiling (sub1 right)) (exact-floor (add1 left)) -1)))
+    (max 0 (- (exact-ceiling (sub1 right)) (exact-floor (add1 left)) -1))))
 
 (define (solve times distances)
   (for/product ([t times]
