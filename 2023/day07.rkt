@@ -35,10 +35,7 @@
   (define (card-strength c)
     (string-find-index card-order c))
 
-  (for/first ([card1 hand1]
-              [card2 hand2]
-              #:when (not (char=? card1 card2)))
-    (< (card-strength card1) (card-strength card2))))
+  (sequence<? hand1 hand2 char=? card-strength))
 
 (define (hand< transformer card-order)
   (λ (h1 h2)

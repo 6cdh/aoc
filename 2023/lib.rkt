@@ -28,6 +28,7 @@
          string-replace-char
          counter
          counter-as-list
+         sequence<?
          first
          second
          third
@@ -163,6 +164,12 @@
 
 (define (counter-as-list seq)
   (hash->list (counter seq)))
+
+(define (sequence<? seq1 seq2 eq? cmp)
+  (for/first ([v1 seq1]
+              [v2 seq2]
+              #:when (not (eq? v1 v2)))
+    (< (cmp v1) (cmp v2))))
 
 ;; fast version of builtin functions
 (define first car)
