@@ -23,6 +23,11 @@
          for/count
          string-split-in-spaces
          solve-quadratic-equation
+         string-find-index
+         for/string
+         string-replace-char
+         counter
+         counter-as-list
          first
          second
          third
@@ -134,6 +139,30 @@
                   (* 2 a)))
              (list + -))
         <))
+
+(define (string-find-index str char)
+  (or (for/first ([(c i) (in-indexed str)]
+                  #:when (char=? c char))
+        i)
+      -1))
+
+(define-syntax-rule
+  (for/string iter
+    body ...)
+  (list->string
+   (for/list iter
+     body ...)))
+
+(define (string-replace-char str from to)
+  (string-replace str (string from) (string to)))
+
+(define (counter seq)
+  (for/fold ([h (hash)])
+            ([v seq])
+    (hash-update h v add1 0)))
+
+(define (counter-as-list seq)
+  (hash->list (counter seq)))
 
 ;; fast version of builtin functions
 (define first car)
