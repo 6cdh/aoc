@@ -29,6 +29,7 @@
          counter
          counter-as-list
          sequence<?
+         assert!
          first
          second
          third
@@ -170,6 +171,10 @@
               [v2 seq2]
               #:when (not (eq? v1 v2)))
     (< (cmp v1) (cmp v2))))
+
+(define-syntax-rule (assert! expr)
+  (when (not expr)
+    (error "assert not true:" (quote expr))))
 
 ;; fast version of builtin functions
 (define first car)
