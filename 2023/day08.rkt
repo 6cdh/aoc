@@ -40,7 +40,7 @@
   (println (count-steps instructions lefts rights "AAA" (λ (node) (string=? node "ZZZ"))))
 
   ;; observe and assume: a A-node -> k steps -> Z node -> k steps -> Z node -> ...
-  ;;                     the Z nodes are not must be the same.
+  ;;                     the Z nodes not must be the same.
   ;; this code won't work if the assumption is false.
   (println (apply lcm
                   (for/list ([from (filter (ends-with? #\A) (hash-keys lefts))])
