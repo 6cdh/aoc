@@ -41,12 +41,12 @@
   (define (bfs dist points)
     (define new-points '())
 
-    (for ([point points])
-      (for ([nei (neighbors sketch point)])
-        (set-add! sides (list point nei))
-        (when (not (set-member? visited nei))
-          (list-push-head! new-points nei)
-          (set-add! visited nei))))
+    (for* ([point points]
+           [nei (neighbors sketch point)])
+      (set-add! sides (list point nei))
+      (when (not (set-member? visited nei))
+        (list-push-head! new-points nei)
+        (set-add! visited nei)))
 
     (if (null? new-points)
         (list dist visited sides)
