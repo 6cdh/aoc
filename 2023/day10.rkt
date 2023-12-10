@@ -13,7 +13,7 @@
   (filter can-connect-back? (points-connect-to sketch point)))
 
 (define (valid? sketch pos)
-  (match-define (list m n) (array-dims sketch 2))
+  (match-define (list m n) (vector-dims sketch 2))
   (and (< -1 (Point-x pos) m)
        (< -1 (Point-y pos) n)))
 
@@ -55,7 +55,7 @@
   (bfs 0 (list init-point)))
 
 (define (find-s-pos sketch)
-  (match-define (list m n) (array-dims sketch 2))
+  (match-define (list m n) (vector-dims sketch 2))
   (for*/first ([i m]
                [j n]
                #:when (char=? #\S (aref sketch i j)))
@@ -97,7 +97,7 @@
        (< y (Point-y point))))))
 
 (define (count-inside sketch side-points vert-sides)
-  (match-define (list m n) (array-dims sketch 2))
+  (match-define (list m n) (vector-dims sketch 2))
   (define outside-polygon? (point-outside-polygon-fast? vert-sides))
   (for*/count ([x m]
                [y n])

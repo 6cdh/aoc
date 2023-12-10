@@ -32,7 +32,7 @@
          counter-as-list
          sequence<?
          assert!
-         array-dims
+         vector-dims
          first
          second
          third
@@ -193,10 +193,10 @@
   (when (not expr)
     (error (format "assert fail: ~a: ~a" msg (quote expr)))))
 
-(define (array-dims vec k)
+(define (vector-dims vec k)
   (if (= k 1)
       (list (vector-length vec))
-      (cons (vector-length vec) (array-dims (aref vec 0) (sub1 k)))))
+      (cons (vector-length vec) (vector-dims (aref vec 0) (sub1 k)))))
 
 ;; fast version of builtin functions
 (define first car)
