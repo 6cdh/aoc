@@ -16,11 +16,13 @@
          vector-update!
          for/min
          minimum
+         maximum
          chunks
          read-and-split-in-empty-line
          list-append-head!
          list-push-head!
          for/count
+         for*/count
          string-split-in-spaces
          solve-quadratic-equation
          string-find-index
@@ -30,6 +32,7 @@
          counter-as-list
          sequence<?
          assert!
+         array-dims
          first
          second
          third
@@ -55,7 +58,8 @@
 
 (define-syntax-rule (debugv expr)
   (let ([res expr])
-    (displayln (format "~a: ~v" (quote expr) res))
+    (displayln (format "~a:" (quote expr)))
+    (pretty-display res)
     res))
 
 (define (product lst)
@@ -101,6 +105,9 @@
 (define (minimum lst)
   (foldl min (car lst) lst))
 
+(define (maximum lst)
+  (foldl min (car lst) lst))
+
 (define (chunks lst k)
   (if (<= (length lst) k)
       (list lst)
@@ -126,6 +133,16 @@
     body ...
     lastexpr)
   (for/sum iter
+    body ...
+    (if lastexpr
+        1
+        0)))
+
+(define-syntax-rule
+  (for*/count iter
+    body ...
+    lastexpr)
+  (for*/sum iter
     body ...
     (if lastexpr
         1
@@ -172,9 +189,14 @@
               #:when (not (eq? v1 v2)))
     (< (cmp v1) (cmp v2))))
 
-(define-syntax-rule (assert! expr)
+(define-syntax-rule (assert! expr msg)
   (when (not expr)
-    (error "assert not true:" (quote expr))))
+    (error (format "assert fail: ~a: ~a" msg (quote expr)))))
+
+(define (array-dims vec k)
+  (if (= k 1)
+      (list (vector-length vec))
+      (cons (vector-length vec) (array-dims (aref vec 0) (sub1 k)))))
 
 ;; fast version of builtin functions
 (define first car)
