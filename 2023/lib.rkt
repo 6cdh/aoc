@@ -33,6 +33,7 @@
          sequence<?
          assert!
          vector-dims
+         reverse-2d-list
          first
          second
          third
@@ -197,6 +198,9 @@
   (if (= k 1)
       (list (vector-length vec))
       (cons (vector-length vec) (vector-dims (aref vec 0) (sub1 k)))))
+
+(define (reverse-2d-list uni)
+  (apply map list uni))
 
 ;; fast version of builtin functions
 (define first car)
