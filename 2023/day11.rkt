@@ -26,8 +26,8 @@
   (define empty-cols-before (empty-rows-before-vector (reverse-2d-list image)))
 
   (for/list ([g galaxy])
-    (list (+ (Point-x g) (* (sub1 times) (aref empty-rows-before (Point-x g))))
-          (+ (Point-y g) (* (sub1 times) (aref empty-cols-before (Point-y g)))))))
+    (Point (+ (Point-x g) (* (sub1 times) (aref empty-rows-before (Point-x g))))
+           (+ (Point-y g) (* (sub1 times) (aref empty-cols-before (Point-y g)))))))
 
 (define (solve image times)
   (define galaxy-vec (list->vector (expand-coordinate image (find-galaxies image) times)))
