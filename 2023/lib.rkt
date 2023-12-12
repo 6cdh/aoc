@@ -34,6 +34,9 @@
          assert!
          vector-dims
          reverse-2d-list
+         boolean->number
+         repeat
+         cachef-hash!
          first
          second
          third
@@ -201,6 +204,25 @@
 
 (define (reverse-2d-list uni)
   (apply map list uni))
+
+(define (boolean->number b)
+  (if b 1 0))
+
+(define (repeat lst k)
+  (if (= k 1)
+      lst
+      (append lst (repeat lst (sub1 k)))))
+
+(define-syntax-rule (cachef-hash! fn)
+  (set! fn (cachef-hash fn)))
+
+(define (cachef-hash fn)
+  (let ([cache (make-hash)]
+        [ori-fn fn])
+    (λ args
+      (when (not (hash-has-key? cache args))
+        (hash-set! cache args (apply ori-fn args)))
+      (hash-ref cache args))))
 
 ;; fast version of builtin functions
 (define first car)
