@@ -37,6 +37,7 @@
          boolean->number
          repeat
          cachef-hash!
+         sublist
          first
          second
          third
@@ -223,6 +224,9 @@
       (when (not (hash-has-key? cache args))
         (hash-set! cache args (apply ori-fn args)))
       (hash-ref cache args))))
+
+(define (sublist lst from len)
+  (take (drop lst from) len))
 
 ;; fast version of builtin functions
 (define first car)
