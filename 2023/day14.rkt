@@ -2,61 +2,33 @@
 
 (require "lib.rkt")
 
-(define Point cons)
-(define Point-x car)
-(define Point-y cdr)
+(define (row-roll-left row)
+  (~> xs
+      (list->string row)
+      (regexp-match* #px"#?[^#]*" xs)
+      (map string->list xs)
+      (map (sort-in-order "#O.") xs)
+      (append* xs)))
 
-(define (find-all-poses vecvec c)
-  (for*/list ([(row x) (in-indexed vecvec)]
-              [(val y) (in-indexed row)]
-              #:when (char=? c val))
-    (Point x y)))
+(define row-roll-right
+  (compose reverse row-roll-left reverse))
 
-(define (roll-dir platform dx dy)
-  (define platform-vec (list2d->vector2d platform))
-  (define m (vector-length platform-vec))
-  (define n (vector-length (aref platform-vec 0)))
-
-  (define (platform-get pos)
-    (aref platform-vec (Point-x pos) (Point-y pos)))
-
-  (define (platform-set! pos val)
-    (aset! platform-vec (Point-x pos) (Point-y pos) val))
-
-  (define (valid? pos)
-    (and (< -1 (Point-x pos) m) (< -1 (Point-y pos) n)))
-
-  (define (move pos)
-    (define new-pos (Point (+ dx (Point-x pos)) (+ dy (Point-y pos))))
-    (if (not (valid? new-pos))
-        pos
-        (match (platform-get new-pos)
-          [#\# pos]
-          [#\. (move new-pos)]
-          [_
-           (if (equal? (move-round-rock! new-pos) new-pos)
-               pos
-               (move new-pos))])))
-
-  (define (move-round-rock! pos)
-    (when (char=? #\O (platform-get pos))
-      (platform-set! pos #\.)
-      (define final-pos (move pos))
-      (platform-set! final-pos #\O)
-      final-pos))
-
-  (for-each move-round-rock! (find-all-poses platform-vec #\O))
-  (vector2d->list2d platform-vec))
+(define (roll platform dir)
+  (match dir
+    ['west (map row-roll-left platform)]
+    ['east (map row-roll-right platform)]
+    ['north (reverse-2d-list (map row-roll-left (reverse-2d-list platform)))]
+    ['south (reverse-2d-list (map row-roll-right (reverse-2d-list platform)))]))
 
 (define (roll-north platform)
-  (roll-dir platform -1 0))
+  (roll platform 'north))
 
-(define (cycle1 platform)
+(define (one-cycle platform)
   (~> platform
-      (roll-dir platform -1 0)
-      (roll-dir platform 0 -1)
-      (roll-dir platform 1 0)
-      (roll-dir platform 0 1)))
+      (roll platform 'north)
+      (roll platform 'west)
+      (roll platform 'south)
+      (roll platform 'east)))
 
 ;; loop discover
 ;; try to find loop and calculate result, otherwise fallback to brute force
@@ -64,7 +36,7 @@
   (let ([result->cycle-id (make-hash)]
         [cycle-id->result (make-hash)])
     (λ (platform cycle-id)
-      (define new-platform (cycle1 platform))
+      (define new-platform (one-cycle platform))
       (cond [(= cycle-id 1) new-platform]
             [(hash-has-key? result->cycle-id new-platform)
              (define loop-start (hash-ref result->cycle-id new-platform))

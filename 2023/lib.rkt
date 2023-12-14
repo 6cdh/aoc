@@ -42,6 +42,7 @@
          sublist
          list2d->vector2d
          vector2d->list2d
+         sort-in-order
          first
          second
          third
@@ -221,8 +222,8 @@
       (list (vector-length vec))
       (cons (vector-length vec) (vector-dims (aref vec 0) (sub1 k)))))
 
-(define (reverse-2d-list uni)
-  (apply map list uni))
+(define (reverse-2d-list lstlst)
+  (apply map list lstlst))
 
 (define (boolean->number b)
   (if b 1 0))
@@ -251,6 +252,10 @@
 
 (define (vector2d->list2d vecvec)
   (map vector->list (vector->list vecvec)))
+
+(define (sort-in-order order)
+  (λ (lst)
+    (sort lst < #:key (λ (c) (string-find-index order c)))))
 
 ;; fast version of builtin functions
 (define first car)
