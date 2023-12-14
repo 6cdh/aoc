@@ -2,23 +2,27 @@
 
 (require "lib.rkt")
 
-(define (row-roll-left row)
+(define (roll-row row order)
   (~> xs
       (list->string row)
-      (regexp-match* #px"#?[^#]*" xs)
+      (string-split xs "#" #:trim? #f)
       (map string->list xs)
-      (map (sort-in-order "#O.") xs)
-      (append* xs)))
+      (map (λ (lst) (sort lst order)) xs)
+      (map list->string xs)
+      (string->list (string-join xs "#"))))
 
-(define row-roll-right
-  (compose reverse row-roll-left reverse))
+(define (roll-row-to-left row)
+  (roll-row row char>?))
+
+(define (row-roll-to-right row)
+  (roll-row row char<?))
 
 (define (roll platform dir)
   (match dir
-    ['west (map row-roll-left platform)]
-    ['east (map row-roll-right platform)]
-    ['north (reverse-2d-list (map row-roll-left (reverse-2d-list platform)))]
-    ['south (reverse-2d-list (map row-roll-right (reverse-2d-list platform)))]))
+    ['west (map roll-row-to-left platform)]
+    ['east (map row-roll-to-right platform)]
+    ['north (reverse-2d-list (map roll-row-to-left (reverse-2d-list platform)))]
+    ['south (reverse-2d-list (map row-roll-to-right (reverse-2d-list platform)))]))
 
 (define (roll-north platform)
   (roll platform 'north))
@@ -57,6 +61,6 @@
 (define (main)
   (define platform (map string->list (read-lines)))
   (println (total-load (roll-north platform)))
-  (println (total-load (cycles platform #e1e9))))
+  (println (total-load (time (cycles platform #e1e9)))))
 
 (main)
