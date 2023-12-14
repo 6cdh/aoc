@@ -8,6 +8,8 @@
          product
          debugv
          aref
+         aset!
+         make-array
          sum
          absdiff
          list->number
@@ -78,6 +80,20 @@
      arr]
     [(_ arr i idx ...)
      (aref (vector-ref arr i) idx ...)]))
+
+(define-syntax aset!
+  (syntax-rules ()
+    [(_ arr dim new-val)
+     (vector-set! arr dim new-val)]
+    [(_ arr dim1 dims ... new-val)
+     (aset! (vector-ref arr dim1) dims ... new-val)]))
+
+(define-syntax make-array
+  (syntax-rules ()
+    [(_ n init)
+     (make-vector n init)]
+    [(_ n args ...)
+     (build-vector n (λ _ (make-array args ...)))]))
 
 (define (sum lst)
   (foldl + 0 lst))
