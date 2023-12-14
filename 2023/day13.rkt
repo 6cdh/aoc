@@ -29,7 +29,7 @@
 (define (solve mirrors diffs)
   (for/sum ([mirror mirrors])
     (match (find-reflect-line mirror diffs)
-      [(list 'row up) (* 100 up)]
+      [(list 'row above) (* 100 above)]
       [(list 'col left) left])))
 
 (define (main)
