@@ -123,7 +123,7 @@
   (string-split input
                 ;; platform compatibility
                 (if (string-contains? input "\r")
-                    "\r\n"
+                    "\r\n\r\n"
                     "\n\n")
                 #:repeat? #t))
 
