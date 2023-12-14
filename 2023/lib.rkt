@@ -40,6 +40,8 @@
          repeat
          cachef-hash!
          sublist
+         list2d->vector2d
+         vector2d->list2d
          first
          second
          third
@@ -243,6 +245,12 @@
 
 (define (sublist lst from len)
   (take (drop lst from) len))
+
+(define (list2d->vector2d lstlst)
+  (list->vector (map list->vector lstlst)))
+
+(define (vector2d->list2d vecvec)
+  (map vector->list (vector->list vecvec)))
 
 ;; fast version of builtin functions
 (define first car)

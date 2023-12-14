@@ -6,12 +6,6 @@
 (define Point-x car)
 (define Point-y cdr)
 
-(define (list2d->vector2d lstlst)
-  (list->vector (map list->vector lstlst)))
-
-(define (vector2d->list2d vecvec)
-  (map vector->list (vector->list vecvec)))
-
 (define (find-all-poses vecvec c)
   (for*/list ([(row x) (in-indexed vecvec)]
               [(val y) (in-indexed row)]
