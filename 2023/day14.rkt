@@ -61,6 +61,6 @@
 (define (main)
   (define platform (map string->list (read-lines)))
   (println (total-load (roll-north platform)))
-  (println (total-load (time (cycles platform #e1e9)))))
+  (println (total-load (cycles platform #e1e9))))
 
 (main)
