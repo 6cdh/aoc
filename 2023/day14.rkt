@@ -12,9 +12,11 @@
       (string->list (string-join xs "#"))))
 
 (define (roll-row-to-left row)
+  ; 'O' > '.'
   (roll-row row char>?))
 
 (define (row-roll-to-right row)
+  ; '.' < 'O'
   (roll-row row char<?))
 
 (define (roll platform dir)
