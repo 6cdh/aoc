@@ -35,7 +35,7 @@
          sequence<?
          assert!
          vector-dims
-         reverse-2d-list
+         transpose
          boolean->number
          repeat
          cachef-hash!
@@ -222,7 +222,7 @@
       (list (vector-length vec))
       (cons (vector-length vec) (vector-dims (aref vec 0) (sub1 k)))))
 
-(define (reverse-2d-list lstlst)
+(define (transpose lstlst)
   (apply map list lstlst))
 
 (define (boolean->number b)

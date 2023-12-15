@@ -23,8 +23,8 @@
   (match dir
     ['west (map roll-row-to-left platform)]
     ['east (map row-roll-to-right platform)]
-    ['north (reverse-2d-list (map roll-row-to-left (reverse-2d-list platform)))]
-    ['south (reverse-2d-list (map row-roll-to-right (reverse-2d-list platform)))]))
+    ['north (transpose (map roll-row-to-left (transpose platform)))]
+    ['south (transpose (map row-roll-to-right (transpose platform)))]))
 
 (define (roll-north platform)
   (roll platform 'north))
@@ -39,20 +39,20 @@
 ;; loop discover
 ;; try to find loop and calculate result, otherwise fallback to brute force
 (define cycles
-  (let ([result->cycle-id (make-hash)]
-        [cycle-id->result (make-hash)])
+  (let ([platform->cycle-id (make-hash)]
+        [cycle-id->platform (make-hash)])
     (λ (platform cycle-id)
       (define new-platform (one-cycle platform))
       (cond [(= cycle-id 1) new-platform]
-            [(hash-has-key? result->cycle-id new-platform)
-             (define loop-start (hash-ref result->cycle-id new-platform))
+            [(hash-has-key? platform->cycle-id new-platform)
+             (define loop-start (hash-ref platform->cycle-id new-platform))
              (define loop-len (- loop-start cycle-id))
              (define remain (modulo cycle-id loop-len))
              (if (= 0 remain)
-                 (hash-ref cycle-id->result (add1 cycle-id))
-                 (hash-ref cycle-id->result (- (+ loop-start 1) remain)))]
-            [else (hash-set! result->cycle-id new-platform cycle-id)
-                  (hash-set! cycle-id->result cycle-id new-platform)
+                 (hash-ref cycle-id->platform (add1 cycle-id))
+                 (hash-ref cycle-id->platform (- (+ loop-start 1) remain)))]
+            [else (hash-set! platform->cycle-id new-platform cycle-id)
+                  (hash-set! cycle-id->platform cycle-id new-platform)
                   (cycles new-platform (sub1 cycle-id))]))))
 
 (define (total-load platform)
