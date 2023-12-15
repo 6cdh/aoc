@@ -15,16 +15,16 @@
   ; 'O' > '.'
   (roll-row row char>?))
 
-(define (row-roll-to-right row)
+(define (roll-row-to-right row)
   ; '.' < 'O'
   (roll-row row char<?))
 
 (define (roll platform dir)
   (match dir
     ['west (map roll-row-to-left platform)]
-    ['east (map row-roll-to-right platform)]
+    ['east (map roll-row-to-right platform)]
     ['north (transpose (map roll-row-to-left (transpose platform)))]
-    ['south (transpose (map row-roll-to-right (transpose platform)))]))
+    ['south (transpose (map roll-row-to-right (transpose platform)))]))
 
 (define (roll-north platform)
   (roll platform 'north))
