@@ -26,9 +26,6 @@
     ['north (transpose (map roll-row-to-left (transpose platform)))]
     ['south (transpose (map roll-row-to-right (transpose platform)))]))
 
-(define (roll-north platform)
-  (roll platform 'north))
-
 (define (one-cycle platform)
   (~> platform
       (roll platform 'north)
@@ -62,7 +59,7 @@
 
 (define (main)
   (define platform (map string->list (read-lines)))
-  (println (total-load (roll-north platform)))
+  (println (total-load (roll platform 'north)))
   (println (total-load (cycles platform #e1e9))))
 
 (main)
