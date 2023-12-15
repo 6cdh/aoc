@@ -11,16 +11,16 @@
         (modulo cur 256))))
 
 (define (remove! box->labels label->focal label)
+  (hash-remove! label->focal label)
   (hash-update! box->labels (box-hash label)
                 (λ (old)
-                  (hash-remove! label->focal label)
                   (remove label old))
                 '()))
 
 (define (add! box->labels label->focal label focal)
+  (hash-set! label->focal label focal)
   (hash-update! box->labels (box-hash label)
                 (λ (old)
-                  (hash-set! label->focal label focal)
                   (if (member label old)
                       old
                       (cons label old)))
