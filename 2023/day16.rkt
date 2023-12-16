@@ -28,40 +28,40 @@
        (< -1 (Pos-y pos) (Pack-n pack))))
 
 (define (reflect/ pack pos dir)
-  (turn pack pos
-        (match dir
-          [(== Left) Down]
-          [(== Right) Up]
-          [(== Up) Right]
-          [(== Down) Left])))
+  (spread-forward pack pos
+                  (match dir
+                    [(== Left) Down]
+                    [(== Right) Up]
+                    [(== Up) Right]
+                    [(== Down) Left])))
 
 (define (reflect\\ pack pos dir)
-  (turn pack pos
-        (match dir
-          [(== Left) Up]
-          [(== Right) Down]
-          [(== Up) Left]
-          [(== Down) Right])))
+  (spread-forward pack pos
+                  (match dir
+                    [(== Left) Up]
+                    [(== Right) Down]
+                    [(== Up) Left]
+                    [(== Down) Right])))
 
 (define (split- pack pos dir)
   (match dir
-    [(== Left) (turn pack pos dir)]
-    [(== Right) (turn pack pos dir)]
-    [(== Up) (turn pack pos Left)
-             (turn pack pos Right)]
-    [(== Down) (turn pack pos Left)
-               (turn pack pos Right)]))
+    [(== Left) (spread-forward pack pos dir)]
+    [(== Right) (spread-forward pack pos dir)]
+    [(== Up) (spread-forward pack pos Left)
+             (spread-forward pack pos Right)]
+    [(== Down) (spread-forward pack pos Left)
+               (spread-forward pack pos Right)]))
 
 (define (split|| pack pos dir)
   (match dir
-    [(== Left) (turn pack pos Up)
-               (turn pack pos Down)]
-    [(== Right) (turn pack pos Up)
-                (turn pack pos Down)]
-    [(== Up) (turn pack pos dir)]
-    [(== Down) (turn pack pos dir)]))
+    [(== Left) (spread-forward pack pos Up)
+               (spread-forward pack pos Down)]
+    [(== Right) (spread-forward pack pos Up)
+                (spread-forward pack pos Down)]
+    [(== Up) (spread-forward pack pos dir)]
+    [(== Down) (spread-forward pack pos dir)]))
 
-(define (turn pack pos dir)
+(define (spread-forward pack pos dir)
   (spread pack (forward pos dir) dir))
 
 (define (spread pack pos dir)
@@ -70,7 +70,7 @@
              (not (set-member? (Pack-visited pack) key)))
     (set-add! (Pack-visited pack) key)
     (match (aref (Pack-board pack) (Pos-x pos) (Pos-y pos))
-      [#\. (turn pack pos dir)]
+      [#\. (spread-forward pack pos dir)]
       [#\/ (reflect/ pack pos dir)]
       [#\\ (reflect\\ pack pos dir)]
       [#\- (split- pack pos dir)]
