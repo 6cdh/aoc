@@ -25,18 +25,20 @@
        (< -1 (Pos-y point) (Pack-n pack))))
 
 (define (reflect/ pack point dir)
-  (match dir
-    [(== Left) (turn pack point Down)]
-    [(== Right) (turn pack point Up)]
-    [(== Up) (turn pack point Right)]
-    [(== Down) (turn pack point Left)]))
+  (turn pack point
+        (match dir
+          [(== Left) Down]
+          [(== Right) Up]
+          [(== Up) Right]
+          [(== Down) Left])))
 
 (define (reflect\\ pack point dir)
-  (match dir
-    [(== Left) (turn pack point Up)]
-    [(== Right) (turn pack point Down)]
-    [(== Up) (turn pack point Left)]
-    [(== Down) (turn pack point Right)]))
+  (turn pack point
+        (match dir
+          [(== Left) Up]
+          [(== Right) Down]
+          [(== Up) Left]
+          [(== Down) Right])))
 
 (define (split- pack point dir)
   (match dir
