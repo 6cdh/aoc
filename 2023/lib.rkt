@@ -39,10 +39,13 @@
          boolean->number
          repeat
          cachef-hash!
+         cachef-hash
          sublist
          list2d->vector2d
          vector2d->list2d
          sort-in-order
+         for/max
+         vector-fill*!
          first
          second
          third
@@ -256,6 +259,20 @@
 (define (sort-in-order order)
   (λ (lst)
     (sort lst < #:key (λ (c) (string-find-index order c)))))
+
+(define-syntax-rule
+  (for/max init iter
+    body ... last-expr)
+  (for/fold ([maxv init])
+            iter
+    body ...
+    (max maxv last-expr)))
+
+(define (vector-fill*! vec k val)
+  (if (= k 1)
+      (vector-fill! vec val)
+      (for ([subvec vec])
+        (vector-fill*! subvec (sub1 k) val))))
 
 ;; fast version of builtin functions
 (define first car)
