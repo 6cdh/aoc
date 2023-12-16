@@ -20,6 +20,10 @@
 (struct Pack
   (board visited m n))
 
+(define Key cons)
+(define Key-pos car)
+(define Key-dir cdr)
+
 (define (valid? pack point)
   (and (< -1 (Pos-x point) (Pack-m pack))
        (< -1 (Pos-y point) (Pack-n pack))))
@@ -62,7 +66,7 @@
   (spread pack (forward point dir) dir))
 
 (define (spread pack pos dir)
-  (define key (cons pos dir))
+  (define key (Key pos dir))
   (when (and (valid? pack pos)
              (not (set-member? (Pack-visited pack) key)))
     (set-add! (Pack-visited pack) key)
@@ -78,7 +82,7 @@
   (define visited (mutable-set))
   (define pack (Pack board visited m n))
   (spread pack pos dir)
-  (set-count (list->set (set-map visited first))))
+  (set-count (list->set (set-map visited Key-pos))))
 
 (define (main)
   (define board (read-lines-as-vector2d))
