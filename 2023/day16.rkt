@@ -22,48 +22,47 @@
 
 (define Key cons)
 (define Key-pos car)
-(define Key-dir cdr)
 
-(define (valid? pack point)
-  (and (< -1 (Pos-x point) (Pack-m pack))
-       (< -1 (Pos-y point) (Pack-n pack))))
+(define (valid? pack pos)
+  (and (< -1 (Pos-x pos) (Pack-m pack))
+       (< -1 (Pos-y pos) (Pack-n pack))))
 
-(define (reflect/ pack point dir)
-  (turn pack point
+(define (reflect/ pack pos dir)
+  (turn pack pos
         (match dir
           [(== Left) Down]
           [(== Right) Up]
           [(== Up) Right]
           [(== Down) Left])))
 
-(define (reflect\\ pack point dir)
-  (turn pack point
+(define (reflect\\ pack pos dir)
+  (turn pack pos
         (match dir
           [(== Left) Up]
           [(== Right) Down]
           [(== Up) Left]
           [(== Down) Right])))
 
-(define (split- pack point dir)
+(define (split- pack pos dir)
   (match dir
-    [(== Left) (turn pack point dir)]
-    [(== Right) (turn pack point dir)]
-    [(== Up) (turn pack point Left)
-             (turn pack point Right)]
-    [(== Down) (turn pack point Left)
-               (turn pack point Right)]))
+    [(== Left) (turn pack pos dir)]
+    [(== Right) (turn pack pos dir)]
+    [(== Up) (turn pack pos Left)
+             (turn pack pos Right)]
+    [(== Down) (turn pack pos Left)
+               (turn pack pos Right)]))
 
-(define (split|| pack point dir)
+(define (split|| pack pos dir)
   (match dir
-    [(== Left) (turn pack point Up)
-               (turn pack point Down)]
-    [(== Right) (turn pack point Up)
-                (turn pack point Down)]
-    [(== Up) (turn pack point dir)]
-    [(== Down) (turn pack point dir)]))
+    [(== Left) (turn pack pos Up)
+               (turn pack pos Down)]
+    [(== Right) (turn pack pos Up)
+                (turn pack pos Down)]
+    [(== Up) (turn pack pos dir)]
+    [(== Down) (turn pack pos dir)]))
 
-(define (turn pack point dir)
-  (spread pack (forward point dir) dir))
+(define (turn pack pos dir)
+  (spread pack (forward pos dir) dir))
 
 (define (spread pack pos dir)
   (define key (Key pos dir))
