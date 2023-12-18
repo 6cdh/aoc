@@ -136,7 +136,7 @@
   (foldl min (car lst) lst))
 
 (define (maximum lst)
-  (foldl min (car lst) lst))
+  (foldl max (car lst) lst))
 
 (define (chunks lst k)
   (if (<= (length lst) k)
