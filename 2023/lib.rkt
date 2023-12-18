@@ -46,10 +46,13 @@
          sort-in-order
          for/max
          vector-fill*!
+         path-finding/dijkstra
          first
          second
          third
          fourth)
+
+(require data/heap)
 
 (define (read-lines [in (current-input-port)])
   (let ([line (read-line in)])
@@ -273,6 +276,30 @@
       (vector-fill! vec val)
       (for ([subvec vec])
         (vector-fill*! subvec (sub1 k) val))))
+
+(define (path-finding/dijkstra start end? edgeof)
+  (define dist (make-hash))
+
+  (define (rec h)
+    (match-define (cons d closest) (heap-min h))
+    (heap-remove-min! h)
+    (cond [(end? closest) d]
+          [else
+           (for ([edge (edgeof closest)])
+             (match-define (cons to cost) edge)
+             (define d1 (+ d cost))
+             (when (or (not (hash-has-key? dist to))
+                       (< d1 (hash-ref dist to)))
+               (hash-set! dist to d1)
+               (heap-add! h (cons d1 to))))
+
+           (if (zero? (heap-count h))
+               #f
+               (rec h))]))
+
+  (define h (make-heap (λ (a b) (<= (car a) (car b)))))
+  (heap-add! h (cons 0 start))
+  (rec h))
 
 ;; fast version of builtin functions
 (define first car)
