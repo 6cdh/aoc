@@ -52,6 +52,7 @@
           (string->number (substring hex 1 6) 16)
           hex)))
 
+;; https://en.wikipedia.org/wiki/Shoelace_formula
 (define (shoelace-area points)
   (abs (/ (for/sum ([p1 points]
                     [p2 (rest points)])
@@ -59,8 +60,8 @@
                (* (Pos-y p1) (Pos-x p2))))
           2)))
 
+;; https://en.wikipedia.org/wiki/Pick%27s_theorem
 (define (count-area points)
-  ;; https://en.wikipedia.org/wiki/Pick%27s_theorem
   (define interiors (shoelace-area points))
 
   (define boundaries
