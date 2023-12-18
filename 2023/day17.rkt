@@ -46,12 +46,11 @@
                   [(== Up) (list Left Right)]
                   [(== Down) (list Left Right)]))))
 
-(define (min-dist pos dir edgeof end?)
-  (path-finding/dijkstra (Node pos dir 0) end? edgeof))
-
 (define (go pos edgeof end?)
-  (min (min-dist pos Right edgeof end?)
-       (min-dist pos Down edgeof end?)))
+  (path-finding/dijkstra (list (Node pos Right 0)
+                               (Node pos Down 0))
+                         end?
+                         edgeof))
 
 (define (main)
   (define board (for/vector ([row (read-lines-as-vector2d)])

@@ -277,7 +277,7 @@
       (for ([subvec vec])
         (vector-fill*! subvec (sub1 k) val))))
 
-(define (path-finding/dijkstra start end? edgeof)
+(define (path-finding/dijkstra start-nodes end? edgeof)
   (define dist (make-hash))
 
   (define (rec h)
@@ -298,7 +298,8 @@
                (rec h))]))
 
   (define h (make-heap (λ (a b) (<= (car a) (car b)))))
-  (heap-add! h (cons 0 start))
+  (for ([s start-nodes])
+    (heap-add! h (cons 0 s)))
   (rec h))
 
 ;; fast version of builtin functions
