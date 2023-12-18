@@ -68,6 +68,9 @@
        (append (forward board pos dir steps)
                (turn board pos dir))]))
 
+  (define (end? node)
+    (equal? (Node-pos node) (Pos (sub1 m) (sub1 n))))
+
   (define (edgeof-ultra node)
     (match node
       [(Node pos dir 10)
@@ -78,9 +81,6 @@
       [(Node pos dir steps)
        (append (forward board pos dir steps)
                (turn board pos dir))]))
-
-  (define (end? node)
-    (equal? (Node-pos node) (Pos (sub1 m) (sub1 n))))
 
   (define (end-ultra? node)
     (and (equal? (Node-pos node) (Pos (sub1 m) (sub1 n)))
