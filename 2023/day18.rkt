@@ -59,7 +59,8 @@
                (* (Pos-y p1) (Pos-x p2))))
           2)))
 
-(define (pick-theorem points)
+(define (count-area points)
+  ;; https://en.wikipedia.org/wiki/Pick%27s_theorem
   (define interiors (shoelace-area points))
 
   (define boundaries
@@ -75,9 +76,9 @@
 
 (define (main)
   (define plans (read-input))
-  (println (pick-theorem (build-vertexes plans)))
+  (println (count-area (build-vertexes plans)))
 
   (define new-plans (build-new-plans plans))
-  (println (pick-theorem (build-vertexes new-plans))))
+  (println (count-area (build-vertexes new-plans))))
 
 (main)
