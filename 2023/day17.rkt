@@ -60,34 +60,26 @@
 
   (match-define (list m n) (vector-dims board 2))
 
-  (define (edgeof node)
-    (match node
-      [(Node pos dir 3)
-       (turn board pos dir)]
-      [(Node pos dir steps)
-       (append (forward board pos dir steps)
-               (turn board pos dir))]))
+  (define (edgeof min-steps max-steps)
+    (λ (node)
+      (match node
+        [(Node pos dir (== max-steps))
+         (turn board pos dir)]
+        [(Node pos dir steps)
+         #:when (< steps min-steps)
+         (forward board pos dir steps)]
+        [(Node pos dir steps)
+         (append (forward board pos dir steps)
+                 (turn board pos dir))])))
 
   (define (end? node)
     (equal? (Node-pos node) (Pos (sub1 m) (sub1 n))))
 
-  (define (edgeof-ultra node)
-    (match node
-      [(Node pos dir 10)
-       (turn board pos dir)]
-      [(Node pos dir steps)
-       #:when (< steps 4)
-       (forward board pos dir steps)]
-      [(Node pos dir steps)
-       (append (forward board pos dir steps)
-               (turn board pos dir))]))
-
   (define (end-ultra? node)
-    (and (equal? (Node-pos node) (Pos (sub1 m) (sub1 n)))
-         (>= (Node-steps node) 4)))
+    (and (end? node) (>= (Node-steps node) 4)))
 
-  (println (go (Pos 0 0) edgeof end?))
-  (println (go (Pos 0 0) edgeof-ultra end-ultra?)))
+  (println (go (Pos 0 0) (edgeof 0 3) end?))
+  (println (go (Pos 0 0) (edgeof 4 10) end-ultra?)))
 
 (main)
 
