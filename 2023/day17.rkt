@@ -10,9 +10,9 @@
 (define Dir-x car)
 (define Dir-y cdr)
 
-(define (pos+ x y)
-  (Pos (+ (Pos-x x) (Dir-x y))
-       (+ (Pos-y x) (Dir-y y))))
+(define (pos+ pos dir)
+  (Pos (+ (Pos-x pos) (Dir-x dir))
+       (+ (Pos-y pos) (Dir-y dir))))
 
 (define Left (Dir 0 -1))
 (define Right (Dir 0 1))
