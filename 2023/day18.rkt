@@ -59,23 +59,25 @@
                (* (Pos-y p1) (Pos-x p2))))
           2)))
 
-(define (discrete-shoelace-area points)
-  (define boundaries
-    (for/sum ([p1 points]
-              [p2 (rest points)])
-      (+ (absdiff (Pos-x p1) (Pos-x p2))
-         (absdiff (Pos-y p1) (Pos-y p2)))))
+(define (pick-theorem points)
+  (define interiors (shoelace-area points))
 
-  (+ (shoelace-area points)
-     boundaries
-     (- (quotient boundaries 2))
-     1))
+  (define boundaries
+    (+ 4
+       (for/sum ([p1 points]
+                 [p2 (rest points)])
+         (+ (absdiff (Pos-x p1) (Pos-x p2))
+            (absdiff (Pos-y p1) (Pos-y p2))))))
+
+  (+ interiors
+     (/ boundaries 2)
+     -1))
 
 (define (main)
   (define plans (read-input))
-  (println (discrete-shoelace-area (build-vertexes plans)))
+  (println (pick-theorem (build-vertexes plans)))
 
   (define new-plans (build-new-plans plans))
-  (println (discrete-shoelace-area (build-vertexes new-plans))))
+  (println (pick-theorem (build-vertexes new-plans))))
 
 (main)
