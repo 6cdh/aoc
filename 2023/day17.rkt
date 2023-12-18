@@ -39,7 +39,7 @@
       '()))
 
 (define (turn board pos dir)
-  (append* (map (λ (new-pos) (forward board pos new-pos 0))
+  (append* (map (λ (new-dir) (forward board pos new-dir 0))
                 (match dir
                   [(== Left) (list Up Down)]
                   [(== Right) (list Up Down)]
