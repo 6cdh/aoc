@@ -54,8 +54,8 @@
 
 (define (read-rule str)
   (match str
-    [(regexp #px"(.)(.*?)([0-9]+):(.*)" (list _ key str val next))
-     (Rule (list (get-comparator str)
+    [(regexp #px"(.)(.*?)([0-9]+):(.*)" (list _ key cmp val next))
+     (Rule (list (get-comparator cmp)
                  key
                  (string->number val))
            next)]
