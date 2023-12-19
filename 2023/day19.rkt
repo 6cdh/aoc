@@ -29,33 +29,33 @@
 
 ;; Interval END
 
-;; comparator BEGIN
+;; relation BEGIN
 
-(define (comparator< old expect [result '()])
+(define (relation< lhs rhs [result '()])
   (match result
-    ['() (< old expect)]
-    [#t (interval-set< old expect)]
-    [#f (interval-set>= old expect)]))
+    ['() (< lhs rhs)]
+    [#t (interval-set< lhs rhs)]
+    [#f (interval-set>= lhs rhs)]))
 
-(define (comparator> old expect [result '()])
+(define (relation> lhs rhs [result '()])
   (match result
-    ['() (> old expect)]
-    [#t (interval-set> old expect)]
-    [#f (interval-set<= old expect)]))
+    ['() (> lhs rhs)]
+    [#t (interval-set> lhs rhs)]
+    [#f (interval-set<= lhs rhs)]))
 
-(define (read-comparator str)
+(define (read-relation str)
   (match str
-    [">" comparator>]
-    ["<" comparator<]))
+    [">" relation>]
+    ["<" relation<]))
 
-;; comparator END
+;; relation END
 
 ;; read BEGIN
 
 (define (read-rule str)
   (match str
-    [(regexp #px"(.)(.*?)([0-9]+):(.*)" (list _ key cmp val next))
-     (Rule (list (read-comparator cmp)
+    [(regexp #px"(.)(.*?)([0-9]+):(.*)" (list _ key rela val next))
+     (Rule (list (read-relation rela)
                  key
                  (string->number val))
            next)]
@@ -91,8 +91,8 @@
 (define (match? matcher part)
   (match matcher
     [#t #t]
-    [(list comparator key val)
-     (comparator (hash-ref part key) val)]))
+    [(list relation key val)
+     (relation (hash-ref part key) val)]))
 
 (define (accept? workflows part name)
   (for*/first ([rule (hash-ref workflows name)]
@@ -123,9 +123,9 @@
     (match rules
       [(cons (Rule #t next) _)
        (go-next next sol)]
-      [(cons (Rule (list comparator key val) next) rest)
-       (+ (go-next next (hash-update sol key (λ (old) (comparator old val #t))))
-          (probe-rules rest (hash-update sol key (λ (old) (comparator old val #f)))))]))
+      [(cons (Rule (list relation key val) next) rest)
+       (+ (go-next next (hash-update sol key (λ (old) (relation old val #t))))
+          (probe-rules rest (hash-update sol key (λ (old) (relation old val #f)))))]))
 
   (probe-rules (hash-ref workflows name) solution))
 
