@@ -43,7 +43,7 @@
     [#t (interval-set> old expect)]
     [#f (interval-set<= old expect)]))
 
-(define (get-comparator str)
+(define (read-comparator str)
   (match str
     [">" comparator>]
     ["<" comparator<]))
@@ -55,7 +55,7 @@
 (define (read-rule str)
   (match str
     [(regexp #px"(.)(.*?)([0-9]+):(.*)" (list _ key cmp val next))
-     (Rule (list (get-comparator cmp)
+     (Rule (list (read-comparator cmp)
                  key
                  (string->number val))
            next)]
