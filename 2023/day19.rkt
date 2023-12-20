@@ -110,7 +110,7 @@
 
 (define (count-combinations sol)
   (for/product ([intv (hash-values sol)])
-    (max 0 (add1 (absdiff (Interval-min intv) (Interval-max intv))))))
+    (max 0 (add1 (- (Interval-max intv) (Interval-min intv))))))
 
 (define (probe workflows name solution)
   (define (go-next next sol)
