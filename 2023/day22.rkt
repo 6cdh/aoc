@@ -92,11 +92,17 @@
       (hash-update! brick->belows b (λ (old) (cons pb old)))))
   (list brick->belows brick->aboves))
 
+;; part 1 BEGIN
+
 (define (count-removable brick->belows brick->aboves)
   (for/count ([(_ aboves) brick->aboves])
     (or (null? aboves)
         (for/and ([above aboves])
           (>= (length (hash-ref brick->belows above)) 2)))))
+
+;; part 1 END
+
+;; part 2 BEGIN
 
 (define (try-falls b brick->belows brick->aboves)
   (define falled (mutable-set))
@@ -119,6 +125,8 @@
 (define (count-falls brick->belows brick->aboves)
   (for/sum ([b (hash-keys brick->aboves)])
     (try-falls b brick->belows brick->aboves)))
+
+;; part 2 END
 
 (define (main)
   (define bricks (read-input))
