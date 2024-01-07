@@ -23,7 +23,7 @@
 
 (define (expand-coordinate image galaxy times)
   (define empty-rows-before (empty-rows-before-vector image))
-  (define empty-cols-before (empty-rows-before-vector (reverse-2d-list image)))
+  (define empty-cols-before (empty-rows-before-vector (transpose image)))
 
   (for/list ([g galaxy])
     (Point (+ (Point-x g) (* (sub1 times) (aref empty-rows-before (Point-x g))))

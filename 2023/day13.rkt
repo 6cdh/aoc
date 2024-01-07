@@ -24,7 +24,7 @@
 
 (define (find-reflect-line rows diffs)
   (or (find-reflect-line-rows 'row rows diffs)
-      (find-reflect-line-rows 'col (reverse-2d-list rows) diffs)))
+      (find-reflect-line-rows 'col (transpose rows) diffs)))
 
 (define (solve mirrors diffs)
   (for/sum ([mirror mirrors])
