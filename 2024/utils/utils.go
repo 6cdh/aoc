@@ -1,6 +1,7 @@
 package utils
 
 import (
+	iter2 "aoc2024/iter"
 	"bufio"
 	"io"
 	"iter"
@@ -51,4 +52,11 @@ func IgnoreErr[arg any, res any](fn func(arg) (res, error)) func(arg) res {
 
 func StringToInt(s string) int {
 	return IgnoreErr(strconv.Atoi)(s)
+}
+
+// ClearEmptyMatch remove stupid empty string in match slice.
+func ClearEmptyMatch(match []string) []string {
+	return iter2.NewIter(match).Filter(func(s string) bool {
+		return s != ""
+	})
 }

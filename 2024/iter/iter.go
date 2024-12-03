@@ -16,6 +16,16 @@ func (it Iter[V]) CountIf(pred func(V) bool) int {
 	return cnt
 }
 
+func (it Iter[V]) Filter(pred func(V) bool) Iter[V] {
+	res := Iter[V]{}
+	for _, v := range it {
+		if pred(v) {
+			res = append(res, v)
+		}
+	}
+	return res
+}
+
 func Map[F any, T any](it Iter[F], fn func(F) T) Iter[T] {
 	newIt := make([]T, len(it))
 	for k, v := range it {
