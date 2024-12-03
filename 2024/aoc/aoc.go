@@ -38,6 +38,7 @@ func (aoc *AOC) ShowHelp() {
 		"    run           run today's solution for your input",
 		"    run <day>     run <day>'s solution for your input",
 		"    run all       run all solutions for your inputs",
+		"    test          run today's solution, read from stdin",
 		"    test <day>    run <day>'s solution, read from stdin",
 		"    submit        run and submit today's next answer",
 		"    submit <day>  run and submit <day>'s next answer",
@@ -177,8 +178,7 @@ func (aoc *AOC) cmdRun() {
 
 func (aoc *AOC) cmdTest() {
 	if len(os.Args) != 3 {
-		log.Info("\"test\" subcommand requires <day>")
-		aoc.ShowHelp()
+		aoc.runDay(aoc.guessToday(), os.Stdin, os.Stdout)
 	} else {
 		aoc.runDay(aoc.parseDay(os.Args[2]), os.Stdin, os.Stdout)
 	}

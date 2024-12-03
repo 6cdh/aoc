@@ -30,6 +30,8 @@ aoc run all
 ```shell
 # run day 1, read input from stdin, and output to stdout
 aoc test 1
+# run today
+aoc test
 ```
 
 ### Submit
