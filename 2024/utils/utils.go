@@ -11,7 +11,7 @@ type Int interface {
 	int | int8 | int16 | int32 | int64
 }
 
-func ReadBytesLine(reader io.Reader) ([]byte, error) {
+func ReadLine(reader io.Reader) ([]byte, error) {
 	scanner := bufio.NewScanner(reader)
 	if scanner.Scan() {
 		return scanner.Bytes(), nil
@@ -20,7 +20,7 @@ func ReadBytesLine(reader io.Reader) ([]byte, error) {
 	}
 }
 
-func IterLines(in io.Reader) iter.Seq[string] {
+func ReadStringLines(in io.Reader) iter.Seq[string] {
 	return func(yield func(line string) bool) {
 		scanner := bufio.NewScanner(in)
 		for scanner.Scan() {
@@ -32,11 +32,10 @@ func IterLines(in io.Reader) iter.Seq[string] {
 }
 
 func AbsDiff[T Int](x T, y T) T {
-	diff := x - y
-	if diff > 0 {
-		return diff
+	if x > y {
+		return x - y
 	} else {
-		return -diff
+		return y - x
 	}
 }
 

@@ -94,7 +94,7 @@ func (aoc *AOC) readCookie() string {
 	if !IsPathExists(filename) {
 		println("Input your cookie (from browser):")
 		var err error
-		cookie, err = utils.ReadBytesLine(os.Stdin)
+		cookie, err = utils.ReadLine(os.Stdin)
 		log.FatalIfErr(err)
 		err = os.WriteFile(filename, cookie, 0644)
 		log.FatalIfErr(err)
@@ -199,7 +199,7 @@ func (aoc *AOC) submitDay(day int) {
 	var buffer bytes.Buffer
 	aoc.runDay(day, aoc.myInputReader(day), &buffer)
 	lines := make([]string, 0)
-	for line := range utils.IterLines(&buffer) {
+	for line := range utils.ReadStringLines(&buffer) {
 		lines = append(lines, line)
 	}
 	submitUrl := fmt.Sprintf("https://adventofcode.com/2024/day/%d/answer", day)
