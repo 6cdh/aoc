@@ -45,6 +45,7 @@ func isSafe2(report []int) bool {
 	for rem := 0; rem < len(report); rem++ {
 		// NOTE: clone the underlying array
 		newReport := slices.Clone(report)
+		// NOTE: modify the underlying array of `newReport`
 		newReport = slices.Delete(newReport, rem, rem+1)
 		if isSafe(newReport) {
 			return true
