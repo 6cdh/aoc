@@ -1,7 +1,6 @@
 package day02
 
 import (
-	"aoc2024/iter"
 	"aoc2024/utils"
 	"fmt"
 	"io"
@@ -13,7 +12,7 @@ func Solve(in io.Reader, out io.Writer) {
 	var reports [][]int
 	for line := range utils.IterLines(in) {
 		numStr := strings.Fields(line)
-		ints := iter.Map(numStr, utils.StrToInt)
+		ints := utils.Map(numStr, utils.StrToInt)
 		reports = append(reports, ints)
 	}
 	fmt.Fprintln(out, part1(reports))
@@ -55,9 +54,9 @@ func isSafe2(report []int) bool {
 }
 
 func part1(reports [][]int) int {
-	return iter.NewIter(reports).CountIf(isSafe)
+	return utils.CountIf(reports, isSafe)
 }
 
 func part2(reports [][]int) int {
-	return iter.NewIter(reports).CountIf(isSafe2)
+	return utils.CountIf(reports, isSafe2)
 }

@@ -1,7 +1,6 @@
 package utils
 
 import (
-	iter2 "aoc2024/iter"
 	"bufio"
 	"io"
 	"iter"
@@ -56,7 +55,43 @@ func StrToInt(s string) int {
 
 // ClearEmptyMatch remove stupid empty string in match slice.
 func ClearEmptyMatch(match []string) []string {
-	return iter2.NewIter(match).Filter(func(s string) bool {
+	return Filter(match, func(s string) bool {
 		return s != ""
 	})
+}
+
+func CountIf[V any](slice []V, pred func(V) bool) int {
+	cnt := 0
+	for _, v := range slice {
+		if pred(v) {
+			cnt++
+		}
+	}
+	return cnt
+}
+
+func Filter[V any](slice []V, pred func(V) bool) []V {
+	res := []V{}
+	for _, v := range slice {
+		if pred(v) {
+			res = append(res, v)
+		}
+	}
+	return res
+}
+
+func CountFreq[K comparable](slice []K) map[K]int {
+	counter := map[K]int{}
+	for _, v := range slice {
+		counter[v]++
+	}
+	return counter
+}
+
+func Map[F any, T any](it []F, fn func(F) T) []T {
+	newIt := make([]T, len(it))
+	for k, v := range it {
+		newIt[k] = fn(v)
+	}
+	return newIt
 }

@@ -31,11 +31,7 @@ func part1(left []int, right []int) int {
 }
 
 func part2(left []int, right []int) int {
-	rightCounter := map[int]int{}
-	for _, r := range right {
-		rightCounter[r]++
-	}
-
+	rightCounter := utils.CountFreq(right)
 	sum := 0
 	for _, l := range left {
 		sum += l * rightCounter[l]
