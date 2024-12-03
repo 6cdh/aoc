@@ -18,7 +18,7 @@ func part1(input string) int {
 	re := regexp.MustCompile(`(?m)mul\((\d+),(\d+)\)`)
 	for _, shit := range re.FindAllStringSubmatch(input, -1) {
 		match := utils.ClearEmptyMatch(shit)
-		sum += utils.StringToInt(match[1]) * utils.StringToInt(match[2])
+		sum += utils.StrToInt(match[1]) * utils.StrToInt(match[2])
 	}
 	return sum
 }
@@ -32,7 +32,7 @@ func part2(input string) int {
 		switch match[1] {
 		case "mul":
 			if isEnable {
-				sum += utils.StringToInt(match[2]) * utils.StringToInt(match[3])
+				sum += utils.StrToInt(match[2]) * utils.StrToInt(match[3])
 			}
 		case "do":
 			isEnable = true

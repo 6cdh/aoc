@@ -50,7 +50,7 @@ func IgnoreErr[arg any, res any](fn func(arg) (res, error)) func(arg) res {
 	}
 }
 
-func StringToInt(s string) int {
+func StrToInt(s string) int {
 	return IgnoreErr(strconv.Atoi)(s)
 }
 

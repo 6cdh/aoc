@@ -13,8 +13,8 @@ func Solve(in io.Reader, out io.Writer) {
 	var right []int
 	for line := range utils.IterLines(in) {
 		numStr := strings.Fields(line)
-		left = append(left, utils.StringToInt(numStr[0]))
-		right = append(right, utils.StringToInt(numStr[1]))
+		left = append(left, utils.StrToInt(numStr[0]))
+		right = append(right, utils.StrToInt(numStr[1]))
 	}
 	slices.Sort(left)
 	slices.Sort(right)

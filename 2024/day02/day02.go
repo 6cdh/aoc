@@ -13,7 +13,7 @@ func Solve(in io.Reader, out io.Writer) {
 	var reports [][]int
 	for line := range utils.IterLines(in) {
 		numStr := strings.Fields(line)
-		ints := iter.Map(numStr, utils.StringToInt)
+		ints := iter.Map(numStr, utils.StrToInt)
 		reports = append(reports, ints)
 	}
 	fmt.Fprintln(out, part1(reports))
