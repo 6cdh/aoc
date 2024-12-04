@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"io"
 	"iter"
+	"slices"
 	"strconv"
 )
 
@@ -92,4 +93,10 @@ func Map[F any, T any](slice []F, fn func(F) T) []T {
 		res[i] = fn(v)
 	}
 	return res
+}
+
+func StringReverse(s string) string {
+	bs := []byte(s)
+	slices.Reverse(bs)
+	return string(bs)
 }
