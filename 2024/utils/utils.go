@@ -39,10 +39,9 @@ func AbsDiff[T Int](x T, y T) T {
 	}
 }
 
-// IgnoreErr accepts a function which return a result and an error,
-// returns another function that only returns the result.
-func IgnoreErr[arg any, res any](fn func(arg) (res, error)) func(arg) res {
-	return func(x arg) res {
+// IgnoreErr wraps a function, ignoring its error and returning only its result.
+func IgnoreErr[Arg any, Res any](fn func(Arg) (Res, error)) func(Arg) Res {
+	return func(x Arg) Res {
 		r, _ := fn(x)
 		return r
 	}
@@ -70,7 +69,7 @@ func CountIf[V any](slice []V, pred func(V) bool) int {
 }
 
 func Filter[V any](slice []V, pred func(V) bool) []V {
-	res := []V{}
+	res := make([]V, 0, len(slice))
 	for _, v := range slice {
 		if pred(v) {
 			res = append(res, v)
@@ -80,17 +79,17 @@ func Filter[V any](slice []V, pred func(V) bool) []V {
 }
 
 func CountFreq[K comparable](slice []K) map[K]int {
-	counter := map[K]int{}
+	counter := make(map[K]int, len(slice))
 	for _, v := range slice {
 		counter[v]++
 	}
 	return counter
 }
 
-func Map[F any, T any](it []F, fn func(F) T) []T {
-	newIt := make([]T, len(it))
-	for k, v := range it {
-		newIt[k] = fn(v)
+func Map[F any, T any](slice []F, fn func(F) T) []T {
+	res := make([]T, len(slice))
+	for i, v := range slice {
+		res[i] = fn(v)
 	}
-	return newIt
+	return res
 }

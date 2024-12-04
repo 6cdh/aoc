@@ -41,7 +41,7 @@ func isSafe2(report []int) bool {
 	if isSafe(report) {
 		return true
 	}
-	for rem := 0; rem < len(report); rem++ {
+	for rem := range report {
 		// NOTE: clone the underlying array
 		newReport := slices.Clone(report)
 		// NOTE: modify the underlying array of `newReport`

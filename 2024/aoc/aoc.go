@@ -35,13 +35,13 @@ func (aoc *AOC) ShowHelp() {
 		"Usage:",
 		"    aoc2024 <command>",
 		"<command> is one of",
-		"    run           run today's solution for your input",
-		"    run <day>     run <day>'s solution for your input",
-		"    run all       run all solutions for your inputs",
-		"    test          run today's solution, read from stdin",
-		"    test <day>    run <day>'s solution, read from stdin",
-		"    submit        run and submit today's next answer",
-		"    submit <day>  run and submit <day>'s next answer",
+		"    run           run today's solution with your input.",
+		"    run <day>     run <day>'s solution with your input.",
+		"    run all       run all solutions with your inputs.",
+		"    test          run today's solution, read input from stdin.",
+		"    test <day>    run <day>'s solution, read input from stdin.",
+		"    submit        run and submit today's next answer.",
+		"    submit <day>  run and submit <day>'s next answer.",
 		"<day> is an integer in range",
 		fmt.Sprintf("    1 ≤ day ≤ %d", aoc.maxDay),
 	}
@@ -49,22 +49,21 @@ func (aoc *AOC) ShowHelp() {
 }
 
 func (aoc *AOC) guessToday() int {
-	now := time.Now()
 	utcMinus5 := time.FixedZone("UTC-5", -5*60*60)
-	nowUTCMinus5 := now.In(utcMinus5)
-	if !(nowUTCMinus5.Year() == 2024 && nowUTCMinus5.Month() == 12) {
-		log.Fatal("it's not in December 2024, can't guess today's problem id")
+	now := time.Now().In(utcMinus5)
+	if !(now.Year() == 2024 && now.Month() == 12) {
+		log.Fatal("It's not December 2024, can't guess today's problem.")
 	}
-	return nowUTCMinus5.Day()
+	return now.Day()
 }
 
 func (aoc *AOC) parseDay(str string) int {
 	day, err := strconv.Atoi(str)
 	if err != nil {
-		log.Fatalf("error when parse <day> \"%s\": not an integer", str)
+		log.Fatalf("Invalid <day> '%s': not an integer.", str)
 	}
 	if !(1 <= day && day <= aoc.maxDay) {
-		log.Fatalf("error when parse <day> \"%s\": out of range", str)
+		log.Fatalf("Invalid <day> '%d': out of range.", day)
 	}
 	return day
 }
@@ -74,8 +73,7 @@ func (aoc *AOC) runDay(day int, in io.ReadCloser, out io.Writer) {
 	defer in.Close()
 	start := time.Now()
 	aoc.solve(day, in, out)
-	spend := time.Since(start)
-	fmt.Fprintf(os.Stderr, "%v\n", spend)
+	fmt.Fprintf(os.Stderr, "Execution time: %v\n", time.Since(start))
 }
 
 func IsPathExists(p string) bool {
@@ -90,33 +88,31 @@ func IsPathDir(p string) bool {
 
 func (aoc *AOC) readCookie() string {
 	filename := ".cookie"
-	var cookie []byte
 	if !IsPathExists(filename) {
 		println("Input your cookie (from browser):")
-		var err error
-		cookie, err = utils.ReadLine(os.Stdin)
+		cookie, err := utils.ReadLine(os.Stdin)
 		log.FatalIfErr(err)
-		err = os.WriteFile(filename, cookie, 0644)
+		err = os.WriteFile(filename, cookie, 0600)
 		log.FatalIfErr(err)
+		return string(cookie)
 	} else if IsPathDir(filename) {
-		log.Fatalf("'%s' is a directory, aoc failed to write cookie into it", filename)
-	} else {
-		var err error
-		cookie, err = os.ReadFile(filename)
-		log.FatalIfErr(err)
+		log.Fatalf("'%s' is a directory, cannnot use it as a cookie file.", filename)
 	}
+	cookie, err := os.ReadFile(filename)
+	log.FatalIfErr(err)
 	return string(cookie)
 }
 
 func (aoc *AOC) sendHTTP(method string, url string, headers map[string]string, data string) []byte {
-	client := &http.Client{}
 	req, err := http.NewRequest(method, url, strings.NewReader(data))
 	log.FatalIfErr(err)
+
 	for k, v := range headers {
 		req.Header.Set(k, v)
 	}
 	req.Header.Set("Cookie", aoc.readCookie())
-	resp, err := client.Do(req)
+
+	resp, err := http.DefaultClient.Do(req)
 	log.FatalIfErr(err)
 	defer resp.Body.Close()
 
@@ -155,7 +151,7 @@ func (aoc *AOC) myInputReader(day int) io.ReadCloser {
 		err := os.WriteFile(p, input, 0644)
 		log.FatalIfErr(err)
 	} else if IsPathDir(p) {
-		log.Fatalf("'%s' is a directory, aoc failed to write input data into it", p)
+		log.Fatalf("'%s' is a directory, cannot to write input data to it.", p)
 	}
 	in, err := os.Open(p)
 	log.FatalIfErr(err)
@@ -187,12 +183,13 @@ func (aoc *AOC) cmdTest() {
 func (aoc *AOC) submitDay(day int) {
 	problemUrl := fmt.Sprintf("https://adventofcode.com/2024/day/%d", day)
 	page := aoc.httpGET(problemUrl)
+
 	level := 1
 	if bytes.Contains(page, []byte("--- Part Two ---")) {
 		level = 2
 	}
 	if bytes.Contains(page, []byte("Both parts of this puzzle are complete!")) {
-		fmt.Printf("day %d is completed!\n", day)
+		fmt.Printf("day %d is already completed!\n", day)
 		return
 	}
 
@@ -202,25 +199,24 @@ func (aoc *AOC) submitDay(day int) {
 	for line := range utils.ReadStringLines(&buffer) {
 		lines = append(lines, line)
 	}
-	submitUrl := fmt.Sprintf("https://adventofcode.com/2024/day/%d/answer", day)
 	answer := lines[level-1]
+
 	fmt.Println("submit answer", answer)
+	submitUrl := fmt.Sprintf("https://adventofcode.com/2024/day/%d/answer", day)
 	form := map[string]string{
-		"level":  fmt.Sprintf("%d", level),
+		"level":  strconv.Itoa(level),
 		"answer": answer,
 	}
-	resp := aoc.httpPOST(submitUrl, form)
-	if bytes.Contains(resp, []byte("That's the right answer!")) {
-		fmt.Println("pass!")
+	response := aoc.httpPOST(submitUrl, form)
+
+	if bytes.Contains(response, []byte("That's the right answer!")) {
+		fmt.Println("Answer is correct!")
+	} else if bytes.Contains(response, []byte("your answer is too high.")) {
+		fmt.Println("Answer is too high.")
+	} else if bytes.Contains(response, []byte("your answer is too low.")) {
+		fmt.Println("Answer is too low.")
 	} else {
-		fmt.Println("failed!")
-		if bytes.Contains(resp, []byte("your answer is too high.")) {
-			fmt.Println("too high!")
-		} else if bytes.Contains(resp, []byte("your answer is too low.")) {
-			fmt.Println("too low!")
-		} else {
-			fmt.Println("can't determine if it's low or high.")
-		}
+		fmt.Println("Unknown response.")
 	}
 }
 
@@ -247,7 +243,7 @@ func (aoc *AOC) ParseAndRun() {
 	case "submit":
 		aoc.cmdSubmit()
 	default:
-		log.Info("wrong command")
+		log.Info("Invalid command.")
 		aoc.ShowHelp()
 	}
 }

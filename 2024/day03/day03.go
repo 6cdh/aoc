@@ -15,7 +15,7 @@ func Solve(in io.Reader, out io.Writer) {
 
 func part1(input string) int {
 	sum := 0
-	re := regexp.MustCompile(`(?m)mul\((\d+),(\d+)\)`)
+	re := regexp.MustCompile(`mul\((\d+),(\d+)\)`)
 	for _, shit := range re.FindAllStringSubmatch(input, -1) {
 		match := utils.ClearEmptyMatch(shit)
 		sum += utils.StrToInt(match[1]) * utils.StrToInt(match[2])

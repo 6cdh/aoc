@@ -24,17 +24,17 @@ func Solve(in io.Reader, out io.Writer) {
 
 func part1(left []int, right []int) int {
 	sum := 0
-	for i := 0; i < len(left); i++ {
+	for i := range left {
 		sum += utils.AbsDiff(left[i], right[i])
 	}
 	return sum
 }
 
 func part2(left []int, right []int) int {
-	rightCounter := utils.CountFreq(right)
+	rightFreq := utils.CountFreq(right)
 	sum := 0
 	for _, l := range left {
-		sum += l * rightCounter[l]
+		sum += l * rightFreq[l]
 	}
 	return sum
 }
