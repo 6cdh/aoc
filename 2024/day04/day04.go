@@ -58,7 +58,7 @@ func isChar(grid []string, i int, j int, char byte) bool {
 		grid[i][j] == char
 }
 
-func isPatternDir(grid []string, i int, j int, di int, dj int, pat string) bool {
+func isPatternInOrder(grid []string, i int, j int, di int, dj int, pat string) bool {
 	for k, ch := range pat {
 		if !isChar(grid, i+di*k, j+dj*k, byte(ch)) {
 			return false
@@ -67,21 +67,21 @@ func isPatternDir(grid []string, i int, j int, di int, dj int, pat string) bool 
 	return true
 }
 
-func isPatternBothDir(grid []string, i int, j int, di int, dj int, pat string) bool {
+func isPatternAnyOrder(grid []string, i int, j int, di int, dj int, pat string) bool {
 	revPat := utils.StringReverse(pat)
-	return isPatternDir(grid, i, j, di, dj, pat) || isPatternDir(grid, i, j, di, dj, revPat)
+	return isPatternInOrder(grid, i, j, di, dj, pat) || isPatternInOrder(grid, i, j, di, dj, revPat)
 }
 
 func isPattern(grid []string, i int, j int, dir int, pat string) bool {
 	switch dir {
 	case horizontal:
-		return isPatternBothDir(grid, i, j, 0, 1, pat)
+		return isPatternAnyOrder(grid, i, j, 0, 1, pat)
 	case vertical:
-		return isPatternBothDir(grid, i, j, 1, 0, pat)
+		return isPatternAnyOrder(grid, i, j, 1, 0, pat)
 	case diagonalL:
-		return isPatternBothDir(grid, i, j, 1, 1, pat)
+		return isPatternAnyOrder(grid, i, j, 1, 1, pat)
 	case diagonalR:
-		return isPatternBothDir(grid, i, j, 1, -1, pat)
+		return isPatternAnyOrder(grid, i, j, 1, -1, pat)
 	default:
 		log.Fatal("Invalid direction")
 		return false
