@@ -54,7 +54,7 @@ func part2(grid []string) int {
 
 func isChar(grid []string, i int, j int, char byte) bool {
 	return 0 <= i && i < len(grid) &&
-		0 <= j && j < len(grid[0]) &&
+		0 <= j && j < len(grid[i]) &&
 		grid[i][j] == char
 }
 
