@@ -6,27 +6,28 @@ import (
 	"aoc2024/day02"
 	"aoc2024/day03"
 	"aoc2024/day04"
+	"aoc2024/day05"
 	"aoc2024/log"
 	"io"
 )
 
+type Solver = func(reader io.Reader, writer io.Writer)
+
+var funcs = []Solver{
+	day01.Solve,
+	day02.Solve,
+	day03.Solve,
+	day04.Solve,
+	day05.Solve,
+}
+
 func main() {
 	defer log.Sync()
-	a := aoc.New(run, 4)
+	a := aoc.New(run, len(funcs))
 	a.ParseAndRun()
 }
 
 func run(id int, in io.Reader, out io.Writer) {
-	switch id {
-	case 1:
-		day01.Solve(in, out)
-	case 2:
-		day02.Solve(in, out)
-	case 3:
-		day03.Solve(in, out)
-	case 4:
-		day04.Solve(in, out)
-	default:
-		log.Fatalf("id %d is out of range", id)
-	}
+	solve := funcs[id-1]
+	solve(in, out)
 }

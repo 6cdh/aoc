@@ -6,6 +6,7 @@ import (
 	"iter"
 	"slices"
 	"strconv"
+	"strings"
 )
 
 type Int interface {
@@ -100,3 +101,15 @@ func StringReverse(s string) string {
 	slices.Reverse(bs)
 	return string(bs)
 }
+
+func ReadInts(str string, sep string) []int {
+	numStr := strings.Split(str, sep)
+	ints := Map(numStr, StrToInt)
+	return ints
+}
+
+const (
+	LessThan    = -1
+	Equal       = 0
+	GreaterThan = 1
+)
