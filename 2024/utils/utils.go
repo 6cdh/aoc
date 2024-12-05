@@ -113,3 +113,23 @@ const (
 	Equal       = 0
 	GreaterThan = 1
 )
+
+func NeighborPairs[T any](slice []T) iter.Seq2[T, T] {
+	return func(yield func(x T, y T) bool) {
+		for i := 1; i < len(slice); i++ {
+			if !yield(slice[i-1], slice[i]) {
+				return
+			}
+		}
+	}
+}
+
+func SortByLessFunc[T any](slice []T, lessThan func(x T, y T) bool) {
+	slices.SortFunc(slice, func(x T, y T) int {
+		if lessThan(x, y) {
+			return LessThan
+		} else {
+			return GreaterThan
+		}
+	})
+}

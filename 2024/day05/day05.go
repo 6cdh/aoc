@@ -4,7 +4,6 @@ import (
 	"aoc2024/utils"
 	"fmt"
 	"io"
-	"slices"
 )
 
 type Rule = map[int]map[int]bool
@@ -42,8 +41,8 @@ func Solve(in io.Reader, out io.Writer) {
 }
 
 func isInRightOrder(pages []int, rules Rule) bool {
-	for i := 1; i < len(pages); i++ {
-		if rules[pages[i]][pages[i-1]] {
+	for before, after := range utils.NeighborPairs(pages) {
+		if rules[after][before] {
 			return false
 		}
 	}
@@ -51,11 +50,7 @@ func isInRightOrder(pages []int, rules Rule) bool {
 }
 
 func SortPagesByRules(pages []int, rules Rule) {
-	slices.SortFunc(pages, func(x int, y int) int {
-		if rules[x][y] {
-			return utils.LessThan
-		} else {
-			return utils.GreaterThan
-		}
+	utils.SortByLessFunc(pages, func(x int, y int) bool {
+		return rules[x][y]
 	})
 }
