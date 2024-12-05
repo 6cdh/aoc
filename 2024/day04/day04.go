@@ -1,17 +1,21 @@
 package day04
 
 import (
-	"aoc2024/log"
 	"aoc2024/utils"
 	"fmt"
 	"io"
 )
 
-const (
-	horizontal = iota
-	vertical
-	diagonalL
-	diagonalR
+type Dir struct {
+	di int
+	dj int
+}
+
+var (
+	right     = Dir{di: 0, dj: 1}
+	down      = Dir{di: 1, dj: 0}
+	leftDown  = Dir{di: 1, dj: -1}
+	rightDown = Dir{di: 1, dj: 1}
 )
 
 func Solve(in io.Reader, out io.Writer) {
@@ -28,8 +32,8 @@ func part1(grid []string) int {
 	pat := "XMAS"
 	for i := range grid {
 		for j := range grid[i] {
-			for _, dir := range []int{horizontal, vertical, diagonalL, diagonalR} {
-				if isPattern(grid, i, j, dir, pat) {
+			for _, dir := range []Dir{right, down, leftDown, rightDown} {
+				if isPatternAnyOrder(grid, i, j, dir, pat) {
 					cnt++
 				}
 			}
@@ -43,8 +47,8 @@ func part2(grid []string) int {
 	pat := "MAS"
 	for i := range grid {
 		for j := range grid[i] {
-			if isPattern(grid, i, j, diagonalL, pat) &&
-				isPattern(grid, i, j+2, diagonalR, pat) {
+			if isPatternAnyOrder(grid, i, j, rightDown, pat) &&
+				isPatternAnyOrder(grid, i, j+2, leftDown, pat) {
 				cnt++
 			}
 		}
@@ -58,32 +62,16 @@ func isChar(grid []string, i int, j int, char byte) bool {
 		grid[i][j] == char
 }
 
-func isPatternInOrder(grid []string, i int, j int, di int, dj int, pat string) bool {
+func isPatternInOrder(grid []string, i int, j int, dir Dir, pat string) bool {
 	for k, ch := range pat {
-		if !isChar(grid, i+di*k, j+dj*k, byte(ch)) {
+		if !isChar(grid, i+dir.di*k, j+dir.dj*k, byte(ch)) {
 			return false
 		}
 	}
 	return true
 }
 
-func isPatternAnyOrder(grid []string, i int, j int, di int, dj int, pat string) bool {
+func isPatternAnyOrder(grid []string, i int, j int, dir Dir, pat string) bool {
 	revPat := utils.StringReverse(pat)
-	return isPatternInOrder(grid, i, j, di, dj, pat) || isPatternInOrder(grid, i, j, di, dj, revPat)
-}
-
-func isPattern(grid []string, i int, j int, dir int, pat string) bool {
-	switch dir {
-	case horizontal:
-		return isPatternAnyOrder(grid, i, j, 0, 1, pat)
-	case vertical:
-		return isPatternAnyOrder(grid, i, j, 1, 0, pat)
-	case diagonalL:
-		return isPatternAnyOrder(grid, i, j, 1, 1, pat)
-	case diagonalR:
-		return isPatternAnyOrder(grid, i, j, 1, -1, pat)
-	default:
-		log.Fatal("Invalid direction")
-		return false
-	}
+	return isPatternInOrder(grid, i, j, dir, pat) || isPatternInOrder(grid, i, j, dir, revPat)
 }
