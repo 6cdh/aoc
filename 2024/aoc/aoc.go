@@ -44,6 +44,10 @@ func (aoc *AOC) ShowHelp() {
 		"    submit <day>  run and submit <day>'s next answer.",
 		"<day> is an integer in range",
 		fmt.Sprintf("    1 ≤ day ≤ %d", aoc.maxDay),
+		"subcommand shortcuts:",
+		"    r -> run",
+		"    t -> test",
+		"    s -> submit",
 	}
 	fmt.Println(strings.Join(helpMsg, "\n"))
 }
@@ -236,11 +240,11 @@ func (aoc *AOC) ParseAndRun() {
 		return
 	}
 	switch os.Args[1] {
-	case "run":
+	case "run", "r":
 		aoc.cmdRun()
-	case "test":
+	case "test", "t":
 		aoc.cmdTest()
-	case "submit":
+	case "submit", "s":
 		aoc.cmdSubmit()
 	default:
 		log.Info("Invalid command.")
