@@ -19,7 +19,7 @@ func Solve(in io.Reader, out io.Writer) {
 	guardPos := findCharPos(grid, '^')
 	visitedPos, _ := guardMove(grid, guardPos, moveStep)
 	fmt.Fprintln(out, len(visitedPos))
-	fmt.Fprintln(out, part2Parallel(grid, guardPos, visitedPos))
+	fmt.Fprintln(out, concurrentPart2(grid, guardPos, visitedPos))
 }
 
 // Original part2 implementation
@@ -39,8 +39,7 @@ func part2(grid [][]byte, guardPos vec.Vec2i, visitedPos VisitedPos) int {
 	return cnt
 }
 
-// concurrent part2
-func part2Parallel(grid [][]byte, guardPos vec.Vec2i, visitedPos VisitedPos) int {
+func concurrentPart2(grid [][]byte, guardPos vec.Vec2i, visitedPos VisitedPos) int {
 	// force run so that we don't have concurrent map write later
 	for i := range grid {
 		for j := range grid[i] {
