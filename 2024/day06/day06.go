@@ -5,6 +5,7 @@ import (
 	"aoc2024/vec"
 	"fmt"
 	"io"
+	"sync"
 )
 
 type VisitedPos map[vec.Vec2i]map[vec.Vec2i]bool
@@ -18,9 +19,10 @@ func Solve(in io.Reader, out io.Writer) {
 	guardPos := findCharPos(grid, '^')
 	visitedPos, _ := guardMove(grid, guardPos, moveStep)
 	fmt.Fprintln(out, len(visitedPos))
-	fmt.Fprintln(out, part2(grid, guardPos, visitedPos))
+	fmt.Fprintln(out, part2Parallel(grid, guardPos, visitedPos))
 }
 
+// Original part2 implementation
 func part2(grid [][]byte, guardPos vec.Vec2i, visitedPos VisitedPos) int {
 	cnt := 0
 	// New obstruction position should be one of the visited positions that
@@ -33,7 +35,54 @@ func part2(grid [][]byte, guardPos vec.Vec2i, visitedPos VisitedPos) int {
 			}
 		}
 	}
+
 	return cnt
+}
+
+// concurrent part2
+func part2Parallel(grid [][]byte, guardPos vec.Vec2i, visitedPos VisitedPos) int {
+	// force run so that we don't have concurrent map write later
+	for i := range grid {
+		for j := range grid[i] {
+			for _, dir := range []vec.Vec2i{vec.UP, vec.DOWN, vec.LEFT, vec.RIGHT} {
+				nextPosBeforeObs(vec.NewVec2i(i, j), dir, grid)
+			}
+		}
+	}
+
+	var wg sync.WaitGroup
+	ch := make(chan struct{}, 2000)
+	task := func(pos vec.Vec2i) {
+		defer wg.Done()
+		_, canLeave := guardMove(grid, guardPos, moveTeleport(pos))
+		if !canLeave {
+			ch <- struct{}{}
+		}
+	}
+
+	// New obstruction position should be one of the visited positions that
+	// we got in part 1.
+	for pos := range visitedPos {
+		if pos != guardPos {
+			wg.Add(1)
+			go task(pos)
+		}
+	}
+
+	go func() {
+		wg.Wait()
+		close(ch)
+	}()
+
+	cnt := 0
+	for {
+		_, more := <-ch
+		if more {
+			cnt++
+		} else {
+			return cnt
+		}
+	}
 }
 
 type moveFunc = func(pos vec.Vec2i, dir vec.Vec2i, grid [][]byte) vec.Vec2i
