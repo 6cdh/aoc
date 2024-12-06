@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"io"
 	"iter"
+	"math"
 	"slices"
 	"strconv"
 	"strings"
@@ -132,4 +133,8 @@ func SortByLessFunc[T any](slice []T, lessThan func(x T, y T) bool) {
 			return GreaterThan
 		}
 	})
+}
+
+func RoundToInt[F float32 | float64](f F) int {
+	return int(math.Round(float64(f)))
 }
