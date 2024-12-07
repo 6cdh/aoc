@@ -3,11 +3,11 @@ package day07
 import (
 	"aoc2024/iter"
 	"aoc2024/utils"
+	"errors"
 	"fmt"
 	"io"
 	"strconv"
 	"strings"
-	"sync"
 )
 
 type Equation struct {
@@ -26,65 +26,61 @@ func Solve(in io.Reader, out io.Writer) {
 		equations = append(equations, eq)
 	}
 
-	var wg sync.WaitGroup
-	results := make(chan [2]int, len(equations))
-
-	for _, eq := range equations {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			s := 0
-			s2 := 0
-			if try(1, eq.operators[0], eq, []Op{plusOp, mulOp}) {
-				s = eq.result
-				s2 = eq.result
-			} else if try(1, eq.operators[0], eq, []Op{plusOp, mulOp, concatOp}) {
-				s2 = eq.result
-			}
-			results <- [2]int{s, s2}
-		}()
-	}
-
-	go func() {
-		wg.Wait()
-		close(results)
-	}()
-
 	s := 0
 	s2 := 0
-	for r := range results {
-		s += r[0]
-		s2 += r[1]
+	for _, eq := range equations {
+		if try(len(eq.operators)-1, eq.result, eq, []Op{minusOp, divOp}) {
+			s += eq.result
+			s2 += eq.result
+		} else if try(len(eq.operators)-1, eq.result, eq, []Op{minusOp, divOp, unConcatOp}) {
+			s2 += eq.result
+		}
 	}
 
 	fmt.Fprintln(out, s)
 	fmt.Fprintln(out, s2)
 }
 
-func try(i int, cur int, eq Equation, ops []Op) bool {
-	if i == len(eq.operators) {
-		return cur == eq.result
-	}
-	if cur > eq.result {
-		return false
+func try(i int, result int, eq Equation, ops []Op) bool {
+	if i == 0 {
+		return result == eq.operators[0]
 	}
 	return iter.SliceValues(ops).Any(func(op Op) bool {
-		return try(i+1, op(cur, eq.operators[i]), eq, ops)
+		x, err := op(eq.operators[i], result)
+		return errors.Is(err, divisorIsZero) || (err == nil && try(i-1, x, eq, ops))
 	})
 }
 
-type Op func(int, int) int
+type Op func(int, int) (int, error)
 
-func plusOp(x int, y int) int {
-	return x + y
+var (
+	cantContinue  = fmt.Errorf("can't continue with operator")
+	divisorIsZero = fmt.Errorf("divided is zero")
+)
+
+func minusOp(y int, r int) (int, error) {
+	return r - y, nil
 }
 
-func mulOp(x int, y int) int {
-	return x * y
+func divOp(divisor int, r int) (int, error) {
+	if divisor != 0 && r%divisor == 0 {
+		return r / divisor, nil
+	}
+	if divisor == 0 && r == 0 {
+		return 0, divisorIsZero
+	}
+	return 0, cantContinue
 }
 
-func concatOp(x int, y int) int {
-	sx := strconv.Itoa(x)
+func unConcatOp(y int, r int) (int, error) {
+	sr := strconv.Itoa(r)
 	sy := strconv.Itoa(y)
-	return utils.StrToInt(sx + sy)
+	sx, isSuffix := strings.CutSuffix(sr, sy)
+	if isSuffix {
+		x, err := strconv.Atoi(sx)
+		if err == nil {
+			return x, nil
+		}
+	}
+	return 0, cantContinue
 }
