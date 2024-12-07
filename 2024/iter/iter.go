@@ -105,6 +105,24 @@ func Reduce[T any, V any](it iter.Seq[V], initial T, fn func(T, V) T) T {
 	return initial
 }
 
+func IfAny[V any](it iter.Seq[V], pred func(V) bool) bool {
+	for v := range it {
+		if pred(v) {
+			return true
+		}
+	}
+	return false
+}
+
+func IfAll[T any](it iter.Seq[T], pred func(T) bool) bool {
+	for v := range it {
+		if !pred(v) {
+			return false
+		}
+	}
+	return true
+}
+
 func CountIf[V any](it iter.Seq[V], pred func(V) bool) int {
 	return Reduce(it, 0, func(cnt int, v V) int {
 		if pred(v) {
