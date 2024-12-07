@@ -76,6 +76,16 @@ func MatrixIndex[S ~[][]V, V any](matrix S) iter.Seq[Pair[int, int]] {
 	}
 }
 
+func MapIter[K comparable, V any](m map[K]V) iter.Seq[K] {
+	return func(yield func(K) bool) {
+		for k, _ := range m {
+			if !yield(k) {
+				return
+			}
+		}
+	}
+}
+
 func Map[F any, T any](it iter.Seq[F], fn func(F) T) iter.Seq[T] {
 	return func(yield func(T) bool) {
 		for v := range it {
@@ -153,12 +163,8 @@ func CountIfParallel[V any](it iter.Seq[V], pred func(V) bool) int {
 	}()
 
 	cnt := 0
-	for {
-		_, more := <-ch
-		if more {
-			cnt++
-		} else {
-			return cnt
-		}
+	for range ch {
+		cnt++
 	}
+	return cnt
 }

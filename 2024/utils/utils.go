@@ -61,7 +61,7 @@ func ClearEmptyMatch(match []string) []string {
 	})
 }
 
-func CountIf[V any](slice []V, pred func(V) bool) int {
+func CountIf[S ~[]V, V any](slice S, pred func(V) bool) int {
 	cnt := 0
 	for _, v := range slice {
 		if pred(v) {

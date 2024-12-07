@@ -1,11 +1,11 @@
 package day06
 
 import (
+	"aoc2024/iter"
 	"aoc2024/utils"
 	"aoc2024/vec"
 	"fmt"
 	"io"
-	"sync"
 )
 
 type VisitedPos map[vec.Vec2i]map[vec.Vec2i]bool
@@ -24,19 +24,9 @@ func Solve(in io.Reader, out io.Writer) {
 
 // Original part2 implementation
 func part2(grid [][]byte, guardPos vec.Vec2i, visitedPos VisitedPos) int {
-	cnt := 0
 	// New obstruction position should be one of the visited positions that
 	// we got in part 1.
-	for pos := range visitedPos {
-		if pos != guardPos {
-			_, canLeave := guardMove(grid, guardPos, moveTeleport(pos))
-			if !canLeave {
-				cnt++
-			}
-		}
-	}
-
-	return cnt
+	return iter.CountIf(iter.MapIter(visitedPos), willLoop(grid, guardPos))
 }
 
 func concurrentPart2(grid [][]byte, guardPos vec.Vec2i, visitedPos VisitedPos) int {
@@ -49,38 +39,18 @@ func concurrentPart2(grid [][]byte, guardPos vec.Vec2i, visitedPos VisitedPos) i
 		}
 	}
 
-	var wg sync.WaitGroup
-	ch := make(chan struct{}, 2000)
-	task := func(pos vec.Vec2i) {
-		defer wg.Done()
-		_, canLeave := guardMove(grid, guardPos, moveTeleport(pos))
-		if !canLeave {
-			ch <- struct{}{}
-		}
-	}
+	return iter.CountIfParallel(iter.MapIter(visitedPos), willLoop(grid, guardPos))
+}
 
-	// New obstruction position should be one of the visited positions that
-	// we got in part 1.
-	for pos := range visitedPos {
-		if pos != guardPos {
-			wg.Add(1)
-			go task(pos)
+func willLoop(grid [][]byte, guardPos vec.Vec2i) func(vec.Vec2i) bool {
+	return func(obsPos vec.Vec2i) bool {
+		if obsPos != guardPos {
+			_, canLeave := guardMove(grid, guardPos, moveTeleport(obsPos))
+			if !canLeave {
+				return true
+			}
 		}
-	}
-
-	go func() {
-		wg.Wait()
-		close(ch)
-	}()
-
-	cnt := 0
-	for {
-		_, more := <-ch
-		if more {
-			cnt++
-		} else {
-			return cnt
-		}
+		return false
 	}
 }
 
