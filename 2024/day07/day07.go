@@ -27,49 +27,34 @@ func Solve(in io.Reader, out io.Writer) {
 	}
 
 	var wg sync.WaitGroup
-	ch1 := make(chan int, len(equations))
-	ch2 := make(chan int, len(equations))
+	results := make(chan [2]int, len(equations))
 
-	s := 0
-	s2 := 0
 	for _, eq := range equations {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
+			s := 0
+			s2 := 0
 			if try(1, eq.operators[0], eq.operators, eq.result, []Op{plusOp, mulOp}) {
-				ch1 <- eq.result
-				ch2 <- eq.result
+				s = eq.result
+				s2 = eq.result
 			} else if try(1, eq.operators[0], eq.operators, eq.result, []Op{plusOp, mulOp, concatOp}) {
-				ch2 <- eq.result
+				s2 = eq.result
 			}
+			results <- [2]int{s, s2}
 		}()
 	}
 
 	go func() {
 		wg.Wait()
-		close(ch1)
-		close(ch2)
+		close(results)
 	}()
 
-	closedChan := 0
-	for {
-		select {
-		case v, more := <-ch1:
-			if !more {
-				closedChan++
-			} else {
-				s += v
-			}
-		case v, more := <-ch2:
-			if !more {
-				closedChan++
-			} else {
-				s2 += v
-			}
-		}
-		if closedChan == 2 {
-			break
-		}
+	s := 0
+	s2 := 0
+	for r := range results {
+		s += r[0]
+		s2 += r[1]
 	}
 
 	fmt.Fprintln(out, s)
