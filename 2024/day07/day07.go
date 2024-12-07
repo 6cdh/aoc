@@ -35,10 +35,10 @@ func Solve(in io.Reader, out io.Writer) {
 			defer wg.Done()
 			s := 0
 			s2 := 0
-			if try(1, eq.operators[0], eq.operators, eq.result, []Op{plusOp, mulOp}) {
+			if try(1, eq.operators[0], eq, []Op{plusOp, mulOp}) {
 				s = eq.result
 				s2 = eq.result
-			} else if try(1, eq.operators[0], eq.operators, eq.result, []Op{plusOp, mulOp, concatOp}) {
+			} else if try(1, eq.operators[0], eq, []Op{plusOp, mulOp, concatOp}) {
 				s2 = eq.result
 			}
 			results <- [2]int{s, s2}
@@ -61,15 +61,15 @@ func Solve(in io.Reader, out io.Writer) {
 	fmt.Fprintln(out, s2)
 }
 
-func try(i int, cur int, equation []int, result int, ops []Op) bool {
-	if i == len(equation) {
-		return cur == result
+func try(i int, cur int, eq Equation, ops []Op) bool {
+	if i == len(eq.operators) {
+		return cur == eq.result
 	}
-	if cur > result {
+	if cur > eq.result {
 		return false
 	}
 	return iter.SliceValues(ops).Any(func(op Op) bool {
-		return try(i+1, op(cur, equation[i]), equation, result, ops)
+		return try(i+1, op(cur, eq.operators[i]), eq, ops)
 	})
 }
 
