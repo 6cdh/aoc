@@ -1,6 +1,7 @@
 package day04
 
 import (
+	"aoc2024/iter"
 	"aoc2024/utils"
 	"fmt"
 	"io"
@@ -19,10 +20,7 @@ var (
 )
 
 func Solve(in io.Reader, out io.Writer) {
-	grid := []string{}
-	for line := range utils.ReadStringLines(in) {
-		grid = append(grid, line)
-	}
+	grid := iter.ReadStringLines(in).Collect()
 	fmt.Fprintln(out, part1(grid))
 	fmt.Fprintln(out, part2(grid))
 }

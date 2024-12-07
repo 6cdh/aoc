@@ -8,24 +8,26 @@ import (
 )
 
 type Pair[F any, S any] struct {
-	fst F
-	snd S
+	Fst F
+	Snd S
 }
 
-func ReadLines(in io.Reader) iter.Seq[[]byte] {
+type Iter[V any] iter.Seq[V]
+
+func ReadLines(in io.Reader) Iter[[]byte] {
+	scanner := bufio.NewScanner(in)
 	return func(yield func(line []byte) bool) {
-		scanner := bufio.NewScanner(in)
 		for scanner.Scan() {
-			if !yield(scanner.Bytes()) {
+			if !yield([]byte(scanner.Text())) {
 				return
 			}
 		}
 	}
 }
 
-func ReadStringLines(in io.Reader) iter.Seq[string] {
+func ReadStringLines(in io.Reader) Iter[string] {
+	scanner := bufio.NewScanner(in)
 	return func(yield func(line string) bool) {
-		scanner := bufio.NewScanner(in)
 		for scanner.Scan() {
 			if !yield(scanner.Text()) {
 				return
@@ -34,7 +36,15 @@ func ReadStringLines(in io.Reader) iter.Seq[string] {
 	}
 }
 
-func SliceIndexes[S ~[]V, V any](slice S) iter.Seq[int] {
+func (it Iter[V]) Collect() []V {
+	slice := []V{}
+	for v := range it {
+		slice = append(slice, v)
+	}
+	return slice
+}
+
+func SliceIndexes[S ~[]V, V any](slice S) Iter[int] {
 	return func(yield func(int) bool) {
 		for i := range slice {
 			if !yield(i) {
@@ -44,7 +54,7 @@ func SliceIndexes[S ~[]V, V any](slice S) iter.Seq[int] {
 	}
 }
 
-func SliceValues[S ~[]V, V any](slice S) iter.Seq[V] {
+func SliceValues[S ~[]V, V any](slice S) Iter[V] {
 	return func(yield func(V) bool) {
 		for _, v := range slice {
 			if !yield(v) {
@@ -54,7 +64,7 @@ func SliceValues[S ~[]V, V any](slice S) iter.Seq[V] {
 	}
 }
 
-func Enumerate[S ~[]V, V any](slice S) iter.Seq[Pair[int, V]] {
+func Enumerate[S ~[]V, V any](slice S) Iter[Pair[int, V]] {
 	return func(yield func(Pair[int, V]) bool) {
 		for i, v := range slice {
 			if !yield(Pair[int, V]{i, v}) {
@@ -64,7 +74,7 @@ func Enumerate[S ~[]V, V any](slice S) iter.Seq[Pair[int, V]] {
 	}
 }
 
-func MatrixIndex[S ~[][]V, V any](matrix S) iter.Seq[Pair[int, int]] {
+func MatrixIndex[S ~[][]V, V any](matrix S) Iter[Pair[int, int]] {
 	return func(yield func(Pair[int, int]) bool) {
 		for i, s := range matrix {
 			for j := range s {
@@ -76,7 +86,7 @@ func MatrixIndex[S ~[][]V, V any](matrix S) iter.Seq[Pair[int, int]] {
 	}
 }
 
-func MapIter[K comparable, V any](m map[K]V) iter.Seq[K] {
+func MapIter[K comparable, V any](m map[K]V) Iter[K] {
 	return func(yield func(K) bool) {
 		for k, _ := range m {
 			if !yield(k) {
@@ -86,7 +96,7 @@ func MapIter[K comparable, V any](m map[K]V) iter.Seq[K] {
 	}
 }
 
-func Map[F any, T any](it iter.Seq[F], fn func(F) T) iter.Seq[T] {
+func Map[F any, T any](it Iter[F], fn func(F) T) Iter[T] {
 	return func(yield func(T) bool) {
 		for v := range it {
 			if !(yield(fn(v))) {
@@ -96,7 +106,7 @@ func Map[F any, T any](it iter.Seq[F], fn func(F) T) iter.Seq[T] {
 	}
 }
 
-func Filter[V any](it iter.Seq[V], pred func(V) bool) iter.Seq[V] {
+func (it Iter[V]) Filter(pred func(V) bool) Iter[V] {
 	return func(yield func(V) bool) {
 		for v := range it {
 			if pred(v) {
@@ -108,14 +118,14 @@ func Filter[V any](it iter.Seq[V], pred func(V) bool) iter.Seq[V] {
 	}
 }
 
-func Reduce[T any, V any](it iter.Seq[V], initial T, fn func(T, V) T) T {
+func Reduce[T any, V any](it Iter[V], initial T, fn func(T, V) T) T {
 	for v := range it {
 		initial = fn(initial, v)
 	}
 	return initial
 }
 
-func IfAny[V any](it iter.Seq[V], pred func(V) bool) bool {
+func (it Iter[V]) Any(pred func(V) bool) bool {
 	for v := range it {
 		if pred(v) {
 			return true
@@ -124,7 +134,7 @@ func IfAny[V any](it iter.Seq[V], pred func(V) bool) bool {
 	return false
 }
 
-func IfAll[T any](it iter.Seq[T], pred func(T) bool) bool {
+func (it Iter[V]) All(pred func(V) bool) bool {
 	for v := range it {
 		if !pred(v) {
 			return false
@@ -133,7 +143,7 @@ func IfAll[T any](it iter.Seq[T], pred func(T) bool) bool {
 	return true
 }
 
-func CountIf[V any](it iter.Seq[V], pred func(V) bool) int {
+func (it Iter[V]) CountIf(pred func(V) bool) int {
 	return Reduce(it, 0, func(cnt int, v V) int {
 		if pred(v) {
 			return cnt + 1
@@ -142,7 +152,7 @@ func CountIf[V any](it iter.Seq[V], pred func(V) bool) int {
 	})
 }
 
-func CountIfParallel[V any](it iter.Seq[V], pred func(V) bool) int {
+func (it Iter[V]) CountIfParallel(pred func(V) bool) int {
 	var wg sync.WaitGroup
 	ch := make(chan struct{}, 2000)
 	task := func(v V) {

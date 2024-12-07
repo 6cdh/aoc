@@ -1,6 +1,7 @@
 package day05
 
 import (
+	"aoc2024/iter"
 	"aoc2024/utils"
 	"fmt"
 	"io"
@@ -12,7 +13,7 @@ func Solve(in io.Reader, out io.Writer) {
 	rules := Rule{}
 	updates := [][]int{}
 	isRuleSection := true
-	for line := range utils.ReadStringLines(in) {
+	for line := range iter.ReadStringLines(in) {
 		if line == "" {
 			isRuleSection = false
 		} else if isRuleSection {

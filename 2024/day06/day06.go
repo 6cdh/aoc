@@ -11,11 +11,7 @@ import (
 type VisitedPos map[vec.Vec2i]map[vec.Vec2i]bool
 
 func Solve(in io.Reader, out io.Writer) {
-	grid := [][]byte{}
-	for line := range utils.ReadStringLines(in) {
-		grid = append(grid, []byte(line))
-	}
-
+	grid := iter.ReadLines(in).Collect()
 	guardPos := findCharPos(grid, '^')
 	visitedPos, _ := guardMove(grid, guardPos, moveStep)
 	fmt.Fprintln(out, len(visitedPos))
@@ -26,7 +22,7 @@ func Solve(in io.Reader, out io.Writer) {
 func part2(grid [][]byte, guardPos vec.Vec2i, visitedPos VisitedPos) int {
 	// New obstruction position should be one of the visited positions that
 	// we got in part 1.
-	return iter.CountIf(iter.MapIter(visitedPos), willLoop(grid, guardPos))
+	return iter.MapIter(visitedPos).CountIf(willLoop(grid, guardPos))
 }
 
 func concurrentPart2(grid [][]byte, guardPos vec.Vec2i, visitedPos VisitedPos) int {
@@ -39,7 +35,7 @@ func concurrentPart2(grid [][]byte, guardPos vec.Vec2i, visitedPos VisitedPos) i
 		}
 	}
 
-	return iter.CountIfParallel(iter.MapIter(visitedPos), willLoop(grid, guardPos))
+	return iter.MapIter(visitedPos).CountIfParallel(willLoop(grid, guardPos))
 }
 
 func willLoop(grid [][]byte, guardPos vec.Vec2i) func(vec.Vec2i) bool {
@@ -131,11 +127,9 @@ func isValidPos(pos vec.Vec2i, grid [][]byte) bool {
 }
 
 func findCharPos(grid [][]byte, ch byte) vec.Vec2i {
-	for i := range grid {
-		for j, c := range grid[i] {
-			if c == ch {
-				return vec.NewVec2i(i, j)
-			}
+	for p := range iter.MatrixIndex(grid) {
+		if grid[p.Fst][p.Snd] == ch {
+			return vec.NewVec2i(p.Fst, p.Snd)
 		}
 	}
 	return vec.NewVec2i(-1, -1)

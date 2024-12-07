@@ -1,6 +1,7 @@
 package aoc
 
 import (
+	"aoc2024/iter"
 	"aoc2024/log"
 	"aoc2024/utils"
 	"bytes"
@@ -200,7 +201,7 @@ func (aoc *AOC) submitDay(day int) {
 	var buffer bytes.Buffer
 	aoc.runDay(day, aoc.myInputReader(day), &buffer)
 	lines := make([]string, 0)
-	for line := range utils.ReadStringLines(&buffer) {
+	for line := range iter.ReadStringLines(&buffer) {
 		lines = append(lines, line)
 	}
 	answer := lines[level-1]

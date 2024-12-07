@@ -1,19 +1,17 @@
 package day02
 
 import (
+	"aoc2024/iter"
 	"aoc2024/utils"
 	"fmt"
 	"io"
 	"slices"
-	"strings"
 )
 
 func Solve(in io.Reader, out io.Writer) {
 	var reports [][]int
-	for line := range utils.ReadStringLines(in) {
-		numStr := strings.Fields(line)
-		ints := utils.Map(numStr, utils.StrToInt)
-		reports = append(reports, ints)
+	for line := range iter.ReadStringLines(in) {
+		reports = append(reports, utils.ReadInts(line, " "))
 	}
 	fmt.Fprintln(out, part1(reports))
 	fmt.Fprintln(out, part2(reports))
@@ -54,9 +52,9 @@ func isSafe2(report []int) bool {
 }
 
 func part1(reports [][]int) int {
-	return utils.CountIf(reports, isSafe)
+	return iter.SliceValues(reports).CountIf(isSafe)
 }
 
 func part2(reports [][]int) int {
-	return utils.CountIf(reports, isSafe2)
+	return iter.SliceValues(reports).CountIf(isSafe2)
 }

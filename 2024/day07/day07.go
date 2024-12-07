@@ -17,7 +17,7 @@ type Equation struct {
 
 func Solve(in io.Reader, out io.Writer) {
 	equations := []Equation{}
-	for line := range utils.ReadStringLines(in) {
+	for line := range iter.ReadStringLines(in) {
 		parts := strings.Split(line, ": ")
 		eq := Equation{
 			result:    utils.StrToInt(parts[0]),
@@ -68,7 +68,7 @@ func try(i int, cur int, equation []int, result int, ops []Op) bool {
 	if cur > result {
 		return false
 	}
-	return iter.IfAny(iter.SliceValues(ops), func(op Op) bool {
+	return iter.SliceValues(ops).Any(func(op Op) bool {
 		return try(i+1, op(cur, equation[i]), equation, result, ops)
 	})
 }

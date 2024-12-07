@@ -1,6 +1,7 @@
 package day01
 
 import (
+	"aoc2024/iter"
 	"aoc2024/utils"
 	"fmt"
 	"io"
@@ -11,7 +12,7 @@ import (
 func Solve(in io.Reader, out io.Writer) {
 	var left []int
 	var right []int
-	for line := range utils.ReadStringLines(in) {
+	for line := range iter.ReadStringLines(in) {
 		numStr := strings.Fields(line)
 		left = append(left, utils.StrToInt(numStr[0]))
 		right = append(right, utils.StrToInt(numStr[1]))

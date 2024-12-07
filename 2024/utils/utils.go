@@ -1,6 +1,7 @@
 package utils
 
 import (
+	iter2 "aoc2024/iter"
 	"bufio"
 	"io"
 	"iter"
@@ -20,17 +21,6 @@ func ReadLine(reader io.Reader) ([]byte, error) {
 		return scanner.Bytes(), nil
 	} else {
 		return nil, scanner.Err()
-	}
-}
-
-func ReadStringLines(in io.Reader) iter.Seq[string] {
-	return func(yield func(line string) bool) {
-		scanner := bufio.NewScanner(in)
-		for scanner.Scan() {
-			if !yield(scanner.Text()) {
-				return
-			}
-		}
 	}
 }
 
@@ -56,29 +46,9 @@ func StrToInt(s string) int {
 
 // ClearEmptyMatch remove stupid empty string in match slice.
 func ClearEmptyMatch(match []string) []string {
-	return Filter(match, func(s string) bool {
+	return iter2.SliceValues(match).Filter(func(s string) bool {
 		return s != ""
-	})
-}
-
-func CountIf[S ~[]V, V any](slice S, pred func(V) bool) int {
-	cnt := 0
-	for _, v := range slice {
-		if pred(v) {
-			cnt++
-		}
-	}
-	return cnt
-}
-
-func Filter[V any](slice []V, pred func(V) bool) []V {
-	res := make([]V, 0, len(slice))
-	for _, v := range slice {
-		if pred(v) {
-			res = append(res, v)
-		}
-	}
-	return res
+	}).Collect()
 }
 
 func CountFreq[K comparable](slice []K) map[K]int {
@@ -89,14 +59,6 @@ func CountFreq[K comparable](slice []K) map[K]int {
 	return counter
 }
 
-func Map[F any, T any](slice []F, fn func(F) T) []T {
-	res := make([]T, len(slice))
-	for i, v := range slice {
-		res[i] = fn(v)
-	}
-	return res
-}
-
 func StringReverse(s string) string {
 	bs := []byte(s)
 	slices.Reverse(bs)
@@ -105,7 +67,7 @@ func StringReverse(s string) string {
 
 func ReadInts(str string, sep string) []int {
 	numStr := strings.Split(str, sep)
-	ints := Map(numStr, StrToInt)
+	ints := iter2.Map(iter2.SliceValues(numStr), StrToInt).Collect()
 	return ints
 }
 
