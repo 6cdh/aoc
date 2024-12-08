@@ -40,16 +40,16 @@ func addAntiNodes(antenna1 vec.Vec2i, antenna2 vec.Vec2i, m int, n int, antiNode
 	for _, signal := range [][]vec.Vec2i{{antenna1, antenna2}, {antenna2, antenna1}} {
 		from := signal[0]
 		to := signal[1]
-		dist := to.Minus(from)
+		distVec := to.Minus(from)
 		var node vec.Vec2i
 		if countResonant {
 			node = to
 		} else {
-			node = to.Add(dist)
+			node = to.Add(distVec)
 		}
-		for 0 <= node.X && node.X < m && 0 <= node.Y && node.Y < n {
+		for node.InRectangle(vec.NewVec2i(0, 0), vec.NewVec2i(m, n)) {
 			antiNodes[node.X][node.Y] = true
-			node = node.Add(dist)
+			node = node.Add(distVec)
 			if !countResonant {
 				break
 			}
