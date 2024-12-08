@@ -22,10 +22,10 @@ func countAntiNodes(grid [][]byte, countResonant bool) int {
 	antennas := iter.MatrixIndex(grid).Filter(func(pos vec.Vec2i) bool {
 		return grid[pos.X][pos.Y] != '.'
 	})
-	for pos1 := range antennas {
-		for pos2 := range antennas {
-			if pos1 != pos2 && grid[pos1.X][pos1.Y] == grid[pos2.X][pos2.Y] {
-				addAntiNodes(pos1, pos2, m, n, antiNodes, countResonant)
+	for antenna1 := range antennas {
+		for antenna2 := range antennas {
+			if antenna1 != antenna2 && grid[antenna1.X][antenna1.Y] == grid[antenna2.X][antenna2.Y] {
+				addAntiNodes(antenna1, antenna2, m, n, antiNodes, countResonant)
 			}
 		}
 	}
