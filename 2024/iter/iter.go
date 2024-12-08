@@ -1,6 +1,7 @@
 package iter
 
 import (
+	"aoc2024/vec"
 	"bufio"
 	"io"
 	"iter"
@@ -10,6 +11,10 @@ import (
 type Pair[F any, S any] struct {
 	Fst F
 	Snd S
+}
+
+func NewPair[F any, S any](fst F, snd S) Pair[F, S] {
+	return Pair[F, S]{fst, snd}
 }
 
 type Iter[V any] iter.Seq[V]
@@ -74,11 +79,11 @@ func Enumerate[S ~[]V, V any](slice S) Iter[Pair[int, V]] {
 	}
 }
 
-func MatrixIndex[S ~[][]V, V any](matrix S) Iter[Pair[int, int]] {
-	return func(yield func(Pair[int, int]) bool) {
+func MatrixIndex[S ~[][]V, V any](matrix S) Iter[vec.Vec2i] {
+	return func(yield func(vec.Vec2i) bool) {
 		for i, s := range matrix {
 			for j := range s {
-				if !yield(Pair[int, int]{i, j}) {
+				if !yield(vec.NewVec2i(i, j)) {
 					return
 				}
 			}

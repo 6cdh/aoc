@@ -63,8 +63,8 @@ func moveTeleport(obs vec.Vec2i) moveFunc {
 		nextPos := nextPosBeforeObs(pos, dir, grid)
 		// If the path from `pos` to `nextPos` needs to cross the new obstruction `obs`,
 		// use the position before `obs` as the next position.
-		toObs := obs.Sub(pos)
-		ToNext := nextPos.Sub(pos)
+		toObs := obs.Minus(pos)
+		ToNext := nextPos.Minus(pos)
 		if toObs.Sign() == ToNext.Sign() && ToNext.UnitLen() >= toObs.UnitLen() {
 			return pos.Add(toObs.Sign().MulI(max(0, utils.RoundToInt(toObs.UnitLen())-1)))
 		}
@@ -128,8 +128,8 @@ func isValidPos(pos vec.Vec2i, grid [][]byte) bool {
 
 func findCharPos(grid [][]byte, ch byte) vec.Vec2i {
 	for p := range iter.MatrixIndex(grid) {
-		if grid[p.Fst][p.Snd] == ch {
-			return vec.NewVec2i(p.Fst, p.Snd)
+		if grid[p.X][p.Y] == ch {
+			return vec.NewVec2i(p.X, p.Y)
 		}
 	}
 	return vec.NewVec2i(-1, -1)

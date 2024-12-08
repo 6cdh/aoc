@@ -100,3 +100,14 @@ func SortByLessFunc[T any](slice []T, lessThan func(x T, y T) bool) {
 func RoundToInt[F float32 | float64](f F) int {
 	return int(math.Round(float64(f)))
 }
+
+func NewMatrix[T any](m int, n int, init T) [][]T {
+	matrix := make([][]T, m)
+	for i := range matrix {
+		matrix[i] = make([]T, n)
+		for j := range matrix[i] {
+			matrix[i][j] = init
+		}
+	}
+	return matrix
+}

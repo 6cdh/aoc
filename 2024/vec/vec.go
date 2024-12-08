@@ -44,7 +44,7 @@ func (v Vec2i) Add(u Vec2i) Vec2i {
 	}
 }
 
-func (v Vec2i) Sub(u Vec2i) Vec2i {
+func (v Vec2i) Minus(u Vec2i) Vec2i {
 	return Vec2i{
 		X: v.X - u.X,
 		Y: v.Y - u.Y,
