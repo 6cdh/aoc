@@ -204,6 +204,9 @@ func (aoc *AOC) submitDay(day int) {
 	for line := range iter.ReadStringLines(&buffer) {
 		lines = append(lines, line)
 	}
+	if len(lines) <= level-1 {
+		log.Fatal("aoc2024 needs %d-th line output as answer to submit part %d", level, level)
+	}
 	answer := lines[level-1]
 
 	fmt.Println("submit answer", answer)
