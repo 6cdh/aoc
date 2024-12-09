@@ -5,6 +5,7 @@ import (
 	"bufio"
 	"io"
 	"iter"
+	"math"
 	"sync"
 )
 
@@ -20,7 +21,9 @@ func NewPair[F any, S any](fst F, snd S) Pair[F, S] {
 type Iter[V any] iter.Seq[V]
 
 func ReadLines(in io.Reader) Iter[[]byte] {
+	limit := math.MaxInt32
 	scanner := bufio.NewScanner(in)
+	scanner.Buffer([]byte{}, limit)
 	return func(yield func(line []byte) bool) {
 		for scanner.Scan() {
 			if !yield([]byte(scanner.Text())) {
@@ -31,7 +34,9 @@ func ReadLines(in io.Reader) Iter[[]byte] {
 }
 
 func ReadStringLines(in io.Reader) Iter[string] {
+	limit := math.MaxInt32
 	scanner := bufio.NewScanner(in)
+	scanner.Buffer([]byte{}, limit)
 	return func(yield func(line string) bool) {
 		for scanner.Scan() {
 			if !yield(scanner.Text()) {

@@ -16,7 +16,9 @@ type Int interface {
 }
 
 func ReadLine(reader io.Reader) ([]byte, error) {
+	limit := math.MaxInt32
 	scanner := bufio.NewScanner(reader)
+	scanner.Buffer([]byte{}, limit)
 	if scanner.Scan() {
 		return scanner.Bytes(), nil
 	} else {
