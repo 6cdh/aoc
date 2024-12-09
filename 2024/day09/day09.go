@@ -45,7 +45,7 @@ func part1(diskMap []int) int {
 	freeI := 1
 	for fileI := range RevFileIndexIter(blocks) {
 		for blocks[fileI].file.size > 0 && freeI < fileI {
-			move(&blocks[fileI], &blocks[freeI])
+			moveFile(&blocks[fileI], &blocks[freeI])
 			if blocks[freeI].free.capacity == 0 {
 				freeI += 2
 			}
@@ -61,7 +61,7 @@ func part2(diskMap []int) int {
 	for fileI := range RevFileIndexIter(blocks) {
 		for freeI := 1; freeI < fileI; freeI += 2 {
 			if blocks[freeI].free.capacity >= blocks[fileI].file.size {
-				move(&blocks[fileI], &blocks[freeI])
+				moveFile(&blocks[fileI], &blocks[freeI])
 				break
 			}
 		}
@@ -70,7 +70,7 @@ func part2(diskMap []int) int {
 	return checksum(blocks)
 }
 
-func move(fileb *Block, freeb *Block) {
+func moveFile(fileb *Block, freeb *Block) {
 	file := fileb.file
 	free := freeb.free
 	moveSize := min(file.size, free.capacity)
