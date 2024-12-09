@@ -24,7 +24,7 @@ type File struct {
 
 type Free struct {
 	files    []File
-	freeSize int
+	capacity int
 }
 
 const (
@@ -44,17 +44,9 @@ func part1(diskMap []int) int {
 
 	freeI := 1
 	for fileI := range RevFileIndexIter(blocks) {
-		file := blocks[fileI].file
-		for file.size > 0 && freeI < fileI {
-			free := blocks[freeI].free
-			moveSize := min(file.size, free.freeSize)
-			file.size -= moveSize
-			free.freeSize -= moveSize
-			free.files = append(free.files, File{
-				size: moveSize,
-				id:   file.id,
-			})
-			if free.freeSize == 0 {
+		for blocks[fileI].file.size > 0 && freeI < fileI {
+			move(&blocks[fileI], &blocks[freeI])
+			if blocks[freeI].free.capacity == 0 {
 				freeI += 2
 			}
 		}
@@ -65,24 +57,35 @@ func part1(diskMap []int) int {
 
 func part2(diskMap []int) int {
 	blocks := diskMapToBlocks(diskMap)
+
 	for fileI := range RevFileIndexIter(blocks) {
-		file := blocks[fileI].file
 		for freeI := 1; freeI < fileI; freeI += 2 {
-			free := blocks[freeI].free
-			if free.freeSize >= file.size {
-				free.freeSize -= file.size
-				free.files = append(free.files, *file)
-				blocks[fileI] = Block{
-					t: isFree,
-					free: &Free{
-						freeSize: file.size,
-					},
-				}
+			if blocks[freeI].free.capacity >= blocks[fileI].file.size {
+				move(&blocks[fileI], &blocks[freeI])
 				break
 			}
 		}
 	}
+
 	return checksum(blocks)
+}
+
+func move(fileb *Block, freeb *Block) {
+	file := fileb.file
+	free := freeb.free
+	moveSize := min(file.size, free.capacity)
+	file.size -= moveSize
+	free.capacity -= moveSize
+	free.files = append(free.files, File{
+		size: moveSize,
+		id:   file.id,
+	})
+	if file.size == 0 {
+		fileb.t = isFree
+		fileb.free = &Free{
+			capacity: moveSize,
+		}
+	}
 }
 
 func diskMapToBlocks(diskMap []int) []Block {
@@ -100,7 +103,7 @@ func diskMapToBlocks(diskMap []int) []Block {
 			blocks = append(blocks, Block{
 				t: isFree,
 				free: &Free{
-					freeSize: size,
+					capacity: size,
 				},
 			})
 		}
@@ -126,7 +129,7 @@ func (c *checkSumer) sumFree(free *Free) {
 	for _, file := range free.files {
 		c.sumFile(&file)
 	}
-	c.index += free.freeSize
+	c.index += free.capacity
 }
 
 func checksum(blocks []Block) int {
