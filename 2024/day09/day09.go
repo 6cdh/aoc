@@ -2,13 +2,15 @@ package day09
 
 import (
 	"aoc2024/iter"
+	"aoc2024/log"
 	"aoc2024/utils"
 	"fmt"
 	"io"
 )
 
 func Solve(in io.Reader, out io.Writer) {
-	line, _ := utils.ReadLine(in)
+	line, err := utils.ReadLine(in)
+	log.FatalIfErr(err)
 	diskMap := iter.Map(iter.SliceValues(line), func(b byte) int {
 		return int(b - '0')
 	}).Collect()
