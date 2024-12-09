@@ -183,3 +183,32 @@ func (it Iter[V]) CountIfParallel(pred func(V) bool) int {
 	}
 	return cnt
 }
+
+func Pairs[V any](it Iter[V]) Iter[Pair[V, V]] {
+	return func(yield func(Pair[V, V]) bool) {
+		i := 0
+		for v := range it {
+			j := 0
+			for v1 := range it {
+				if j >= i {
+					break
+				}
+				if !yield(NewPair(v, v1)) {
+					return
+				}
+				j++
+			}
+			i++
+		}
+	}
+}
+
+func PosIter(init vec.Vec2i, inc vec.Vec2i, isEnd func(vec.Vec2i) bool) Iter[vec.Vec2i] {
+	return func(yield func(vec.Vec2i) bool) {
+		for pos := init; !isEnd(pos); pos = pos.Add(inc) {
+			if !yield(pos) {
+				return
+			}
+		}
+	}
+}
