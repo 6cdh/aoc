@@ -62,9 +62,9 @@ func exploreRegion(pos Pos, id RegionID, regions map[Pos]RegionID, garden [][]by
 	regions[pos] = id
 
 	for _, dir := range fourDirs {
-		next := pos.Add(dir)
-		if vec.IsValidPos(next, garden) && isSame(pos, next, garden) {
-			exploreRegion(next, id, regions, garden)
+		neighbor := pos.Add(dir)
+		if vec.IsValidPos(neighbor, garden) && isSame(pos, neighbor, garden) {
+			exploreRegion(neighbor, id, regions, garden)
 		}
 	}
 }
