@@ -77,3 +77,7 @@ func (v Vec2i) RotateRight() Vec2i {
 func (v Vec2i) InRectangle(topLeft Vec2i, bottomRight Vec2i) bool {
 	return topLeft.X <= v.X && v.X < bottomRight.X && topLeft.Y <= v.Y && v.Y < bottomRight.Y
 }
+
+func IsValidPos[V any](v Vec2i, grid [][]V) bool {
+	return v.InRectangle(NewVec2i(0, 0), NewVec2i(len(grid), len(grid[0])))
+}

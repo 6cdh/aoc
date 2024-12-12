@@ -113,3 +113,8 @@ func NewMatrix[T any](m int, n int, init T) [][]T {
 	}
 	return matrix
 }
+
+func MapContains[K comparable, V any](m map[K]V, k K) bool {
+	_, ok := m[k]
+	return ok
+}
