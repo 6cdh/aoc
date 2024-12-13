@@ -47,15 +47,15 @@ func try(i int, result int, eq Equation, ops []Op) bool {
 	}
 	return iter.SliceValues(ops).Any(func(op Op) bool {
 		x, err := op(eq.operators[i], result)
-		return errors.Is(err, divisorIsZero) || (err == nil && try(i-1, x, eq, ops))
+		return errors.Is(err, errDivisorIsZero) || (err == nil && try(i-1, x, eq, ops))
 	})
 }
 
 type Op func(int, int) (int, error)
 
 var (
-	cantContinue  = fmt.Errorf("can't continue with operator")
-	divisorIsZero = fmt.Errorf("divided is zero")
+	errCantContinue  = fmt.Errorf("can't continue with operator")
+	errDivisorIsZero = fmt.Errorf("divisor is zero")
 )
 
 func minusOp(y int, r int) (int, error) {
@@ -67,9 +67,9 @@ func divOp(divisor int, r int) (int, error) {
 		return r / divisor, nil
 	}
 	if divisor == 0 && r == 0 {
-		return 0, divisorIsZero
+		return 0, errDivisorIsZero
 	}
-	return 0, cantContinue
+	return 0, errCantContinue
 }
 
 func unConcatOp(y int, r int) (int, error) {
@@ -82,5 +82,5 @@ func unConcatOp(y int, r int) (int, error) {
 			return x, nil
 		}
 	}
-	return 0, cantContinue
+	return 0, errCantContinue
 }
