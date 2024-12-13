@@ -27,11 +27,9 @@ func part2(grid [][]byte, guardPos vec.Vec2i, visitedPos VisitedPos) int {
 
 func concurrentPart2(grid [][]byte, guardPos vec.Vec2i, visitedPos VisitedPos) int {
 	// force run so that we don't have concurrent map write later
-	for i := range grid {
-		for j := range grid[i] {
-			for _, dir := range []vec.Vec2i{vec.UP, vec.DOWN, vec.LEFT, vec.RIGHT} {
-				nextPosBeforeObs(vec.NewVec2i(i, j), dir, grid)
-			}
+	for pos := range iter.MatrixIndex(grid) {
+		for _, dir := range []vec.Vec2i{vec.UP, vec.DOWN, vec.LEFT, vec.RIGHT} {
+			nextPosBeforeObs(pos, dir, grid)
 		}
 	}
 
