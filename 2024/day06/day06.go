@@ -65,8 +65,8 @@ func moveTeleport(obs vec.Vec2i) moveFunc {
 		// use the position before `obs` as the next position.
 		toObs := obs.Minus(pos)
 		ToNext := nextPos.Minus(pos)
-		if toObs.Sign() == ToNext.Sign() && ToNext.UnitLen() >= toObs.UnitLen() {
-			return pos.Add(toObs.Sign().MulI(max(0, utils.RoundToInt(toObs.UnitLen())-1)))
+		if toObs.Sign() == ToNext.Sign() && ToNext.VecLen() >= toObs.VecLen() {
+			return pos.Add(toObs.Sign().MulI(max(0, utils.RoundToInt(toObs.VecLen())-1)))
 		}
 		return nextPos
 	}
@@ -82,7 +82,7 @@ func nextPosBeforeObs(pos vec.Vec2i, dir vec.Vec2i, grid [][]byte) vec.Vec2i {
 
 	nextPos := pos.Add(dir)
 	var res vec.Vec2i
-	if !isValidPos(nextPos, grid) {
+	if !vec.IsValidPos(nextPos, grid) {
 		res = nextPos
 	} else if grid[nextPos.X][nextPos.Y] == '#' {
 		res = pos
@@ -110,7 +110,7 @@ func guardMove(grid [][]byte, pos vec.Vec2i, moveFn moveFunc) (VisitedPos, bool)
 		visited[pos][dir] = true
 
 		nextPos := moveFn(pos, dir, grid)
-		if !isValidPos(nextPos, grid) {
+		if !vec.IsValidPos(nextPos, grid) {
 			return visited, true
 		}
 		if nextPos == pos || grid[nextPos.X][nextPos.Y] == '#' {
@@ -121,15 +121,10 @@ func guardMove(grid [][]byte, pos vec.Vec2i, moveFn moveFunc) (VisitedPos, bool)
 	}
 }
 
-func isValidPos(pos vec.Vec2i, grid [][]byte) bool {
-	return 0 <= pos.X && pos.X < len(grid) &&
-		0 <= pos.Y && pos.Y < len(grid[pos.X])
-}
-
 func findCharPos(grid [][]byte, ch byte) vec.Vec2i {
 	for p := range iter.MatrixIndex(grid) {
 		if grid[p.X][p.Y] == ch {
-			return vec.NewVec2i(p.X, p.Y)
+			return p
 		}
 	}
 	return vec.NewVec2i(-1, -1)

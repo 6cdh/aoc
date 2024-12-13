@@ -23,7 +23,7 @@ var (
 	RIGHT = NewVec2i(0, 1)
 )
 
-func (v Vec2i) UnitLen() float64 {
+func (v Vec2i) VecLen() float64 {
 	return math.Sqrt(float64(v.X*v.X + v.Y*v.Y))
 }
 
