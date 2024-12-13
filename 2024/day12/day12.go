@@ -38,7 +38,7 @@ func Solve(in io.Reader, out io.Writer) {
 	for pos := range iter.MatrixIndex(garden) {
 		for _, dir := range fourDirs {
 			if isRegionSide(pos, dir, garden) && !visitedSide[pos][dir] {
-				exploreRegionSides(pos, dir, visitedSide, garden)
+				exploreRegionSide(pos, dir, visitedSide, garden)
 				id := regions[pos]
 				sides[id] += 1
 			}
@@ -63,7 +63,7 @@ func exploreRegion(pos Pos, id RegionID, regions map[Pos]RegionID, garden [][]by
 
 	for _, dir := range fourDirs {
 		neighbor := pos.Add(dir)
-		if vec.IsValidPos(neighbor, garden) && isSame(pos, neighbor, garden) {
+		if vec.IsValidPos(neighbor, garden) && hasSamePlant(pos, neighbor, garden) {
 			exploreRegion(neighbor, id, regions, garden)
 		}
 	}
@@ -75,31 +75,31 @@ func plotPerimeter(pos Pos, garden [][]byte) int {
 	})
 }
 
-func isSame(pos1 Pos, pos2 Pos, garden [][]byte) bool {
+func hasSamePlant(pos1 Pos, pos2 Pos, garden [][]byte) bool {
 	return garden[pos1.X][pos1.Y] == garden[pos2.X][pos2.Y]
 }
 
 func isRegionSide(pos Pos, dir Dir, garden [][]byte) bool {
 	neighbor := pos.Add(dir)
-	return !vec.IsValidPos(neighbor, garden) || !isSame(pos, neighbor, garden)
+	return !vec.IsValidPos(neighbor, garden) || !hasSamePlant(pos, neighbor, garden)
 }
 
-func exploreRegionSides(pos Pos, dir Dir, regionSides map[Pos]map[Dir]bool, garden [][]byte) {
-	if regionSides[pos][dir] {
+func exploreRegionSide(pos Pos, dir Dir, visitedSide map[Pos]map[Dir]bool, garden [][]byte) {
+	if visitedSide[pos][dir] {
 		return
 	}
 
-	if regionSides[pos] == nil {
-		regionSides[pos] = map[Dir]bool{}
+	if visitedSide[pos] == nil {
+		visitedSide[pos] = map[Dir]bool{}
 	}
-	regionSides[pos][dir] = true
+	visitedSide[pos][dir] = true
 
 	dirV1 := dir.RotateRight()
 	dirV2 := dir.RotateLeft()
 	for _, dv := range []Dir{dirV1, dirV2} {
 		neighbor := pos.Add(dv)
-		if vec.IsValidPos(neighbor, garden) && isSame(pos, neighbor, garden) && isRegionSide(neighbor, dir, garden) {
-			exploreRegionSides(neighbor, dir, regionSides, garden)
+		if vec.IsValidPos(neighbor, garden) && hasSamePlant(pos, neighbor, garden) && isRegionSide(neighbor, dir, garden) {
+			exploreRegionSide(neighbor, dir, visitedSide, garden)
 		}
 	}
 }
