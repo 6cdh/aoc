@@ -9,6 +9,7 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"sync"
 )
 
 type Int interface {
@@ -117,4 +118,36 @@ func NewMatrix[T any](m int, n int, init T) [][]T {
 func MapContains[K comparable, V any](m map[K]V, k K) bool {
 	_, ok := m[k]
 	return ok
+}
+
+type TaskPool[T any] struct {
+	ch chan T
+	wg sync.WaitGroup
+}
+
+func NewTaskPool[T any](n int) *TaskPool[T] {
+	return &TaskPool[T]{
+		ch: make(chan T, n),
+		wg: sync.WaitGroup{},
+	}
+}
+
+func (p *TaskPool[T]) AddTask(task func() (T, error)) {
+	p.wg.Add(1)
+	go func() {
+		defer p.wg.Done()
+		r, err := task()
+		if err == nil {
+			p.ch <- r
+		}
+	}()
+}
+
+func (p *TaskPool[T]) WaitAll() {
+	p.wg.Wait()
+	close(p.ch)
+}
+
+func (p *TaskPool[T]) Result() <-chan T {
+	return p.ch
 }

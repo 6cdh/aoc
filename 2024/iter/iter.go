@@ -217,3 +217,9 @@ func PosIter(init vec.Vec2i, inc vec.Vec2i, isEnd func(vec.Vec2i) bool) Iter[vec
 		}
 	}
 }
+
+func Product(it Iter[int]) int {
+	return Reduce(it, 1, func(product int, v int) int {
+		return product * v
+	})
+}
