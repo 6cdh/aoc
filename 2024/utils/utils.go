@@ -3,6 +3,7 @@ package utils
 import (
 	iter2 "aoc2024/iter"
 	"bufio"
+	"fmt"
 	"io"
 	"iter"
 	"math"
@@ -124,6 +125,8 @@ type TaskPool[T any] struct {
 	ch chan T
 	wg sync.WaitGroup
 }
+
+var ErrTaskNoResult = fmt.Errorf("no result for this task")
 
 func NewTaskPool[T any](n int) *TaskPool[T] {
 	return &TaskPool[T]{

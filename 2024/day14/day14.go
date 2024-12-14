@@ -63,7 +63,7 @@ func part2(robots []Robot) int {
 					return sec, nil
 				}
 			}
-			return 0, fmt.Errorf("no result")
+			return 0, utils.ErrTaskNoResult
 		})
 	}
 
