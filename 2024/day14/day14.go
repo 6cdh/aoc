@@ -14,12 +14,12 @@ type Robot struct {
 	v vec.Vec2i
 }
 
-type Room struct {
+type RoomSize struct {
 	width  int
 	height int
 }
 
-var room = Room{101, 103}
+var room = RoomSize{101, 103}
 
 func Solve(in io.Reader, out io.Writer) {
 	robots := []Robot{}
