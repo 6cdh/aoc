@@ -13,6 +13,20 @@ type MoveRule struct {
 	to   vec.Vec2i
 }
 
+// Overall:
+// immutable
+// for each action, copy the current room, recursively move the robot and boxes,
+// if failed, use the old room, otherwise use the new room as the next room.
+// Move:
+// Every position has a list of MoveRule, it defines how to move the box or the robot
+// at this position given an action IN ORDER.
+// For an action direction `dir` and a position `pos`, its move rules are one element
+//  list [pos -> dir + pos] in part 1. For part 2, a wider box with position (left, right) has
+// this move rules:
+// if action is up or down: [left -> left + dir, right -> right + dir]
+// if action is left: [left -> left + dir, right -> right + dir]
+// if action is right: [right -> right + dir, left -> left + dir]
+
 func Solve(in io.Reader, out io.Writer) {
 	room, moves := parse(in)
 
@@ -103,16 +117,10 @@ func moveRules(pos vec.Vec2i, action vec.Vec2i, room [][]byte) []MoveRule {
 
 func wideBoxMoveRules(pos vec.Vec2i, action vec.Vec2i, room [][]byte) []MoveRule {
 	left, right := wideBoxPos(pos, room)
-	switch action {
-	case vec.UP, vec.DOWN:
-		return []MoveRule{{left, left.Add(action)}, {right, right.Add(action)}}
-	case vec.LEFT:
-		return []MoveRule{{left, left.Add(action)}, {right, left}}
-	case vec.RIGHT:
-		return []MoveRule{{right, right.Add(action)}, {left, right}}
-	default:
-		panic(pos)
+	if action == vec.RIGHT {
+		return []MoveRule{{right, right.Add(action)}, {left, left.Add(action)}}
 	}
+	return []MoveRule{{left, left.Add(action)}, {right, right.Add(action)}}
 }
 
 func wideBoxPos(pos vec.Vec2i, room [][]byte) (vec.Vec2i, vec.Vec2i) {
