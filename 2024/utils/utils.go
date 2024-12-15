@@ -2,6 +2,7 @@ package utils
 
 import (
 	iter2 "aoc2024/iter"
+	"aoc2024/vec"
 	"bufio"
 	"fmt"
 	"io"
@@ -153,4 +154,27 @@ func (p *TaskPool[T]) WaitAll() {
 
 func (p *TaskPool[T]) Result() <-chan T {
 	return p.ch
+}
+
+func FindMatrixPos[T comparable](b T, room [][]T) vec.Vec2i {
+	for pos := range iter2.MatrixIndex(room) {
+		if MatrixAt(room, pos) == b {
+			return pos
+		}
+	}
+	return vec.NewVec2i(-1, -1)
+}
+
+func MatrixAt[T any](mat [][]T, pos vec.Vec2i) T {
+	return mat[pos.X][pos.Y]
+}
+
+func CopyMatrix[T any](mat [][]T) [][]T {
+	new := [][]T{}
+	for _, row := range mat {
+		newRow := make([]T, len(row))
+		copy(newRow, row)
+		new = append(new, newRow)
+	}
+	return new
 }
