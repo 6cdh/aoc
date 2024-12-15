@@ -28,7 +28,8 @@ func simulate(room [][]byte, moves []vec.Vec2i) int {
 
 	sum := 0
 	for pos := range iter.MatrixIndex(room) {
-		if utils.MatrixAt(room, pos) == 'O' || utils.MatrixAt(room, pos) == '[' {
+		cell := utils.MatrixAt(room, pos)
+		if cell == 'O' || cell == '[' {
 			sum += 100*pos.X + pos.Y
 		}
 	}
