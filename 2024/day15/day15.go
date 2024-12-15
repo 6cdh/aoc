@@ -8,24 +8,25 @@ import (
 	"io"
 )
 
+// idea
+// To move an object at position `pos` towards direction `dir`, we need to
+// move another position next to `pos` in direction `dir`.
+// In part 2, for a widebox occupys two positions: `left` and `right`.
+// To move `left`, depends on the direction, we would have complex rules
+// to move this first, then that, ..., finally `left`.
+// So, every move of a position depends on a list of move rules. Each
+// move rule is a pair of position `from` and a position `to`.
+// For each part of problem, when we try to move a position, check its
+// move rules, if they are feasible, then executes these rules, then
+// move this position.
+// Here my method is use immutable data structure as room, executes these rules directly,
+// and if failed, use the old room for the next action, otherwise, use the new room.
+// This is less error-prone than mutable version, but slower.
+
 type MoveRule struct {
 	from vec.Vec2i
 	to   vec.Vec2i
 }
-
-// Overall:
-// immutable
-// for each action, copy the current room, recursively move the robot and boxes,
-// if failed, use the old room, otherwise use the new room as the next room.
-// Move:
-// Every position has a list of MoveRule, it defines how to move the box or the robot
-// at this position given an action IN ORDER.
-// For an action direction `dir` and a position `pos`, its move rules are one element
-//  list [pos -> dir + pos] in part 1. For part 2, a wider box with position (left, right) has
-// this move rules:
-// if action is up or down: [left -> left + dir, right -> right + dir]
-// if action is left: [left -> left + dir, right -> right + dir]
-// if action is right: [right -> right + dir, left -> left + dir]
 
 func Solve(in io.Reader, out io.Writer) {
 	room, moves := parse(in)
