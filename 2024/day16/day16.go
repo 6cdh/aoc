@@ -24,8 +24,6 @@ type Dir = vec.Vec2i
 
 func Solve(in io.Reader, out io.Writer) {
 	maze := iter.ReadLines(in).Collect()
-	start := utils.FindMatrixPos('S', maze)
-	end := utils.FindMatrixPos('E', maze)
 
 	edgesOf := func(snode *ScoreNode) []*ScoreNode {
 		neighbors := []*ScoreNode{}
@@ -39,6 +37,8 @@ func Solve(in io.Reader, out io.Writer) {
 		return neighbors
 	}
 
+	start := utils.FindMatrixPos('S', maze)
+	end := utils.FindMatrixPos('E', maze)
 	distTo, preNodes := Dijkstra(start, end, edgesOf)
 	minScore, endNodes := processShortestPaths(end, distTo)
 	fmt.Fprintln(out, minScore)
