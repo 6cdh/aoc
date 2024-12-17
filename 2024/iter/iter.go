@@ -7,6 +7,8 @@ import (
 	"iter"
 	"math"
 	"sync"
+
+	"golang.org/x/exp/constraints"
 )
 
 type Pair[F any, S any] struct {
@@ -98,8 +100,18 @@ func MatrixIndex[S ~[][]V, V any](matrix S) Iter[vec.Vec2i] {
 
 func MapIter[K comparable, V any](m map[K]V) Iter[K] {
 	return func(yield func(K) bool) {
-		for k, _ := range m {
+		for k := range m {
 			if !yield(k) {
+				return
+			}
+		}
+	}
+}
+
+func ChannelIter[V any](c <-chan V) Iter[V] {
+	return func(yield func(V) bool) {
+		for v := range c {
+			if !yield(v) {
 				return
 			}
 		}
@@ -151,6 +163,12 @@ func (it Iter[V]) All(pred func(V) bool) bool {
 		}
 	}
 	return true
+}
+
+func (it Iter[V]) Count() int {
+	return Reduce(it, 0, func(cnt int, v V) int {
+		return cnt + 1
+	})
 }
 
 func (it Iter[V]) CountIf(pred func(V) bool) int {
@@ -222,4 +240,48 @@ func Product(it Iter[int]) int {
 	return Reduce(it, 1, func(product int, v int) int {
 		return product * v
 	})
+}
+
+func Sum(it Iter[int]) int {
+	return Reduce(it, 0, func(sum int, v int) int {
+		return sum + v
+	})
+}
+
+func Min(it Iter[int]) int {
+	return Reduce(it, math.MaxInt, func(minv int, v int) int {
+		return min(minv, v)
+	})
+}
+
+func Max(it Iter[int]) int {
+	return Reduce(it, math.MinInt, func(maxv int, v int) int {
+		return max(maxv, v)
+	})
+}
+
+func ArgMin[T any, W constraints.Ordered](it Iter[T], init W, fn func(v T) W) *T {
+	type P = Pair[W, *T]
+	p := Reduce(it, P{init, nil}, func(minp P, v T) P {
+		i := fn(v)
+		if i < minp.Fst {
+			return NewPair(i, &v)
+		} else {
+			return minp
+		}
+	})
+	return p.Snd
+}
+
+func ArgMax[T any, W constraints.Ordered](it Iter[T], init W, fn func(v T) W) *T {
+	type P = Pair[W, *T]
+	p := Reduce(it, P{init, nil}, func(maxp P, v T) P {
+		i := fn(v)
+		if i > maxp.Fst {
+			return NewPair(i, &v)
+		} else {
+			return maxp
+		}
+	})
+	return p.Snd
 }

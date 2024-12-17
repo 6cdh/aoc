@@ -6,6 +6,7 @@ import (
 	"aoc2024/vec"
 	"fmt"
 	"io"
+	"math"
 	"regexp"
 )
 
@@ -48,44 +49,50 @@ func part1(robots []Robot) int {
 }
 
 func part2(robots []Robot) int {
+	type Result struct {
+		sec      int
+		variance float64
+	}
+
 	n := 12000
-	pool := utils.NewTaskPool[int](n)
+	pool := utils.NewTaskPool[Result](n)
 
 	for sec := range n {
-		pool.AddTask(func() (int, error) {
+		pool.AddTask(func() (Result, error) {
 			hasRobot := utils.NewMatrix(room.width, room.height, false)
 			for _, r := range robots {
 				newPos := simulate(r, sec)
 				hasRobot[newPos.X][newPos.Y] = true
 			}
-			for pos := range iter.MatrixIndex(hasRobot) {
-				if has3x3Robots(pos, hasRobot) {
-					return sec, nil
-				}
-			}
-			return 0, utils.ErrTaskNoResult
+			return Result{sec, spatialVariance(hasRobot)}, nil
 		})
 	}
 
 	pool.WaitAll()
 
-	minResult := n
-	for sec := range pool.Result() {
-		minResult = min(minResult, sec)
-	}
-	return minResult
+	return iter.ArgMin(iter.ChannelIter(pool.Result()), math.MaxFloat64, func(v Result) float64 {
+		return v.variance
+	}).sec
 }
 
-func has3x3Robots(pos vec.Vec2i, hasRobot [][]bool) bool {
-	for dx := range 3 {
-		for dy := range 3 {
-			delta := vec.NewVec2i(dx, dy)
-			if !vec.IsValidPos(pos.Add(delta), hasRobot) || !hasRobot[pos.X+delta.X][pos.Y+delta.Y] {
-				return false
-			}
-		}
+func spatialVariance(hasRobot [][]bool) float64 {
+	robots := iter.MatrixIndex(hasRobot).Filter(func(v vec.Vec2i) bool {
+		return hasRobot[v.X][v.Y]
+	})
+	n := robots.Count()
+	cx := iter.Sum(iter.Map(robots, func(p vec.Vec2i) int {
+		return p.X
+	})) / n
+	cy := iter.Sum(iter.Map(robots, func(p vec.Vec2i) int {
+		return p.Y
+	})) / n
+	c := vec.NewVec2i(cx, cy)
+	variance := 0.0
+	for r := range robots {
+		variance += c.DistTo(r)
 	}
-	return true
+	variance /= float64(n)
+	return variance
 }
 
 func simulate(r Robot, secs int) vec.Vec2i {

@@ -81,3 +81,7 @@ func (v Vec2i) InRectangle(topLeft Vec2i, bottomRight Vec2i) bool {
 func IsValidPos[V any](v Vec2i, grid [][]V) bool {
 	return v.InRectangle(NewVec2i(0, 0), NewVec2i(len(grid), len(grid[0])))
 }
+
+func (v Vec2i) DistTo(to Vec2i) float64 {
+	return math.Sqrt(math.Pow(float64(v.X-to.X), 2) + math.Pow(float64(v.Y-to.Y), 2))
+}
