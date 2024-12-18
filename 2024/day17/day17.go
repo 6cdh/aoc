@@ -5,7 +5,6 @@ import (
 	"aoc2024/utils"
 	"fmt"
 	"io"
-	"math"
 	"strconv"
 	"strings"
 )
@@ -48,13 +47,13 @@ func part2(c Computer) int {
 			c: c.c,
 		},
 	}
-	mina := -1
+	mina := ErrNotFound
 	for newa := range 8 {
 		rc2 := rc
 		rc2.st.a = newa
 		ra := rc2.run()
 		rc2.st.a = ra
-		if ra != -1 && validSol(rc2) && (mina == -1 || ra < mina) {
+		if ra != ErrNotFound && validSol(rc2) && (mina == ErrNotFound || ra < mina) {
 			mina = ra
 		}
 	}
@@ -112,7 +111,7 @@ func (c *Computer) combo() int {
 }
 
 func (c *Computer) adv() {
-	c.a = int(float64(c.a) / math.Pow(2, float64(c.combo())))
+	c.a = c.a >> c.combo()
 	c.pointer += 2
 }
 
@@ -145,11 +144,11 @@ func (c *Computer) out() {
 }
 
 func (c *Computer) bdv() {
-	c.b = int(float64(c.a) / math.Pow(2, float64(c.combo())))
+	c.b = c.a >> c.combo()
 	c.pointer += 2
 }
 
 func (c *Computer) cdv() {
-	c.c = int(float64(c.a) / math.Pow(2, float64(c.combo())))
+	c.c = c.a >> c.combo()
 	c.pointer += 2
 }

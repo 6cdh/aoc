@@ -1,8 +1,11 @@
 package day17
 
 import (
+	"aoc2024/utils"
 	"slices"
 )
+
+const ErrNotFound = -1
 
 type State struct {
 	a       int
@@ -17,42 +20,42 @@ type RComputer struct {
 	st      State
 }
 
-var dp = map[State]int{}
+var cache = map[State]int{}
 
 func (c RComputer) run() int {
+	if !utils.MapContains(cache, c.st) {
+		cache[c.st] = c.run1()
+	}
+	return cache[c.st]
+}
+
+func (c RComputer) run1() int {
 	if c.st.pointer == len(c.program) {
 		if c.st.output == len(c.program) {
 			return c.st.a
 		}
-		return -1
+		return ErrNotFound
 	}
-	val, ok := dp[c.st]
-	if ok {
-		return val
-	}
-	a := 0
 	switch c.program[c.st.pointer] {
 	case 0:
-		a = c.adv()
+		return c.adv()
 	case 1:
-		a = c.bxl()
+		return c.bxl()
 	case 2:
-		a = c.bst()
+		return c.bst()
 	case 3:
-		a = c.jnz()
+		return c.jnz()
 	case 4:
-		a = c.bxc()
+		return c.bxc()
 	case 5:
-		a = c.out()
+		return c.out()
 	case 6:
-		a = c.bdv()
+		return c.bdv()
 	case 7:
-		a = c.cdv()
+		return c.cdv()
 	default:
 		panic(c)
 	}
-	dp[c.st] = a
-	return a
 }
 
 func (c RComputer) literal() int {
@@ -88,21 +91,16 @@ func validSol(rc RComputer) bool {
 }
 
 func (rc RComputer) adv() int {
-	if rc.program[rc.st.pointer+1] == 4 {
-		panic(rc)
-	}
-	mina := -1
-	for newa := range 8 {
-		rc1 := rc
-		rc1.st.a = newa
-		rc1.st.pointer += 2
-		ra := rc1.run()
-		if ra != -1 {
-			rc2 := rc
-			rc2.st.a = (ra << rc2.combo()) | rc.st.a
-			if validSol(rc2) && (mina == -1 || rc2.st.a < mina) {
-				mina = rc2.st.a
-			}
+	mina := ErrNotFound
+	for bits := range 8 {
+		rc2 := rc
+		rc2.st.a = bits
+		rc2.st.pointer += 2
+		ra := rc2.run()
+		rc3 := rc
+		rc3.st.a = (ra << rc3.combo()) | rc.st.a
+		if ra != ErrNotFound && validSol(rc3) && (mina == ErrNotFound || rc3.st.a < mina) {
+			mina = rc3.st.a
 		}
 	}
 	return mina
@@ -131,7 +129,7 @@ func (rc RComputer) jnz() int {
 		a1 := rc1.run()
 		rc2 := rc
 		rc2.st.a = a1
-		if a1 != -1 && validSol(rc2) {
+		if a1 != ErrNotFound && validSol(rc2) {
 			return 0
 		}
 
@@ -140,11 +138,11 @@ func (rc RComputer) jnz() int {
 		a2 := rc3.run()
 		rc4 := rc
 		rc4.st.a = a2
-		if a2 != -1 && validSol(rc4) {
+		if a2 != ErrNotFound && validSol(rc4) {
 			return a2
 		}
 	}
-	return -1
+	return ErrNotFound
 }
 
 func (c RComputer) bxc() int {
@@ -156,7 +154,7 @@ func (c RComputer) bxc() int {
 func (rc RComputer) out() int {
 	cur := rc.combo() % 8
 	if !(rc.st.output < len(rc.program)) || cur != rc.program[rc.st.output] {
-		return -1
+		return ErrNotFound
 	}
 	rc.st.output += 1
 	rc.st.pointer += 2
@@ -164,44 +162,34 @@ func (rc RComputer) out() int {
 }
 
 func (rc RComputer) bdv() int {
-	if rc.program[rc.st.pointer+1] == 4 {
-		panic(rc)
-	}
-	mina := -1
-	for newb := range 8 {
-		rc1 := rc
-		rc1.st.a = (newb << rc1.combo()) | rc.st.a
-		rc1.st.b = rc1.st.a >> rc1.combo()
-		rc1.st.pointer += 2
-		ra := rc1.run()
-		if ra != -1 {
-			rc2 := rc
-			rc2.st.a = ra
-			if validSol(rc2) && (mina == -1 || rc2.st.a < mina) {
-				mina = rc2.st.a
-			}
+	mina := ErrNotFound
+	for bits := range 8 {
+		rc2 := rc
+		rc2.st.a = (bits << rc2.combo()) | rc.st.a
+		rc2.st.b = rc2.st.a >> rc2.combo()
+		rc2.st.pointer += 2
+		ra := rc2.run()
+		rc3 := rc
+		rc3.st.a = ra
+		if ra != ErrNotFound && validSol(rc3) && (mina == ErrNotFound || rc3.st.a < mina) {
+			mina = rc3.st.a
 		}
 	}
 	return mina
 }
 
 func (rc RComputer) cdv() int {
-	if rc.program[rc.st.pointer+1] == 4 {
-		panic(rc)
-	}
-	mina := -1
-	for newb := range 8 {
-		rc1 := rc
-		rc1.st.a = (newb << rc1.combo()) | rc.st.a
-		rc1.st.c = rc1.st.a >> rc1.combo()
-		rc1.st.pointer += 2
-		ra := rc1.run()
-		if ra != -1 {
-			rc2 := rc
-			rc2.st.a = ra
-			if validSol(rc2) && (mina == -1 || rc2.st.a < mina) {
-				mina = rc2.st.a
-			}
+	mina := ErrNotFound
+	for bits := range 8 {
+		rc2 := rc
+		rc2.st.a = (bits << rc2.combo()) | rc.st.a
+		rc2.st.c = rc2.st.a >> rc2.combo()
+		rc2.st.pointer += 2
+		ra := rc2.run()
+		rc3 := rc
+		rc3.st.a = ra
+		if ra != ErrNotFound && validSol(rc3) && (mina == ErrNotFound || rc3.st.a < mina) {
+			mina = rc3.st.a
 		}
 	}
 	return mina
