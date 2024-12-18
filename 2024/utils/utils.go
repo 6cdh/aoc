@@ -4,6 +4,7 @@ import (
 	iter2 "aoc2024/iter"
 	"aoc2024/vec"
 	"bufio"
+	"container/heap"
 	"fmt"
 	"io"
 	"iter"
@@ -177,4 +178,66 @@ func CopyMatrix[T any](mat [][]T) [][]T {
 		new = append(new, newRow)
 	}
 	return new
+}
+
+type WeightNode[T any] struct {
+	Node T
+	Dist int
+}
+
+type PriorityQueue[T any] []*WeightNode[T]
+
+func (h PriorityQueue[T]) Len() int {
+	return len(h)
+}
+
+func (h PriorityQueue[T]) Less(i int, j int) bool {
+	return h[i].Dist < h[j].Dist
+}
+
+func (h PriorityQueue[T]) Swap(i int, j int) {
+	h[i], h[j] = h[j], h[i]
+}
+
+func (h *PriorityQueue[T]) Push(x any) {
+	*h = append(*h, x.(*WeightNode[T]))
+}
+
+func (h *PriorityQueue[T]) Pop() any {
+	old := *h
+	n := len(old)
+	x := old[n-1]
+	*h = old[0 : n-1]
+	return x
+}
+
+func Dijkstra[Node comparable](
+	start Node,
+	end Node,
+	edgesOf func(*WeightNode[Node]) []*WeightNode[Node],
+) (map[Node]int, map[Node][]Node) {
+	h := &PriorityQueue[Node]{}
+	heap.Init(h)
+	distTo := map[Node]int{}
+	preNodes := map[Node][]Node{}
+
+	startNode := WeightNode[Node]{start, 0}
+	heap.Push(h, &startNode)
+	distTo[startNode.Node] = 0
+	preNodes[startNode.Node] = []Node{}
+
+	for h.Len() > 0 {
+		nearest := heap.Pop(h).(*WeightNode[Node])
+		for _, neignbor := range edgesOf(nearest) {
+			if !MapContains(distTo, neignbor.Node) || distTo[neignbor.Node] > neignbor.Dist {
+				distTo[neignbor.Node] = neignbor.Dist
+				heap.Push(h, neignbor)
+				preNodes[neignbor.Node] = []Node{nearest.Node}
+			} else if distTo[neignbor.Node] == neignbor.Dist {
+				preNodes[neignbor.Node] = append(preNodes[neignbor.Node], nearest.Node)
+			}
+		}
+	}
+
+	return distTo, preNodes
 }
