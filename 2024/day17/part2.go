@@ -5,7 +5,7 @@ import (
 	"slices"
 )
 
-// A general solver which does not have too much assumptions about the input
+// A general solver which does not assumptions about the input
 
 func part2(c Computer) int {
 	bc := BranchComputer{
