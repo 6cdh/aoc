@@ -5,8 +5,6 @@ import (
 	"slices"
 )
 
-const ErrNotFound = -1
-
 type State struct {
 	a       int
 	b       int
@@ -15,26 +13,26 @@ type State struct {
 	output  int
 }
 
-type RComputer struct {
+type BranchComputer struct {
 	program []int
 	st      State
 }
 
-var cache = map[State]int{}
+var cache = map[State][]int{}
 
-func (c RComputer) run() int {
+func (c BranchComputer) run() []int {
 	if !utils.MapContains(cache, c.st) {
 		cache[c.st] = c.run1()
 	}
 	return cache[c.st]
 }
 
-func (c RComputer) run1() int {
+func (c BranchComputer) run1() []int {
 	if c.st.pointer == len(c.program) {
 		if c.st.output == len(c.program) {
-			return c.st.a
+			return []int{c.st.a}
 		}
-		return ErrNotFound
+		return []int{}
 	}
 	switch c.program[c.st.pointer] {
 	case 0:
@@ -58,11 +56,11 @@ func (c RComputer) run1() int {
 	}
 }
 
-func (c RComputer) literal() int {
+func (c BranchComputer) literal() int {
 	return c.program[c.st.pointer+1]
 }
 
-func (c RComputer) combo() int {
+func (c BranchComputer) combo() int {
 	switch v := c.program[c.st.pointer+1]; v {
 	case 0, 1, 2, 3:
 		return v
@@ -77,7 +75,7 @@ func (c RComputer) combo() int {
 	}
 }
 
-func validSol(rc RComputer) bool {
+func validSolution(rc BranchComputer) bool {
 	c := Computer{
 		a:       rc.st.a,
 		b:       rc.st.b,
@@ -90,107 +88,114 @@ func validSol(rc RComputer) bool {
 	return slices.Equal(c.output, c.program)
 }
 
-func (rc RComputer) adv() int {
-	mina := ErrNotFound
+func (rc BranchComputer) adv() []int {
+	as := []int{}
 	for bits := range 8 {
 		rc2 := rc
 		rc2.st.a = bits
 		rc2.st.pointer += 2
-		ra := rc2.run()
-		rc3 := rc
-		rc3.st.a = (ra << rc3.combo()) | rc.st.a
-		if ra != ErrNotFound && validSol(rc3) && (mina == ErrNotFound || rc3.st.a < mina) {
-			mina = rc3.st.a
+		for _, ra := range rc2.run() {
+			rc3 := rc
+			// combo() is expected to not a value from register A
+			rc3.st.a = (ra << rc3.combo()) | rc.st.a
+			if validSolution(rc3) {
+				as = append(as, rc3.st.a)
+			}
 		}
 	}
-	return mina
+	return as
 }
 
-func (c RComputer) bxl() int {
+func (c BranchComputer) bxl() []int {
 	c.st.b = c.st.b ^ c.literal()
 	c.st.pointer += 2
 	return c.run()
 }
 
-func (c RComputer) bst() int {
+func (c BranchComputer) bst() []int {
 	c.st.b = c.combo() % 8
 	c.st.pointer += 2
 	return c.run()
 }
 
-func (rc RComputer) jnz() int {
+func (rc BranchComputer) jnz() []int {
 	if rc.st.a != 0 {
-		rc1 := rc
-		rc1.st.pointer = rc1.literal()
-		return rc1.run()
-	} else {
-		rc1 := rc
-		rc1.st.pointer += 2
-		a1 := rc1.run()
 		rc2 := rc
-		rc2.st.a = a1
-		if a1 != ErrNotFound && validSol(rc2) {
-			return 0
-		}
-
-		rc3 := rc
-		rc3.st.pointer = rc3.literal()
-		a2 := rc3.run()
-		rc4 := rc
-		rc4.st.a = a2
-		if a2 != ErrNotFound && validSol(rc4) {
-			return a2
+		rc2.st.pointer = rc2.literal()
+		return rc2.run()
+	}
+	as := []int{}
+	{
+		rc2 := rc
+		rc2.st.pointer += 2
+		for _, ra := range rc2.run() {
+			rc3 := rc
+			rc3.st.a = ra
+			if ra == 0 && validSolution(rc3) {
+				as = append(as, rc3.st.a)
+			}
 		}
 	}
-	return ErrNotFound
+	{
+		rc2 := rc
+		rc2.st.pointer = rc2.literal()
+		for _, ra := range rc2.run() {
+			rc3 := rc
+			rc3.st.a = ra
+			if ra != 0 && validSolution(rc3) {
+				as = append(as, rc3.st.a)
+			}
+		}
+	}
+	return as
 }
 
-func (c RComputer) bxc() int {
+func (c BranchComputer) bxc() []int {
 	c.st.b = c.st.b ^ c.st.c
 	c.st.pointer += 2
 	return c.run()
 }
 
-func (rc RComputer) out() int {
+func (rc BranchComputer) out() []int {
 	cur := rc.combo() % 8
 	if !(rc.st.output < len(rc.program)) || cur != rc.program[rc.st.output] {
-		return ErrNotFound
+		return []int{}
 	}
 	rc.st.output += 1
 	rc.st.pointer += 2
 	return rc.run()
 }
 
-func (rc RComputer) bdv() int {
-	mina := ErrNotFound
+func (rc BranchComputer) bdv() []int {
+	as := []int{}
 	for bits := range 8 {
 		rc2 := rc
-		rc2.st.a = (bits << rc2.combo()) | rc.st.a
-		rc2.st.b = rc2.st.a >> rc2.combo()
+		rc2.st.b = bits
 		rc2.st.pointer += 2
-		ra := rc2.run()
-		rc3 := rc
-		rc3.st.a = ra
-		if ra != ErrNotFound && validSol(rc3) && (mina == ErrNotFound || rc3.st.a < mina) {
-			mina = rc3.st.a
+		for _, ra := range rc2.run() {
+			rc3 := rc
+			rc3.st.a = ra
+			if validSolution(rc3) {
+				as = append(as, rc3.st.a)
+			}
 		}
 	}
-	return mina
+	return as
 }
 
-func (rc RComputer) cdv() int {
-	mina := ErrNotFound
+func (rc BranchComputer) cdv() []int {
+	as := []int{}
 	for bits := range 8 {
 		rc2 := rc
-		rc2.st.a = (bits << rc2.combo()) | rc.st.a
-		rc2.st.c = rc2.st.a >> rc2.combo()
+		rc2.st.b = bits
 		rc2.st.pointer += 2
-		ra := rc2.run()
-		rc3 := rc
-		rc3.st.a = ra
-		if ra != ErrNotFound && validSol(rc3) && (mina == ErrNotFound || rc3.st.a < mina) {
-			mina = rc3.st.a
+		for _, ra := range rc2.run() {
+			rc3 := rc
+			rc3.st.a = ra
+			if validSolution(rc3) {
+				as = append(as, rc3.st.a)
+			}
 		}
 	}
-	return mina
+	return as
 }

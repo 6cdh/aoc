@@ -39,7 +39,7 @@ func part1(c Computer) string {
 }
 
 func part2(c Computer) int {
-	rc := RComputer{
+	rc := BranchComputer{
 		program: c.program,
 		st: State{
 			a: c.a,
@@ -47,17 +47,18 @@ func part2(c Computer) int {
 			c: c.c,
 		},
 	}
-	mina := ErrNotFound
-	for newa := range 8 {
+	minA := -1
+	for a := range 8 {
 		rc2 := rc
-		rc2.st.a = newa
-		ra := rc2.run()
-		rc2.st.a = ra
-		if ra != ErrNotFound && validSol(rc2) && (mina == ErrNotFound || ra < mina) {
-			mina = ra
+		rc2.st.a = a
+		for _, ra := range rc2.run() {
+			rc2.st.a = ra
+			if validSolution(rc2) && rc2.st.a > 0 && (minA == -1 || ra < minA) {
+				minA = rc2.st.a
+			}
 		}
 	}
-	return mina
+	return minA
 }
 
 func parseRegister(str string) int {
