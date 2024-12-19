@@ -8,7 +8,7 @@ import (
 // A general solver which does not have too much assumptions about the input
 
 func part2(c Computer) int {
-	rc := BranchComputer{
+	bc := BranchComputer{
 		program: c.program,
 		st: State{
 			a: c.a,
@@ -18,12 +18,12 @@ func part2(c Computer) int {
 	}
 	minA := -1
 	for a := range 8 {
-		rc2 := rc
-		rc2.st.a = a
-		for _, ra := range rc2.run() {
-			rc2.st.a = ra
-			if validSolution(rc2) && rc2.st.a > 0 && (minA == -1 || ra < minA) {
-				minA = rc2.st.a
+		bc2 := bc
+		bc2.st.a = a
+		for _, ra := range bc2.run() {
+			bc2.st.a = ra
+			if validSolution(bc2) && bc2.st.a > 0 && (minA == -1 || ra < minA) {
+				minA = bc2.st.a
 			}
 		}
 	}
@@ -45,179 +45,179 @@ type BranchComputer struct {
 
 var cache = map[State][]int{}
 
-func (c BranchComputer) run() []int {
-	if !utils.MapContains(cache, c.st) {
-		cache[c.st] = c.run1()
+func (bc BranchComputer) run() []int {
+	if !utils.MapContains(cache, bc.st) {
+		cache[bc.st] = bc.run1()
 	}
-	return cache[c.st]
+	return cache[bc.st]
 }
 
-func (c BranchComputer) run1() []int {
-	if c.st.pointer == len(c.program) {
-		if c.st.output == len(c.program) {
-			return []int{c.st.a}
+func (bc BranchComputer) run1() []int {
+	if bc.st.pointer == len(bc.program) {
+		if bc.st.output == len(bc.program) {
+			return []int{bc.st.a}
 		}
 		return []int{}
 	}
-	switch c.program[c.st.pointer] {
+	switch bc.program[bc.st.pointer] {
 	case 0:
-		return c.adv()
+		return bc.adv()
 	case 1:
-		return c.bxl()
+		return bc.bxl()
 	case 2:
-		return c.bst()
+		return bc.bst()
 	case 3:
-		return c.jnz()
+		return bc.jnz()
 	case 4:
-		return c.bxc()
+		return bc.bxc()
 	case 5:
-		return c.out()
+		return bc.out()
 	case 6:
-		return c.bdv()
+		return bc.bdv()
 	case 7:
-		return c.cdv()
+		return bc.cdv()
 	default:
-		panic(c)
+		panic(bc)
 	}
 }
 
-func (c BranchComputer) literal() int {
-	return c.program[c.st.pointer+1]
+func (bc BranchComputer) literal() int {
+	return bc.program[bc.st.pointer+1]
 }
 
-func (c BranchComputer) combo() int {
-	switch v := c.program[c.st.pointer+1]; v {
+func (bc BranchComputer) combo() int {
+	switch v := bc.program[bc.st.pointer+1]; v {
 	case 0, 1, 2, 3:
 		return v
 	case 4:
-		return c.st.a
+		return bc.st.a
 	case 5:
-		return c.st.b
+		return bc.st.b
 	case 6:
-		return c.st.c
+		return bc.st.c
 	default:
 		panic(v)
 	}
 }
 
-func validSolution(rc BranchComputer) bool {
+func validSolution(bc BranchComputer) bool {
 	c := Computer{
-		a:       rc.st.a,
-		b:       rc.st.b,
-		c:       rc.st.c,
-		pointer: rc.st.pointer,
-		program: rc.program,
-		output:  slices.Clone(rc.program[:rc.st.output]),
+		a:       bc.st.a,
+		b:       bc.st.b,
+		c:       bc.st.c,
+		pointer: bc.st.pointer,
+		program: bc.program,
+		output:  slices.Clone(bc.program[:bc.st.output]),
 	}
 	c.run()
 	return slices.Equal(c.output, c.program)
 }
 
-func (rc BranchComputer) adv() []int {
+func (bc BranchComputer) adv() []int {
 	as := []int{}
 	for bits := range 8 {
-		rc2 := rc
-		rc2.st.a = bits
-		rc2.st.pointer += 2
-		for _, ra := range rc2.run() {
-			rc3 := rc
-			rc3.st.a = (ra << rc3.combo()) | rc.st.a
-			if validSolution(rc3) {
-				as = append(as, rc3.st.a)
+		bc2 := bc
+		bc2.st.a = bits
+		bc2.st.pointer += 2
+		for _, ra := range bc2.run() {
+			bc3 := bc
+			bc3.st.a = (ra << bc3.combo()) | bc.st.a
+			if validSolution(bc3) {
+				as = append(as, bc3.st.a)
 			}
 		}
 	}
 	return as
 }
 
-func (c BranchComputer) bxl() []int {
-	c.st.b = c.st.b ^ c.literal()
-	c.st.pointer += 2
-	return c.run()
+func (bc BranchComputer) bxl() []int {
+	bc.st.b = bc.st.b ^ bc.literal()
+	bc.st.pointer += 2
+	return bc.run()
 }
 
-func (c BranchComputer) bst() []int {
-	c.st.b = c.combo() % 8
-	c.st.pointer += 2
-	return c.run()
+func (bc BranchComputer) bst() []int {
+	bc.st.b = bc.combo() % 8
+	bc.st.pointer += 2
+	return bc.run()
 }
 
-func (rc BranchComputer) jnz() []int {
-	if rc.st.a != 0 {
-		rc2 := rc
-		rc2.st.pointer = rc2.literal()
-		return rc2.run()
+func (bc BranchComputer) jnz() []int {
+	if bc.st.a != 0 {
+		bc2 := bc
+		bc2.st.pointer = bc2.literal()
+		return bc2.run()
 	}
 	as := []int{}
 	{
-		rc2 := rc
-		rc2.st.pointer += 2
-		for _, ra := range rc2.run() {
-			rc3 := rc
-			rc3.st.a = ra
-			if ra == 0 && validSolution(rc3) {
-				as = append(as, rc3.st.a)
+		bc2 := bc
+		bc2.st.pointer += 2
+		for _, ra := range bc2.run() {
+			bc3 := bc
+			bc3.st.a = ra
+			if ra == 0 && validSolution(bc3) {
+				as = append(as, bc3.st.a)
 			}
 		}
 	}
 	{
-		rc2 := rc
-		rc2.st.pointer = rc2.literal()
-		for _, ra := range rc2.run() {
-			rc3 := rc
-			rc3.st.a = ra
-			if ra != 0 && validSolution(rc3) {
-				as = append(as, rc3.st.a)
+		bc2 := bc
+		bc2.st.pointer = bc2.literal()
+		for _, ra := range bc2.run() {
+			bc3 := bc
+			bc3.st.a = ra
+			if ra != 0 && validSolution(bc3) {
+				as = append(as, bc3.st.a)
 			}
 		}
 	}
 	return as
 }
 
-func (c BranchComputer) bxc() []int {
-	c.st.b = c.st.b ^ c.st.c
-	c.st.pointer += 2
-	return c.run()
+func (bc BranchComputer) bxc() []int {
+	bc.st.b = bc.st.b ^ bc.st.c
+	bc.st.pointer += 2
+	return bc.run()
 }
 
-func (rc BranchComputer) out() []int {
-	cur := rc.combo() % 8
-	if !(rc.st.output < len(rc.program)) || cur != rc.program[rc.st.output] {
+func (bc BranchComputer) out() []int {
+	cur := bc.combo() % 8
+	if !(bc.st.output < len(bc.program)) || cur != bc.program[bc.st.output] {
 		return []int{}
 	}
-	rc.st.output += 1
-	rc.st.pointer += 2
-	return rc.run()
+	bc.st.output += 1
+	bc.st.pointer += 2
+	return bc.run()
 }
 
-func (rc BranchComputer) bdv() []int {
+func (bc BranchComputer) bdv() []int {
 	as := []int{}
 	for bits := range 8 {
-		rc2 := rc
-		rc2.st.b = bits
-		rc2.st.pointer += 2
-		for _, ra := range rc2.run() {
-			rc3 := rc
-			rc3.st.a = ra
-			if validSolution(rc3) {
-				as = append(as, rc3.st.a)
+		bc2 := bc
+		bc2.st.b = bits
+		bc2.st.pointer += 2
+		for _, ra := range bc2.run() {
+			bc3 := bc
+			bc3.st.a = ra
+			if validSolution(bc3) {
+				as = append(as, bc3.st.a)
 			}
 		}
 	}
 	return as
 }
 
-func (rc BranchComputer) cdv() []int {
+func (bc BranchComputer) cdv() []int {
 	as := []int{}
 	for bits := range 8 {
-		rc2 := rc
-		rc2.st.c = bits
-		rc2.st.pointer += 2
-		for _, ra := range rc2.run() {
-			rc3 := rc
-			rc3.st.a = ra
-			if validSolution(rc3) {
-				as = append(as, rc3.st.a)
+		bc2 := bc
+		bc2.st.c = bits
+		bc2.st.pointer += 2
+		for _, ra := range bc2.run() {
+			bc3 := bc
+			bc3.st.a = ra
+			if validSolution(bc3) {
+				as = append(as, bc3.st.a)
 			}
 		}
 	}
