@@ -22,7 +22,7 @@ func part2(c Computer) int {
 		bc2.st.a = a
 		for _, ra := range bc2.run() {
 			bc2.st.a = ra
-			if validSolution(bc2) && bc2.st.a > 0 && (minA == -1 || ra < minA) {
+			if validSolution(bc2) && bc2.st.a > 0 && (minA == -1 || bc2.st.a < minA) {
 				minA = bc2.st.a
 			}
 		}
@@ -155,7 +155,7 @@ func (bc BranchComputer) jnz() []int {
 		for _, ra := range bc2.run() {
 			bc3 := bc
 			bc3.st.a = ra
-			if ra == 0 && validSolution(bc3) {
+			if bc3.st.a == 0 && validSolution(bc3) {
 				as = append(as, bc3.st.a)
 			}
 		}
@@ -166,7 +166,7 @@ func (bc BranchComputer) jnz() []int {
 		for _, ra := range bc2.run() {
 			bc3 := bc
 			bc3.st.a = ra
-			if ra != 0 && validSolution(bc3) {
+			if bc3.st.a != 0 && validSolution(bc3) {
 				as = append(as, bc3.st.a)
 			}
 		}
