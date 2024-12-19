@@ -31,38 +31,15 @@ func Solve(in io.Reader, out io.Writer) {
 	fmt.Fprintln(out, part2(c))
 }
 
+func parseRegister(str string) int {
+	return utils.StrToInt(strings.Split(str, ": ")[1])
+}
+
 func part1(c Computer) string {
 	c.output = []int{}
 	c.run()
 	output := strings.Join(iter.Map(iter.SliceValues(c.output), strconv.Itoa).Collect(), ",")
 	return output
-}
-
-func part2(c Computer) int {
-	rc := BranchComputer{
-		program: c.program,
-		st: State{
-			a: c.a,
-			b: c.b,
-			c: c.c,
-		},
-	}
-	minA := -1
-	for a := range 8 {
-		rc2 := rc
-		rc2.st.a = a
-		for _, ra := range rc2.run() {
-			rc2.st.a = ra
-			if validSolution(rc2) && rc2.st.a > 0 && (minA == -1 || ra < minA) {
-				minA = rc2.st.a
-			}
-		}
-	}
-	return minA
-}
-
-func parseRegister(str string) int {
-	return utils.StrToInt(strings.Split(str, ": ")[1])
 }
 
 func (c *Computer) run() {

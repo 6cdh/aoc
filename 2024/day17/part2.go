@@ -5,6 +5,31 @@ import (
 	"slices"
 )
 
+// A general solver which does not have too much assumptions about the input
+
+func part2(c Computer) int {
+	rc := BranchComputer{
+		program: c.program,
+		st: State{
+			a: c.a,
+			b: c.b,
+			c: c.c,
+		},
+	}
+	minA := -1
+	for a := range 8 {
+		rc2 := rc
+		rc2.st.a = a
+		for _, ra := range rc2.run() {
+			rc2.st.a = ra
+			if validSolution(rc2) && rc2.st.a > 0 && (minA == -1 || ra < minA) {
+				minA = rc2.st.a
+			}
+		}
+	}
+	return minA
+}
+
 type State struct {
 	a       int
 	b       int
