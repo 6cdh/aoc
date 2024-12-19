@@ -121,7 +121,6 @@ func (rc BranchComputer) adv() []int {
 		rc2.st.pointer += 2
 		for _, ra := range rc2.run() {
 			rc3 := rc
-			// combo() is expected to not a value from register A
 			rc3.st.a = (ra << rc3.combo()) | rc.st.a
 			if validSolution(rc3) {
 				as = append(as, rc3.st.a)
