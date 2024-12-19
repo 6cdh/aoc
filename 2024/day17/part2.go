@@ -212,7 +212,7 @@ func (rc BranchComputer) cdv() []int {
 	as := []int{}
 	for bits := range 8 {
 		rc2 := rc
-		rc2.st.b = bits
+		rc2.st.c = bits
 		rc2.st.pointer += 2
 		for _, ra := range rc2.run() {
 			rc3 := rc
