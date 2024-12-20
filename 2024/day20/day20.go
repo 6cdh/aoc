@@ -11,7 +11,7 @@ import (
 type Pos = vec.Vec2i
 type DNode = utils.WeightNode[Pos]
 
-var fourDirs = []Pos{vec.UP, vec.DOWN, vec.LEFT, vec.RIGHT}
+var fourDirs = []vec.Vec2i{vec.UP, vec.DOWN, vec.LEFT, vec.RIGHT}
 
 func Solve(in io.Reader, out io.Writer) {
 	grid := iter.ReadLines(in).Collect()
@@ -19,9 +19,9 @@ func Solve(in io.Reader, out io.Writer) {
 	edges := func(dnode *DNode) []*DNode {
 		dnodes := []*DNode{}
 		for _, dir := range fourDirs {
-			npos := dnode.Node.Add(dir)
-			if utils.MatrixAt(grid, npos) != '#' {
-				dnodes = append(dnodes, &DNode{npos, dnode.Dist + 1})
+			nextPos := dnode.Node.Add(dir)
+			if vec.IsValidPos(nextPos, grid) && utils.MatrixAt(grid, nextPos) != '#' {
+				dnodes = append(dnodes, &DNode{Node: nextPos, Dist: dnode.Dist + 1})
 			}
 		}
 		return dnodes
