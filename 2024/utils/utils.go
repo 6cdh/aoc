@@ -38,6 +38,13 @@ func AbsDiff[T Int](x T, y T) T {
 	}
 }
 
+func Abs[T Int](x T) T {
+	if x < 0 {
+		return -x
+	}
+	return x
+}
+
 // IgnoreErr wraps a function, ignoring its error and returning only its result.
 func IgnoreErr[Arg any, Res any](fn func(Arg) (Res, error)) func(Arg) Res {
 	return func(x Arg) Res {
