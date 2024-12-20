@@ -78,7 +78,12 @@ func (aoc *AOC) runDay(day int, in io.ReadCloser, out io.Writer) {
 	defer in.Close()
 	start := time.Now()
 	aoc.solve(day, in, out)
-	fmt.Fprintf(os.Stderr, "Execution time: %v for day %d\n", time.Since(start), day)
+	fmt.Fprintf(
+		os.Stderr,
+		"Execution time: %s for day %d\n",
+		time.Since(start).Round(time.Microsecond),
+		day,
+	)
 }
 
 func IsPathExists(p string) bool {
