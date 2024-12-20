@@ -16,7 +16,7 @@ var fourDirs = []vec.Vec2i{vec.UP, vec.DOWN, vec.LEFT, vec.RIGHT}
 func Solve(in io.Reader, out io.Writer) {
 	grid := iter.ReadLines(in).Collect()
 
-	edges := func(dnode *DNode) []*DNode {
+	neighbors := func(dnode *DNode) []*DNode {
 		dnodes := []*DNode{}
 		for _, dir := range fourDirs {
 			nextPos := dnode.Node.Add(dir)
@@ -29,8 +29,8 @@ func Solve(in io.Reader, out io.Writer) {
 
 	start := utils.FindMatrixPos('S', grid)
 	end := utils.FindMatrixPos('E', grid)
-	distToStart, _ := utils.Dijkstra(start, end, edges)
-	distToEnd, _ := utils.Dijkstra(end, start, edges)
+	distToStart, _ := utils.Dijkstra(start, end, neighbors)
+	distToEnd, _ := utils.Dijkstra(end, start, neighbors)
 	noCheatDist := distToStart[end]
 	fmt.Fprintln(out, countCheats(2, 100, noCheatDist, distToStart, distToEnd, grid))
 	fmt.Fprintln(out, countCheats(20, 100, noCheatDist, distToStart, distToEnd, grid))
