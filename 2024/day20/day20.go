@@ -32,11 +32,11 @@ func Solve(in io.Reader, out io.Writer) {
 	distToStart, _ := utils.Dijkstra(start, end, edges)
 	distToEnd, _ := utils.Dijkstra(end, start, edges)
 	noCheatDist := distToStart[end]
-	fmt.Fprintln(out, part(2, 100, noCheatDist, distToStart, distToEnd, grid))
-	fmt.Fprintln(out, part(20, 100, noCheatDist, distToStart, distToEnd, grid))
+	fmt.Fprintln(out, countCheats(2, 100, noCheatDist, distToStart, distToEnd, grid))
+	fmt.Fprintln(out, countCheats(20, 100, noCheatDist, distToStart, distToEnd, grid))
 }
 
-func part(cheatLen int, atLeastSave int, noCheatDist int, distToStart map[Pos]int, distToEnd map[Pos]int, grid [][]byte) int {
+func countCheats(cheatLen int, atLeastSave int, noCheatDist int, distToStart map[Pos]int, distToEnd map[Pos]int, grid [][]byte) int {
 	cheatCnt := 0
 	for cheatStart := range iter.MatrixIndex(grid) {
 		for dx := -cheatLen; dx <= cheatLen; dx++ {
