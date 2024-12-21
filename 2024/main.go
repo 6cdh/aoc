@@ -22,6 +22,7 @@ import (
 	"aoc2024/day18"
 	"aoc2024/day19"
 	"aoc2024/day20"
+	"aoc2024/day21"
 	"aoc2024/log"
 	"io"
 )
@@ -49,6 +50,7 @@ var funcs = []Solver{
 	day18.Solve,
 	day19.Solve,
 	day20.Solve,
+	day21.Solve,
 }
 
 func main() {

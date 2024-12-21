@@ -235,16 +235,40 @@ func Dijkstra[Node comparable](
 
 	for h.Len() > 0 {
 		nearest := heap.Pop(h).(*WeightNode[Node])
-		for _, neignbor := range edgesOf(nearest) {
-			if !MapContains(distTo, neignbor.Node) || distTo[neignbor.Node] > neignbor.Dist {
-				distTo[neignbor.Node] = neignbor.Dist
-				heap.Push(h, neignbor)
-				preNodes[neignbor.Node] = []Node{nearest.Node}
-			} else if distTo[neignbor.Node] == neignbor.Dist {
-				preNodes[neignbor.Node] = append(preNodes[neignbor.Node], nearest.Node)
+		for _, neighbor := range edgesOf(nearest) {
+			if !MapContains(distTo, neighbor.Node) || distTo[neighbor.Node] > neighbor.Dist {
+				distTo[neighbor.Node] = neighbor.Dist
+				heap.Push(h, neighbor)
+				preNodes[neighbor.Node] = []Node{nearest.Node}
+			} else if distTo[neighbor.Node] == neighbor.Dist {
+				preNodes[neighbor.Node] = append(preNodes[neighbor.Node], nearest.Node)
 			}
 		}
 	}
 
+	return distTo, preNodes
+}
+
+func BFS[Node comparable](start Node, edgesOf func(Node) []Node) (map[Node]int, map[Node][]Node) {
+	queue := []Node{start}
+	distTo := map[Node]int{}
+	preNodes := map[Node][]Node{}
+	dist := 1
+	for len(queue) > 0 {
+		newQ := []Node{}
+		for _, node := range queue {
+			for _, neighbor := range edgesOf(node) {
+				if !MapContains(distTo, neighbor) {
+					distTo[neighbor] = dist
+					preNodes[neighbor] = []Node{node}
+					newQ = append(newQ, neighbor)
+				} else if dist == distTo[neighbor] {
+					preNodes[neighbor] = append(preNodes[neighbor], node)
+				}
+			}
+		}
+		queue = newQ
+		dist += 1
+	}
 	return distTo, preNodes
 }
