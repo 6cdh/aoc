@@ -24,12 +24,11 @@ func part1(secrets []int) int {
 
 type ChangeSeq = int
 type SeqToPriceT = map[ChangeSeq]int
-type Result = SeqToPriceT
 
 func part2(secrets []int) int {
-	tp := utils.NewTaskPool[Result](len(secrets))
+	tp := utils.NewTaskPool[SeqToPriceT](len(secrets))
 	for _, sec := range secrets {
-		tp.AddTask(func() (Result, error) {
+		tp.AddTask(func() (SeqToPriceT, error) {
 			return addPrice(sec), nil
 		})
 	}
@@ -49,7 +48,7 @@ func part2(secrets []int) int {
 	return maxPrice
 }
 
-func addPrice(sec int) Result {
+func addPrice(sec int) SeqToPriceT {
 	h := SeqToPriceT{}
 	rec(4, next(sec, 0), next(sec, 1), next(sec, 2), next(sec, 3), next(sec, 4), h)
 	return h
