@@ -155,9 +155,24 @@ func (p *TaskPool[T]) AddTask(task func() (T, error)) {
 	}()
 }
 
+func (p *TaskPool[T]) AddChannelTask(task func(chan T)) {
+	p.wg.Add(1)
+	go func() {
+		defer p.wg.Done()
+		task(p.ch)
+	}()
+}
+
 func (p *TaskPool[T]) WaitAll() {
 	p.wg.Wait()
 	close(p.ch)
+}
+
+func (p *TaskPool[T]) AsyncWaitAll() {
+	go func() {
+		p.wg.Wait()
+		close(p.ch)
+	}()
 }
 
 func (p *TaskPool[T]) Result() <-chan T {
