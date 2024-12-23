@@ -34,7 +34,7 @@ func part2(secrets []int) int {
 	}
 	tp.AsyncWaitAll()
 
-	prices := map[ChangeSeq]int{}
+	prices := SeqToPriceT{}
 	for r := range tp.Result() {
 		for seq, price := range r {
 			prices[seq] += price
@@ -49,25 +49,25 @@ func part2(secrets []int) int {
 }
 
 func addPrice(sec int) SeqToPriceT {
-	h := SeqToPriceT{}
-	rec(4, next(sec, 0), next(sec, 1), next(sec, 2), next(sec, 3), next(sec, 4), h)
-	return h
+	seqToPrice := SeqToPriceT{}
+	addPriceRec(4, next(sec, 0), next(sec, 1), next(sec, 2), next(sec, 3), next(sec, 4), seqToPrice)
+	return seqToPrice
 }
 
-func rec(i int, p1 int, p2 int, p3 int, p4 int, p5 int, h SeqToPriceT) {
+func addPriceRec(i int, p1 int, p2 int, p3 int, p4 int, p5 int, seqToPrice SeqToPriceT) {
 	if i == 2001 {
 		return
 	}
-	cs := changeSeqHash(
+	seq := changeSeqHash(
 		price(p2)-price(p1),
 		price(p3)-price(p2),
 		price(p4)-price(p3),
 		price(p5)-price(p4),
 	)
-	if !utils.MapContains(h, cs) {
-		h[cs] = price(p5)
+	if !utils.MapContains(seqToPrice, seq) {
+		seqToPrice[seq] = price(p5)
 	}
-	rec(i+1, p2, p3, p4, p5, next(p5, 1), h)
+	addPriceRec(i+1, p2, p3, p4, p5, next(p5, 1), seqToPrice)
 }
 
 func changeSeqHash(d1 int, d2 int, d3 int, d4 int) int {
