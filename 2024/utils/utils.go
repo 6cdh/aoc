@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"iter"
+	"maps"
 	"math"
 	"slices"
 	"strconv"
@@ -286,4 +287,119 @@ func BFS[Node comparable](start Node, edgesOf func(Node) []Node) (map[Node]int, 
 		dist += 1
 	}
 	return distTo, preNodes
+}
+
+type Map[K comparable, V any] map[K]V
+
+func (m Map[K, V]) Contains(k K) bool {
+	_, ok := m[k]
+	return ok
+}
+
+func (m Map[K, V]) Add(k K, v V) {
+	m[k] = v
+}
+
+func (m Map[K, V]) Remove(k K) {
+	delete(m, k)
+}
+
+func (m Map[K, V]) Get(k K) V {
+	return m[k]
+}
+
+func (m Map[K, V]) GetOrDefault(k K, other V) V {
+	val, ok := m[k]
+	if ok {
+		return val
+	}
+	return other
+}
+
+func (m Map[K, V]) Update(k K, updater func(V) V) {
+	m[k] = updater(m.Get(k))
+}
+
+func (m Map[K, V]) KeyIter() iter2.Iter[K] {
+	return func(yield func(K) bool) {
+		for k := range m {
+			if !yield(k) {
+				return
+			}
+		}
+	}
+}
+
+func (m Map[K, V]) ValIter() iter2.Iter[V] {
+	return func(yield func(V) bool) {
+		for _, v := range m {
+			if !yield(v) {
+				return
+			}
+		}
+	}
+}
+
+func (m Map[K, V]) Iter() iter2.Iter[iter2.Pair[K, V]] {
+	return func(yield func(iter2.Pair[K, V]) bool) {
+		for k, v := range m {
+			if !yield(iter2.NewPair(k, v)) {
+				return
+			}
+		}
+	}
+}
+
+type Set[T comparable] map[T]struct{}
+
+func (s Set[T]) Add(v T) Set[T] {
+	s[v] = struct{}{}
+	return s
+}
+
+func (s Set[T]) Remove(v T) Set[T] {
+	delete(s, v)
+	return s
+}
+
+func (s Set[T]) Contains(v T) bool {
+	_, ok := s[v]
+	return ok
+}
+
+func (s Set[T]) Clone() Set[T] {
+	return maps.Clone(s)
+}
+
+func (s Set[T]) Union(s2 Set[T]) Set[T] {
+	for v := range s2 {
+		s.Add(v)
+	}
+	return s
+}
+
+func (s Set[T]) Intersect(s2 Set[T]) Set[T] {
+	for v := range s {
+		if !s2.Contains(v) {
+			s.Remove(v)
+		}
+	}
+	return s
+}
+
+func (s Set[T]) Iter() iter2.Iter[T] {
+	return func(yield func(T) bool) {
+		for v := range s {
+			if !yield(v) {
+				return
+			}
+		}
+	}
+}
+
+func (s Set[T]) First() T {
+	for v := range s {
+		return v
+	}
+	panic(s)
 }
