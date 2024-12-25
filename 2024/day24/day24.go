@@ -2,7 +2,6 @@ package day24
 
 import (
 	"aoc2024/iter"
-	"aoc2024/log"
 	"aoc2024/utils"
 	"fmt"
 	"io"
@@ -12,8 +11,8 @@ import (
 
 type Gate struct {
 	in1 string
-	in2 string
 	op  string
+	in2 string
 	out string
 }
 
@@ -22,14 +21,14 @@ func Solve(in io.Reader, out io.Writer) {
 
 	outToGate := utils.Map[string, *Gate]{}
 	for _, gate := range gates {
-		outToGate[gate.out] = &gate
+		outToGate[gate.out] = gate
 	}
 
 	fmt.Fprintln(out, part1(gates, wires, outToGate))
 	fmt.Fprintln(out, part2(gates, outToGate))
 }
 
-func part1(gates []Gate, wires utils.Map[string, int], outToGate utils.Map[string, *Gate]) int {
+func part1(gates []*Gate, wires utils.Map[string, int], outToGate utils.Map[string, *Gate]) int {
 	ans := 0
 	for _, gate := range gates {
 		if strings.HasPrefix(gate.out, "z") {
@@ -40,7 +39,7 @@ func part1(gates []Gate, wires utils.Map[string, int], outToGate utils.Map[strin
 	return ans
 }
 
-func part2(gates []Gate, outToGate utils.Map[string, *Gate]) string {
+func part2(gates []*Gate, outToGate utils.Map[string, *Gate]) string {
 	swaps := []string{}
 
 	inToXorGate := utils.Map[string, *Gate]{}
@@ -49,14 +48,14 @@ func part2(gates []Gate, outToGate utils.Map[string, *Gate]) string {
 	for _, gate := range gates {
 		switch gate.op {
 		case "XOR":
-			inToXorGate[gate.in1] = &gate
-			inToXorGate[gate.in2] = &gate
+			inToXorGate[gate.in1] = gate
+			inToXorGate[gate.in2] = gate
 		case "AND":
-			inToAndGate[gate.in1] = &gate
-			inToAndGate[gate.in2] = &gate
+			inToAndGate[gate.in1] = gate
+			inToAndGate[gate.in2] = gate
 		case "OR":
-			inToOrGate[gate.in1] = &gate
-			inToOrGate[gate.in2] = &gate
+			inToOrGate[gate.in1] = gate
+			inToOrGate[gate.in2] = gate
 		default:
 			panic(gate.op)
 		}
@@ -82,8 +81,8 @@ func part2(gates []Gate, outToGate utils.Map[string, *Gate]) string {
 	return strings.Join(swaps, ",")
 }
 
-func parse(in io.Reader) ([]Gate, utils.Map[string, int]) {
-	gates := []Gate{}
+func parse(in io.Reader) ([]*Gate, utils.Map[string, int]) {
+	gates := []*Gate{}
 	wires := utils.Map[string, int]{}
 	isWire := true
 
@@ -95,11 +94,11 @@ func parse(in io.Reader) ([]Gate, utils.Map[string, int]) {
 			wires[strs[0]] = utils.StrToInt(strs[1])
 		} else {
 			strs := strings.Split(line, " ")
-			gates = append(gates, Gate{
-				strs[0],
-				strs[2],
-				strs[1],
-				strs[4],
+			gates = append(gates, &Gate{
+				in1: strs[0],
+				in2: strs[2],
+				op:  strs[1],
+				out: strs[4],
 			})
 		}
 	}
@@ -219,6 +218,5 @@ func swapOut(gate *Gate, gate2 *Gate, outToGate utils.Map[string, *Gate]) Swap {
 	gate2.out = out1
 	outToGate[gate.out] = gate
 	outToGate[gate2.out] = gate2
-	log.Error("swap: ", gate.out, " ", gate2.out)
 	return Swap{gate.out, gate2.out}
 }
