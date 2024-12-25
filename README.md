@@ -8,6 +8,10 @@
 git clone https://github.com/6cdh/aoc.git
 ```
 
+## 2024
+
+Go 25/25
+
 ## 2023
 
 Racket 22/25
