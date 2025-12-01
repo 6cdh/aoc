@@ -14,7 +14,6 @@
             (if (= new-pos 0) (add1 ans1) ans1)
             (+ ans2 zeros))))
 
-;; execute rotation once
 (define (rotate-once start rot)
   (define dir-ch (string-ref rot 0))
   (define steps (string->number (substring rot 1)))
@@ -42,4 +41,5 @@
   (if (> to 0)
       0
       (+ (quotient to -100)
+         ; count 0
          (if (> from 0) 1 0))))
