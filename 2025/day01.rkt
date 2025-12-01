@@ -23,10 +23,8 @@
     (if (eq? dir-ch #\L)
         (values count-100s-left -1)
         (values count-100s-right 1)))
-
   (define end (+ start (* multiplier steps)))
   (define zeros (counting-fn start end))
-
   (values (modulo end 100) zeros))
 
 ;; count multiples of 100 for rightward rotation, in range (from, to]
