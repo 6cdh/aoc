@@ -38,8 +38,6 @@
 ;; where to <= from and 0 <= from < 100
 ;; 0 is counted.
 (define (count-100s-left from to)
-  (if (> to 0)
-      0
-      (+ (quotient to -100)
-         ; count 0
-         (if (> from 0) 1 0))))
+  (cond [(= to 0) 1]
+        [(> to 0) 0]
+        [else (+ (quotient to -100) (if (> from 0) 1 0))]))
