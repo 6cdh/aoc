@@ -2,6 +2,8 @@
 
 (provide solve)
 
+(require "utils.rkt")
+
 (struct Range
   (start end)
   #:transparent)
@@ -52,8 +54,4 @@
   (for*/and ([i (in-range 0 pat-size)]
              [j (in-range i n pat-size)])
     (char=? (string-ref str i) (string-ref str j))))
-
-(define-syntax-rule (parallel-run expr)
-  (thread #:pool 'own #:keep 'results
-          (lambda () expr)))
 
