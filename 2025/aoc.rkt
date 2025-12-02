@@ -13,6 +13,9 @@
 (define (run arg)
   (match-define (CLI-Arg day mode) arg)
   (define solve (get-solver day))
+  (time (execute-mode day mode solve)))
+
+(define (execute-mode day mode solve)
   (match mode
     ['test
      (define-values (ans1 ans2) (solve (current-input-port)))
@@ -28,9 +31,19 @@
      (define session (find-session))
      (define in (open-aoc-input session 2025 day #:cache #t))
      (define-values (ans1 ans2) (solve in))
-     (define succ1 (filter-response (aoc-submit session 2025 day 1 ans1) 'part1))
-     (define succ2 (filter-response (aoc-submit session 2025 day 2 ans2) 'part2))
-     (when (and succ1 succ2)
+     (define submit-part1-before?
+       (if (void? ans1)
+           (begin
+             (displayln "You didn't solve part 1.")
+             #f)
+           (filter-response (aoc-submit session 2025 day 1 ans1) 'part1)))
+     (define submit-part2-before?
+       (if (void? ans2)
+           (begin
+             (displayln "You didn't solve part 2.")
+             #f)
+           (filter-response (aoc-submit session 2025 day 2 ans2) 'part2)))
+     (when (and submit-part1-before? submit-part2-before?)
        (displayln "You solved both parts. Nothing to submit."))]))
 
 (define (filter-response resp name)
@@ -38,7 +51,7 @@
   (cond [(string-contains? resp completed-str)
          #t]
         [else
-         (displayln (format "Submitted ~a" name))
+         (displayln (format "Submitted ~a." name))
          (displayln resp)
          #f]))
 
