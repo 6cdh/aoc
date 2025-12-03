@@ -16,12 +16,9 @@
 
 (define (total-output-joltage banks digits)
   (for/sum ([bank (in-list banks)])
-    ((make-best-jolt-solver bank digits))))
+    (best-jolt-solver bank digits)))
 
-(define (make-best-jolt-solver bank total-digits)
-  (define (best-jolt)
-    (find-best-jolt (sub1 (vector-length bank)) total-digits))
-
+(define (best-jolt-solver bank total-digits)
   (define/cache-vec (find-best-jolt bat digits)
                     #:vector ((vector-length bank) (add1 total-digits) #f)
     (cond [(= bat 0)
@@ -30,8 +27,9 @@
            (max (vector-ref bank bat)
                 (find-best-jolt (sub1 bat) 1))]
           [else
-           (max (make-decimal (find-best-jolt (sub1 bat) (sub1 digits))
-                              (vector-ref bank bat))
+           (max (+ (* 10 (find-best-jolt (sub1 bat) (sub1 digits)))
+                   (vector-ref bank bat))
                 (find-best-jolt (sub1 bat) digits))]))
-  best-jolt)
+
+  (find-best-jolt (sub1 (vector-length bank)) total-digits))
 

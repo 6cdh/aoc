@@ -12,7 +12,6 @@
          for/max
          remove-duplicates-in-sorted-list
          digit-char->number
-         make-decimal
          define/cache
          define/cache-vec)
 
@@ -107,9 +106,6 @@
 
 (define (digit-char->number c)
   (- (char->integer c) (char->integer #\0)))
-
-(define (make-decimal digits digit)
-  (+ (* 10 digits) digit))
 
 (define-syntax make-array
   (syntax-rules ()
