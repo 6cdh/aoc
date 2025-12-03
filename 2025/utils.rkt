@@ -10,7 +10,13 @@
          vector-range-sum
          decimal-digits
          for/max
-         remove-duplicates-in-sorted-list)
+         remove-duplicates-in-sorted-list
+         digit-char->number
+         make-decimal
+         define/cache
+         define/cache-vec)
+
+(require syntax/parse/define)
 
 (define-syntax-rule (parallel-run expr)
   (thread #:pool 'own #:keep 'results
@@ -98,3 +104,69 @@
                        [v (in-list (cdr lst))]
                        #:when (not (same? leftv v)))
               v))))
+
+(define (digit-char->number c)
+  (- (char->integer c) (char->integer #\0)))
+
+(define (make-decimal digits digit)
+  (+ (* 10 digits) digit))
+
+(define-syntax make-array
+  (syntax-rules ()
+    [(_ n init)
+     (build-vector n (λ _ init))]
+    [(_ n args ...)
+     (build-vector n (λ _ (make-array args ...)))]))
+
+(define-syntax aref
+  (syntax-rules ()
+    [(_ arr) arr]
+    [(_ arr i dims ...)
+     (aref (vector-ref arr i) dims ...)]))
+
+(define-syntax aset!
+  (syntax-rules ()
+    [(_ arr dim new-val)
+     (vector-set! arr dim new-val)]
+    [(_ arr dim1 dims ... new-val)
+     (aset! (vector-ref arr dim1) dims ... new-val)]))
+
+;; cache the procedure using a hash table
+;; usage: just replace (define something ...) with (define/cache something ...)
+(define-syntax-parser define/cache
+  [(_ (fname:id args:id ...)
+      body ...)
+   #'(define fname
+       (letrec ([cache (make-hash)]
+                [fn
+                 (λ (args ...)
+                   body ...)]
+                [fname
+                 (λ (args ...)
+                   (define key (list args ...))
+                   (cond [(hash-has-key? cache key)
+                          (hash-ref cache key)]
+                         [else
+                          (define val (fn args ...))
+                          (hash-set! cache key val)
+                          val]))])
+         fname))])
+
+;; cache the procedure using a vector
+(define-syntax-parser define/cache-vec
+  [(_ (fname:id args:id ...) #:vector (dims ... init)
+      body ...)
+   (with-syntax ([(inames ...) (generate-temporaries #'(dims ...))])
+     #'(define fname
+         (letrec ([cache (make-array dims ... init)]
+                  [to-index (λ (args ...) (values args ...))]
+                  [fn
+                   (λ (args ...)
+                     body ...)]
+                  [fname
+                   (λ (args ...)
+                     (define-values (inames ...) (to-index args ...))
+                     (when (equal? init (aref cache inames ...))
+                       (aset! cache inames ... (fn args ...)))
+                     (aref cache inames ...))])
+           fname)))])
