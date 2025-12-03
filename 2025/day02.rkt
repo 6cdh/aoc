@@ -84,7 +84,6 @@
         (sort ids <)
         (list->vector ids)))
   (define range-sum (vector-range-sum-querier all-invalid-ids))
-  (define n (vector-length all-invalid-ids))
   (for/sum ([range (in-list range-list)])
     (define start (vector-binary-search-first all-invalid-ids (curryr >= (Range-start range))))
     (define end (vector-binary-search-last all-invalid-ids (curryr <= (Range-end range))))
