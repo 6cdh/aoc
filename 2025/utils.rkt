@@ -9,7 +9,8 @@
          vector-range-sum-querier
          vector-range-sum
          decimal-digits
-         for/max)
+         for/max
+         remove-duplicates-in-sorted-list)
 
 (define-syntax-rule (parallel-run expr)
   (thread #:pool 'own #:keep 'results
@@ -80,9 +81,20 @@
 
 (define-syntax-rule
   (for/max init clauses
-           body ...
-           last-expr)
+    body ...
+    last-expr)
   (for/fold ([ans init])
             clauses
     body ...
     (max ans last-expr)))
+
+;; for some reason, `remove-duplicates` is slow.
+;; `remove-duplicates-in-sorted-list` is much faster for sorted list.
+(define (remove-duplicates-in-sorted-list lst [same? equal?])
+  (if (empty? lst)
+      lst
+      (cons (car lst)
+            (for/list ([leftv (in-list lst)]
+                       [v (in-list (cdr lst))]
+                       #:when (not (same? leftv v)))
+              v))))

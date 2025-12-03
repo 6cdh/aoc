@@ -61,7 +61,7 @@
              [j (in-range i n pat-size)])
     (char=? (string-ref str i) (string-ref str j))))
 
-;; == generate all invalid ids and query (40 ms) ==
+;; == generate all invalid ids and query (15 ms) ==
 
 (define (generate-all-invalid-ids digits max-repeat)
   (for*/list ([width (in-inclusive-range 1 (quotient digits 2))]
@@ -80,8 +80,8 @@
       (max (decimal-digits (Range-start range)) (decimal-digits (Range-end range)))))
   (define all-invalid-ids
     (~> ids (generate-all-invalid-ids max-digits max-repeat)
-        (remove-duplicates ids)
         (sort ids <)
+        (remove-duplicates-in-sorted-list ids)
         (list->vector ids)))
   (define range-sum (vector-range-sum-querier all-invalid-ids))
   (for/sum ([range (in-list range-list)])
