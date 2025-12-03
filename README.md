@@ -10,7 +10,7 @@ git clone https://github.com/6cdh/aoc.git
 
 ## 2025
 
-Racket 1/10
+Racket 2/10
 
 ## 2024
 

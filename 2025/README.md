@@ -2,6 +2,8 @@
 
 These solutions are written in [Racket](https://racket-lang.org/).
 
+Require Racket 9.0
+
 # Run
 
 Install `advent-of-code` package:
@@ -14,5 +16,11 @@ Show help messages:
 
 ```shell
 racket aoc.rkt -h
+```
+
+Compile Racket files for faster startup time:
+
+```shell
+raco make *.rkt
 ```
 
