@@ -19,8 +19,8 @@
   ; (define ans2 (parallel-run (sum-ranges range-list (invalid-id/regex? #px"^(.+?)(\\1)+$"))))
   ; (define ans1 (parallel-run (sum-ranges range-list (invalid-id/string? even?))))
   ; (define ans2 (parallel-run (sum-ranges range-list (invalid-id/string? (curryr >= 2)))))
-  (define ans1 (parallel-run (count-invalid-ids-in-ranges range-list 2)))
-  (define ans2 (parallel-run (count-invalid-ids-in-ranges range-list +inf.0)))
+  (define ans1 (parallel-run (query-and-sum-invalid-ids range-list 2)))
+  (define ans2 (parallel-run (query-and-sum-invalid-ids range-list +inf.0)))
   (values (thread-wait ans1) (thread-wait ans2)))
 
 ;; == regular expressions (2 seconds) ==
@@ -74,7 +74,7 @@
             ([_ (in-range 1 repeat)])
     (+ (* id (expt 10 width)) num)))
 
-(define (count-invalid-ids-in-ranges range-list max-repeat)
+(define (query-and-sum-invalid-ids range-list max-repeat)
   (define max-digits
     (for/max 0 ([range (in-list range-list)])
       (max (decimal-digits (Range-start range)) (decimal-digits (Range-end range)))))
