@@ -13,11 +13,24 @@
          for/max
          remove-duplicates-in-sorted-list
          digit-char->number
+         make-array
+         aref
+         aset!
          define/cache
          define/cache-vec
-         vector-argmax-index)
+         vector-argmax-index
+         string->vector
 
-(require syntax/parse/define)
+         (struct-out Position)
+         aref
+         aset!
+         read-vector2d
+         vector2d-size
+         vector2d-ref
+         vector2d-set!)
+
+(require syntax/parse/define
+         racket/generator)
 
 (define-syntax-rule (D expr)
   (let ([res expr])
@@ -183,3 +196,26 @@
     (if (or (false? best-v) (> v best-v))
         (values i v)
         (values best-i best-v))))
+
+(define (string->vector str)
+  (list->vector (string->list str)))
+
+(struct Position
+  (row col)
+  #:transparent)
+
+(define (read-vector2d in)
+  (~> lines (port->lines in)
+      (map string->vector lines)
+      (list->vector lines)))
+
+(define (vector2d-size vec2)
+  (values (vector-length vec2)
+          (vector-length (vector-ref vec2 0))))
+
+(define (vector2d-ref vec2 pos)
+  (aref vec2 (Position-row pos) (Position-col pos)))
+
+(define (vector2d-set! vec2 pos val)
+  (aset! vec2 (Position-row pos) (Position-col pos) val))
+
