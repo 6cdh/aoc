@@ -25,11 +25,11 @@
        (< (count-papers-around diagram pos) 4)))
 
 (define (count-papers-around diagram pos)
-  (for/sum ([adj (in-list (positions-around pos diagram))]
+  (for/sum ([adj (in-list (positions-around diagram pos))]
             #:when (paper? diagram adj))
     1))
 
-(define (positions-around pos diagram)
+(define (positions-around diagram pos)
   (define-values (m n) (vector2d-size diagram))
   (match-define (Position i j) pos)
   (for*/list ([di (in-inclusive-range -1 1)]
@@ -52,7 +52,7 @@
     (when (not (empty? papers))
       (define next-round
         (for*/list ([paper (in-list papers)]
-                    [adj (in-list (positions-around paper diagram))]
+                    [adj (in-list (positions-around diagram paper))]
                     #:when (removable? diagram adj))
           (remove! adj)
           adj))
