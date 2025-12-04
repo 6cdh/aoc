@@ -1,6 +1,7 @@
 #lang racket
 
-(provide parallel-run
+(provide D
+         parallel-run
          ~>
          binary-search-first
          vector-binary-search-first
@@ -13,9 +14,15 @@
          remove-duplicates-in-sorted-list
          digit-char->number
          define/cache
-         define/cache-vec)
+         define/cache-vec
+         vector-argmax-index)
 
 (require syntax/parse/define)
+
+(define-syntax-rule (D expr)
+  (let ([res expr])
+    (displayln (format "~a: ~v" 'expr res))
+    res))
 
 (define-syntax-rule (parallel-run expr)
   (thread #:pool 'own #:keep 'results
@@ -166,3 +173,13 @@
                        (aset! cache inames ... (fn args ...)))
                      (aref cache inames ...))])
            fname)))])
+
+(define (vector-argmax-index proc vec [start 0] [end (vector-length vec)])
+  (for/fold ([best-i #f]
+             [best-v #f]
+             #:result best-i)
+            ([i (in-range start end)])
+    (define v (proc (vector-ref vec i)))
+    (if (or (false? best-v) (> v best-v))
+        (values i v)
+        (values best-i best-v))))
