@@ -43,7 +43,7 @@
              [end (- n (- digits 1))]
              [sum 0]
              #:result sum)
-            ([d (in-range digits)])
+            ([_ (in-range digits)])
     (define choose (choose-best-battery bank start end))
     (values (add1 choose) (add1 end) (+ (* 10 sum) (vector-ref bank choose)))))
 
