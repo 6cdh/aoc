@@ -14,17 +14,17 @@ Racket
 
 ## 2024
 
-Go 25/25
+Go
 
 ## 2023
 
-Racket 22/25
+Racket
 
 ## 2022
 
-Racket/Julia 25/25
+Racket/Julia
 
 ## 2021
 
-Fennel/Rust 6/25
+Fennel/Rust
 
