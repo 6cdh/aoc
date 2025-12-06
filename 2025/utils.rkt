@@ -31,7 +31,8 @@
 
          string-empty?
          list-splitf
-         list-split)
+         list-split
+         list-transpose)
 
 (require syntax/parse/define
          racket/generator)
@@ -232,7 +233,7 @@
     (let loop ([cur '()]
                [lst lst])
       (match lst
-        ['() (list cur)]
+        ['() (list (reverse cur))]
         [(cons x xs)
          (if (pred x)
              (cons (reverse cur) (loop '() xs))
@@ -241,3 +242,13 @@
 
 (define (list-split lst v)
   (list-splitf lst (λ (x) (equal? x v))))
+
+;; transpose a list of lists
+;; convert
+;; [[a b]
+;;  [c d]]
+;; to
+;; [[a c]
+;;  [b d]]
+(define (list-transpose lstlst)
+  (apply map list lstlst))
