@@ -27,7 +27,11 @@
          read-vector2d
          vector2d-size
          vector2d-ref
-         vector2d-set!)
+         vector2d-set!
+
+         string-empty?
+         list-splitf
+         list-split)
 
 (require syntax/parse/define
          racket/generator)
@@ -219,3 +223,21 @@
 (define (vector2d-set! vec2 pos val)
   (aset! vec2 (Position-row pos) (Position-col pos) val))
 
+(define (string-empty? str)
+  (= 0 (string-length str)))
+
+;; like string-split but for list
+(define (list-splitf lst pred)
+  (define res
+    (let loop ([cur '()]
+               [lst lst])
+      (match lst
+        ['() (list cur)]
+        [(cons x xs)
+         (if (pred x)
+             (cons (reverse cur) (loop '() xs))
+             (loop (cons x cur) xs))])))
+  (filter-not empty? res))
+
+(define (list-split lst v)
+  (list-splitf lst (λ (x) (equal? x v))))
