@@ -2,7 +2,7 @@
 
 (provide solve)
 
-(require data/integer-set
+(require (prefix-in iset: data/integer-set)
          "utils.rkt")
 
 (struct Range
@@ -35,10 +35,10 @@
 ;; == part2: integer set ==
 
 (define (integer-set-method id-ranges)
-  (for/fold ([iset (make-integer-set '())]
-             #:result (count iset))
+  (for/fold ([iset (iset:make-integer-set '())]
+             #:result (iset:count iset))
             ([r (in-list id-ranges)])
-    (union iset (make-range (Range-start r) (Range-end r)))))
+    (iset:union iset (iset:make-range (Range-start r) (Range-end r)))))
 
 ;; == part2: merge ranges ==
 
