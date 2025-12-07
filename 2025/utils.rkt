@@ -28,11 +28,19 @@
          vector2d-size
          vector2d-ref
          vector2d-set!
+         vector2d-update!
+         vector2d-copy
 
          string-empty?
          list-splitf
          list-split
-         list-transpose)
+         list-transpose
+         vector2d-find
+         move
+         move-left
+         move-right
+         move-up
+         move-down)
 
 (require syntax/parse/define
          racket/generator)
@@ -175,12 +183,14 @@
 
 ;; cache the procedure using a vector
 (define-syntax-parser define/cache-vec
-  [(_ (fname:id args:id ...) #:vector (dims ... init)
+  [(_ (fname:id args:id ...)
+      #:vector (dims ... init)
+      #:cache (vals-to-cache ...)
       body ...)
    (with-syntax ([(inames ...) (generate-temporaries #'(dims ...))])
      #'(define fname
          (letrec ([cache (make-array dims ... init)]
-                  [to-index (λ (args ...) (values args ...))]
+                  [to-index (λ (args ...) (values vals-to-cache ...))]
                   [fn
                    (λ (args ...)
                      body ...)]
@@ -190,7 +200,14 @@
                      (when (equal? init (aref cache inames ...))
                        (aset! cache inames ... (fn args ...)))
                      (aref cache inames ...))])
-           fname)))])
+           fname)))]
+  [(_ (fname:id args:id ...)
+      #:vector (dims ... init)
+      body ...)
+   #'(define/cache-vec (fname args ...)
+       #:vector (dims ... init)
+       #:cache (args ...)
+       body ...)])
 
 (define (vector-argmax-index proc vec [start 0] [end (vector-length vec)])
   (for/fold ([best-i #f]
@@ -224,6 +241,14 @@
 (define (vector2d-set! vec2 pos val)
   (aset! vec2 (Position-row pos) (Position-col pos) val))
 
+(define (vector2d-update! vec2 pos f)
+  (vector2d-set! vec2 pos (f (vector2d-ref vec2 pos))))
+
+(define (vector2d-copy vec2)
+  (define-values (m n) (vector2d-size vec2))
+  (for/vector ([vec (in-vector vec2)])
+    (vector-copy vec)))
+
 (define (string-empty? str)
   (= 0 (string-length str)))
 
@@ -252,3 +277,26 @@
 ;;  [b d]]
 (define (list-transpose lstlst)
   (apply map list lstlst))
+
+(define (vector2d-find vec2 x)
+  (define-values (m n) (vector2d-size vec2))
+  (for*/first ([i (in-range m)]
+               [j (in-range n)]
+               #:when (equal? x (aref vec2 i j)))
+    (Position i j)))
+
+(define (move pos dir)
+  (Position (+ (Position-row pos) (Position-row dir))
+            (+ (Position-col pos) (Position-col dir))))
+
+(define (move-left pos)
+  (move pos (Position 0 -1)))
+
+(define (move-right pos)
+  (move pos (Position 0 1)))
+
+(define (move-down pos)
+  (move pos (Position 1 0)))
+
+(define (move-up pos)
+  (move pos (Position -1 0)))

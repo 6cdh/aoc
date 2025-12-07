@@ -1,4 +1,4 @@
 (for/max 2)
 (define/cache 1)
-(define/cache-vec 3)
+(define/cache-vec 1)
 (define-syntax-parser 1)
