@@ -40,7 +40,9 @@
          move-left
          move-right
          move-up
-         move-down)
+         move-down
+         
+         vector-parallel-sort)
 
 (require syntax/parse/define
          racket/generator)
@@ -300,3 +302,37 @@
 
 (define (move-up pos)
   (move pos (Position -1 0)))
+
+(define (vector-parallel-sort vec less? #:key key)
+  (vector-parallel-merge-sort vec less? 0 (vector-length vec) #:key key)
+  vec)
+
+(define (vector-parallel-merge-sort vec less? start end #:key key)
+  (define (merge s m e)
+    (define result (make-vector (- e s) #f))
+    (let loop ([s1 s]
+               [s2 m]
+               [i 0])
+      (cond [(= s1 m)
+             (vector-copy! result i vec s2 e)]
+            [(= s2 e)
+             (vector-copy! result i vec s1 m)]
+            [(less? (key (vector-ref vec s2))
+                    (key (vector-ref vec s1)))
+             (vector-set! result i (vector-ref vec s2))
+             (loop s1 (add1 s2) (add1 i))]
+            [else
+             (vector-set! result i (vector-ref vec s1))
+             (loop (add1 s1) s2 (add1 i))]))
+    (vector-copy! vec s result))
+
+  (define n (- end start))
+  (cond [(< n #e2e5)
+         (vector-sort! vec less? start end #:key key)]
+        [else
+         (define mid (quotient (+ start end) 2))
+         (define part1 (parallel-run (vector-parallel-merge-sort vec less? start mid #:key key)))
+         (define part2 (parallel-run (vector-parallel-merge-sort vec less? mid end #:key key)))
+         (thread-wait part1)
+         (thread-wait part2)
+         (merge start mid end)]))
