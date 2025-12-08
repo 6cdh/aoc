@@ -33,7 +33,7 @@
     (for*/vector ([j (in-range n)]
                   [i (in-range j)])
       (Pair i j (pair-dist i j))))
-  (define sorted-pairs (vector-parallel-sort pairs < #:key Pair-dist))
+  (define sorted-pairs (vector-parallel-sort! pairs < #:key Pair-dist))
 
   (define circuits (build-vector n uf-new))
   ; In part 1, the sample connects 10 times, but the real input connects 1000 times.

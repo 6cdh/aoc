@@ -42,7 +42,7 @@
          move-up
          move-down
          
-         vector-parallel-sort)
+         vector-parallel-sort!)
 
 (require syntax/parse/define
          racket/generator)
@@ -303,7 +303,7 @@
 (define (move-up pos)
   (move pos (Position -1 0)))
 
-(define (vector-parallel-sort vec less? #:key key)
+(define (vector-parallel-sort! vec less? #:key key)
   (vector-parallel-merge-sort vec less? 0 (vector-length vec) #:key key)
   vec)
 
