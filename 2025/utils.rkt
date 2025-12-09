@@ -304,8 +304,7 @@
   (move pos (Position -1 0)))
 
 (define (vector-parallel-sort! vec less? #:key key)
-  (vector-parallel-merge-sort vec less? 0 (vector-length vec) #:key key)
-  vec)
+  (vector-parallel-merge-sort vec less? 0 (vector-length vec) #:key key))
 
 (define (vector-parallel-merge-sort vec less? start end #:key key)
   (define (merge s m e)
