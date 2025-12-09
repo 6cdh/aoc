@@ -67,12 +67,10 @@
 ;; continue connect from the pair at index `i`
 (define (continue-connect i circuit-count sorted-pairs)
   (match-define (Pair b1 b2 dist) (vector-ref sorted-pairs i))
-  (define uf1 (Box-uf b1))
-  (define uf2 (Box-uf b2))
-  (cond [(uf-same-set? uf1 uf2)
+  (cond [(uf-same-set? (Box-uf b1) (Box-uf b2))
          (continue-connect (add1 i) circuit-count sorted-pairs)]
         [else
-         (uf-union! uf1 uf2)
+         (uf-union! (Box-uf b1) (Box-uf b2))
          (if (= circuit-count 2)
              (* (Box-x b1) (Box-x b2))
              (continue-connect (add1 i) (sub1 circuit-count) sorted-pairs))]))
