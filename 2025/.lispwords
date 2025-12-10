@@ -2,3 +2,4 @@
 (define/cache 1)
 (define/cache-vec 1)
 (define-syntax-parser 1)
+(let/cc 1)
