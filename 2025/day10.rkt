@@ -34,6 +34,7 @@
   (define ln (length lights))
   (define inf (add1 bn))
 
+  ;; enumerate each subset of the buttons
   (for/min inf ([bitset (in-range (expt 2 bn))])
     (define cur-lights
       (for*/fold ([cur-lights (make-list ln #f)])
@@ -49,6 +50,8 @@
   (define buttons (Machine-buttons m))
   (define joltage (Machine-joltage m))
   (solve-part2 buttons joltage))
+
+;; rosette solver for part 2
 
 (module rosette-solver rosette
   (provide solve-part2)
