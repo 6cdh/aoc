@@ -5,11 +5,12 @@
 (require "utils.rkt")
 
 (define (solve in)
-  (define graph (make-hash))
-  (for ([line (in-list (port->lines in))])
-    (match-define (list from tos ...)
-                  (string-split line #px"[: ]" #:repeat? #t))
-    (hash-set! graph from tos))
+  (define graph
+    (for/fold ([graph (hash)])
+              ([line (in-list (port->lines in))])
+      (match-define (list from tos ...)
+                    (string-split line #px"[: ]" #:repeat? #t))
+      (hash-set graph from tos)))
   (define ans1 (count-paths "you" graph))
   (define ans2 (count-paths-dacfft "svr" graph))
   (values ans1 ans2))
