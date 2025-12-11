@@ -1,6 +1,6 @@
 #lang racket
 
-(provide D
+(provide P
          parallel-run
          ~>
          binary-search-first
@@ -11,6 +11,8 @@
          vector-range-sum
          decimal-digits
          for/max
+         for/min
+         for*/min
          remove-duplicates-in-sorted-list
          digit-char->number
          make-array
@@ -41,15 +43,26 @@
          move-right
          move-up
          move-down
-         
-         vector-parallel-sort!)
+
+         vector-parallel-sort!
+         read-sep-numbers
+         parallel-map)
 
 (require syntax/parse/define
          racket/generator)
 
-(define-syntax-rule (D expr)
-  (let ([res expr])
-    (displayln (format "~a: ~v" 'expr res))
+(define-syntax P
+  (syntax-rules ()
+    [(_ expr)
+     (debug (quote expr) expr)]
+    [(_ exprs ...)
+     (debug (list (quote exprs) ...) (list exprs ...))]))
+
+(define-syntax-rule (debug tag form)
+  (let ([res form])
+    (display tag)
+    (display ": ")
+    (pretty-print res)
     res))
 
 (define-syntax-rule (parallel-run expr)
@@ -127,6 +140,24 @@
             clauses
     body ...
     (max ans last-expr)))
+
+(define-syntax-rule
+  (for/min init clauses
+    body ...
+    last-expr)
+  (for/fold ([ans init])
+            clauses
+    body ...
+    (min ans last-expr)))
+
+(define-syntax-rule
+  (for*/min init clauses
+    body ...
+    last-expr)
+  (for*/fold ([ans init])
+             clauses
+    body ...
+    (min ans last-expr)))
 
 ;; for some reason, `remove-duplicates` is slow.
 ;; `remove-duplicates-in-sorted-list` is much faster for sorted list.
@@ -335,3 +366,16 @@
          (thread-wait part1)
          (thread-wait part2)
          (merge start mid end)]))
+
+;; read a list of numbers from `str` separated by `sep`
+(define (read-sep-numbers str sep)
+  (map string->number (string-split str sep)))
+
+(define (parallel-map f xs)
+  (define threads
+    (for/list ([x (in-list xs)])
+      (parallel-run (f x))))
+
+  (for/list ([t (in-list threads)])
+    (thread-wait t)))
+
