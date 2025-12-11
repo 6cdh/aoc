@@ -17,14 +17,14 @@
 (define (count-paths from graph)
   (if (equal? from "out")
       1
-      (for/sum ([to (hash-ref graph from '())])
+      (for/sum ([to (in-list (hash-ref graph from '()))])
         (count-paths to graph))))
 
 (define (count-paths-dacfft from graph)
   (define/cache (count-rec from dac? fft?)
     (if (equal? from "out")
         (if (and dac? fft?) 1 0)
-        (for/sum ([to (hash-ref graph from '())])
+        (for/sum ([to (in-list (hash-ref graph from '()))])
           (count-rec to
                      (or dac? (equal? from "dac"))
                      (or fft? (equal? from "fft"))))))
