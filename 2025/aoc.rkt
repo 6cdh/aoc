@@ -64,13 +64,13 @@
              name str mini name maxi)))
 
 (define (parse-day x)
-  (parse-int x 1 10 'day))
+  (parse-int x 1 12 'day))
 
 (define (print-help-and-exit)
   (displayln "Usage: racket aoc.rkt <day> <mode>")
   (displayln "")
   (displayln "Arguments:")
-  (displayln "  <day>   The day of the Advent of Code puzzle (1-10).")
+  (displayln "  <day>   The day of the Advent of Code puzzle (1-12).")
   (displayln "  <mode>  The execution mode:")
   (displayln "          - 'test' or '-t': Run with test data from stdin and print to stdout.")
   (displayln "          - 'ready' or '-r': Run with your input and print to stdout, but don't submit.")
