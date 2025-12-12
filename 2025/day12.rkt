@@ -15,10 +15,10 @@
   (define trees (map parse-tree (last parts)))
   (define ans1
     (for/sum ([tree trees])
-      (define tot (apply + (Tree-presents tree)))
+      (define need-space (apply + (Tree-presents tree)))
       (define space (* (quotient (Tree-x tree) 3)
                        (quotient (Tree-y tree) 3)))
-      (if (>= space tot) 1 0)))
+      (if (>= space need-space) 1 0)))
   (values ans1 (void)))
 
 (define (parse-tree str)
