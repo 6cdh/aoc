@@ -369,7 +369,7 @@
 
 ;; read a list of numbers from `str` separated by `sep`
 (define (read-sep-numbers str sep)
-  (map string->number (string-split str sep)))
+  (map string->number (string-split str sep #:repeat? #t)))
 
 (define (parallel-map f xs)
   (define threads
