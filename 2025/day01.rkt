@@ -4,8 +4,8 @@
 
 (define (solve in)
   (define instructions (port->lines in))
-  (for/fold [[pos 50] [ans1 0] [ans2 0]
-             #:result (values ans1 ans2)]
+  (for/fold ([pos 50] [ans1 0] [ans2 0]
+             #:result (values ans1 ans2))
             ([rot (in-list instructions)])
     (define-values (new-pos zeros) (rotate-once pos rot))
     (values new-pos
