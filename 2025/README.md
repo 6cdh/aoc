@@ -21,6 +21,14 @@ racket aoc.rkt -h
 Compile Racket files for faster startup time:
 
 ```shell
-raco make *.rkt
+raco make **/*.rkt
+```
+
+# Test
+
+Test for the example and my own input:
+
+```shell
+raco test tests
 ```
 
