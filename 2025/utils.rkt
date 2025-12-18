@@ -9,7 +9,7 @@
          vector-binary-search-last
          vector-range-sum-querier
          vector-range-sum
-         decimal-digits
+         decimal-digits-count
          for/max
          for/min
          for*/min
@@ -129,8 +129,8 @@
   (for/sum ([i (in-inclusive-range start end)])
     (vector-ref vec i)))
 
-(define (decimal-digits d)
-  (ceiling (log d 10)))
+(define (decimal-digits-count d)
+  (exact-ceiling (log d 10)))
 
 (define-syntax-rule
   (for/max init clauses
