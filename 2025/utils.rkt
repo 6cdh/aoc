@@ -13,6 +13,9 @@
          for/max
          for/min
          for*/min
+         for/count
+         for*/count
+
          remove-duplicates-in-sorted-list
          digit-char->number
          make-array
@@ -142,6 +145,22 @@
             clauses
     body ...
     (max ans last-expr)))
+
+(define-syntax-rule
+  (for/count clauses
+    body ...
+    last-expr)
+  (for/sum clauses
+    body ...
+    (if last-expr 1 0)))
+
+(define-syntax-rule
+  (for*/count clauses
+    body ...
+    last-expr)
+  (for*/sum clauses
+    body ...
+    (if last-expr 1 0)))
 
 (define-syntax-rule
   (for/min init clauses

@@ -12,24 +12,23 @@
 (define (solve in)
   (define-values (id-ranges ids) (parse in))
   (define ans1
-    (for/sum ([id (in-list ids)]
-              #:when (in-ranges? id id-ranges))
-      1))
-  (define ans2 (integer-set-method id-ranges))
+    (for/count ([id (in-list ids)])
+      (id-in-ranges? id id-ranges)))
+  (define ans2 (merge-ranges-method id-ranges))
   (values ans1 ans2))
 
-(define (in-ranges? id id-ranges)
-  (for/or ([r id-ranges])
+(define (id-in-ranges? id id-ranges)
+  (for/or ([r (in-list id-ranges)])
     (<= (Range-start r) id (Range-end r))))
 
 (define (parse in)
   (define lines (port->lines in))
-  (match-define (list ranges-str ids-str) (list-split lines ""))
+  (match-define (list ranges-lines ids-lines) (list-split lines ""))
   (define id-ranges
-    (for/list ([r ranges-str])
-      (match-define (pregexp #px"(\\d+)-(\\d+)" (list _ start end)) r)
-      (Range (string->number start) (string->number end))))
-  (define ids (map string->number ids-str))
+    (for/list ([r (in-list ranges-lines)])
+      (match-define (list start end) (read-sep-numbers r "-"))
+      (Range start end)))
+  (define ids (map string->number ids-lines))
   (values id-ranges ids))
 
 ;; == part2: integer set ==
@@ -43,18 +42,18 @@
 ;; == part2: merge ranges ==
 
 (define (merge-ranges-method id-ranges)
-  (define sorted (sort id-ranges < #:key Range-start))
-  (define dedup-ranges
-    (for/fold ([dedup-ranges '()])
-              ([r (in-list sorted)])
-      (match dedup-ranges
+  (define sorted-ranges (sort id-ranges < #:key Range-start))
+  (define no-intersect-ranges
+    (for/fold ([no-intersect-ranges '()])
+              ([r (in-list sorted-ranges)])
+      (match no-intersect-ranges
         ['() (list r)]
         [(cons last rest)
          (if (intersect? r last)
              (cons (merge-range last r) rest)
-             (cons r dedup-ranges))])))
+             (cons r no-intersect-ranges))])))
 
-  (for/sum ([r (in-list dedup-ranges)])
+  (for/sum ([r (in-list no-intersect-ranges)])
     (- (Range-end r) (Range-start r) -1)))
 
 (define (intersect? r1 r2)

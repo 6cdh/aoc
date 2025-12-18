@@ -17,6 +17,7 @@
            (prefix-in day02: "../day02.rkt")
            (prefix-in day03: "../day03.rkt")
            (prefix-in day04: "../day04.rkt")
+           (prefix-in day05: "../day05.rkt")
            )
 
   (test-case "day01"
@@ -34,5 +35,9 @@
   (test-case "day04"
     (aoc-check "day04/example.txt" day04:solve 13 43)
     (aoc-check "day04/input.txt" day04:solve 1533 9206))
+
+  (test-case "day05"
+    (aoc-check "day05/example.txt" day05:solve 3 14)
+    (aoc-check "day05/input.txt" day05:solve 773 332067203034711))
   )
 
