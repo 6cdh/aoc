@@ -15,6 +15,7 @@
 (module+ test
   (require (prefix-in day01: "../day01.rkt")
            (prefix-in day02: "../day02.rkt")
+           (prefix-in day03: "../day03.rkt")
            )
 
   (test-case "day01"
@@ -24,5 +25,9 @@
   (test-case "day02"
     (aoc-check "day02/example.txt" day02:solve 1227775554 4174379265)
     (aoc-check "day02/input.txt" day02:solve 23039913998 35950619148))
+
+  (test-case "day03"
+    (aoc-check "day03/example.txt" day03:solve 357 3121910778619)
+    (aoc-check "day03/input.txt" day03:solve 17095 168794698570517))
   )
 

@@ -168,8 +168,9 @@
 ;; 10^(d-1) <= u <= 10^d - 1
 ;;
 ;; The later steps are the same as part 1.
+;;
 ;; To avoid count a number multiple times, for example, 222222,
-;; use a hashset to record seen numbers.
+;; use a hashset to record seen numbers `n`.
 ;;
 ;; Finally, the solution of part 2 also works for part 1.
 (define (sum-gauss-k range max-repeats)
