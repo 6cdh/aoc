@@ -6,10 +6,11 @@
 
 (define-syntax-parser aoc-check
   [(aoc-check file solve exp-ans1 exp-ans2)
-   #`(let ()
-       (define-values (ans1 ans2) (solve (open-input-file file)))
-       #,(syntax/loc #'exp-ans1 (check-equal? ans1 exp-ans1 "Part 1 failed."))
-       #,(syntax/loc #'exp-ans2 (check-equal? ans2 exp-ans2 "Part 2 failed.")))])
+   #`(with-input-from-file file
+       (λ ()
+         (define-values (ans1 ans2) (solve (current-input-port)))
+         #,(syntax/loc #'exp-ans1 (check-equal? ans1 exp-ans1 "Part 1 failed."))
+         #,(syntax/loc #'exp-ans2 (check-equal? ans2 exp-ans2 "Part 2 failed."))))])
 
 (module+ test
   (require (prefix-in day01: "../day01.rkt")
