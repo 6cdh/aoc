@@ -5,60 +5,58 @@
 (require "utils.rkt")
 
 (define (solve in)
-  (define diagram (read-vector2d in))
-  (define-values (m n) (vector2d-size diagram))
+  (define grid (read-vector2d in))
+  (define-values (rows cols) (vector2d-size grid))
   (define init-papers
-    (for*/list ([i (in-range m)]
-                [j (in-range n)]
-                [pos (in-value (Position i j))]
-                #:when (removable? diagram pos))
+    (for*/list ([r (in-range rows)]
+                [c (in-range cols)]
+                [pos (in-value (Position r c))]
+                #:when (removable? grid pos))
       pos))
   (define ans1 (length init-papers))
-  (define ans2 (bfs init-papers diagram))
+  (define ans2 (bfs init-papers grid))
   (values ans1 ans2))
 
-(define (paper? diagram pos)
-  (eq? #\@ (vector2d-ref diagram pos)))
+(define (paper? grid pos)
+  (eq? #\@ (vector2d-ref grid pos)))
 
-(define (removable? diagram pos)
-  (and (paper? diagram pos)
-       (< (count-papers-around diagram pos) 4)))
+(define (removable? grid pos)
+  (and (paper? grid pos)
+       (< (count-papers-around grid pos) 4)))
 
-(define (count-papers-around diagram pos)
-  (for/sum ([adj (in-list (positions-around diagram pos))]
-            #:when (paper? diagram adj))
-    1))
+(define (count-papers-around grid pos)
+  (length (papers-around grid pos)))
 
-(define (positions-around diagram pos)
-  (define-values (m n) (vector2d-size diagram))
-  (match-define (Position i j) pos)
-  (for*/list ([di (in-inclusive-range -1 1)]
-              [dj (in-inclusive-range -1 1)]
-              [i1 (in-value (+ i di))]
-              [j1 (in-value (+ j dj))]
-              #:when (and (< -1 i1 m)
-                          (< -1 j1 n)
-                          (not (and (= i1 i) (= j1 j)))))
-    (Position i1 j1)))
+(define (papers-around grid pos)
+  (define-values (rows cols) (vector2d-size grid))
+  (for*/list ([dr (in-inclusive-range -1 1)]
+              [dc (in-inclusive-range -1 1)]
+              #:when (not (= dr dc 0))
+              [nr (in-value (+ (Position-row pos) dr))]
+              [nc (in-value (+ (Position-col pos) dc))]
+              #:when (and (< -1 nr rows) (< -1 nc cols))
+              [npos (in-value (Position nr nc))]
+              #:when (paper? grid npos))
+    npos))
 
-(define (bfs init-papers diagram)
-  (define removed-count 0)
+(define (bfs init-papers grid)
+  (define total-removed 0)
 
   (define (remove! pos)
-    (set! removed-count (add1 removed-count))
-    (vector2d-set! diagram pos #\.))
+    (set! total-removed (add1 total-removed))
+    (vector2d-set! grid pos #\.))
 
   (define (bfs-rec papers)
     (when (not (empty? papers))
       (define next-round
         (for*/list ([paper (in-list papers)]
-                    [adj (in-list (positions-around diagram paper))]
-                    #:when (removable? diagram adj))
+                    [adj (in-list (papers-around grid paper))]
+                    #:when (removable? grid adj))
           (remove! adj)
           adj))
       (bfs-rec next-round)))
 
   (for-each remove! init-papers)
   (bfs-rec init-papers)
-  removed-count)
+  total-removed)
 

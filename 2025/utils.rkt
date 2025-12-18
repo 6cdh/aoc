@@ -23,7 +23,9 @@
          vector-argmax-index
          string->vector
 
-         (struct-out Position)
+         Position
+         Position-row
+         Position-col
          aref
          aset!
          read-vector2d
@@ -255,9 +257,9 @@
 (define (string->vector str)
   (list->vector (string->list str)))
 
-(struct Position
-  (row col)
-  #:transparent)
+(define Position make-rectangular)
+(define Position-row real-part)
+(define Position-col imag-part)
 
 (define (read-vector2d in)
   (~> lines (port->lines in)
