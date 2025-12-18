@@ -14,7 +14,7 @@
                 #:when (removable? grid pos))
       pos))
   (define ans1 (length init-papers))
-  (define ans2 (bfs init-papers grid))
+  (define ans2 (simulate init-papers grid))
   (values ans1 ans2))
 
 (define (paper? grid pos)
@@ -39,14 +39,14 @@
               #:when (paper? grid npos))
     npos))
 
-(define (bfs init-papers grid)
+(define (simulate init-papers grid)
   (define total-removed 0)
 
   (define (remove! pos)
     (set! total-removed (add1 total-removed))
     (vector2d-set! grid pos #\.))
 
-  (define (bfs-rec papers)
+  (define (bfs papers)
     (when (not (empty? papers))
       (define next-round
         (for*/list ([paper (in-list papers)]
@@ -54,9 +54,9 @@
                     #:when (removable? grid adj))
           (remove! adj)
           adj))
-      (bfs-rec next-round)))
+      (bfs next-round)))
 
   (for-each remove! init-papers)
-  (bfs-rec init-papers)
+  (bfs init-papers)
   total-removed)
 
