@@ -15,30 +15,26 @@
       [(cons "*" nums) (apply * nums)])))
 
 (define (parse lines)
-  (define rev-columns
-    (~> rows (map string-split lines)
-        (list-transpose (reverse rows))))
-  (for/list ([col rev-columns])
-    (match-define (cons op nums) col)
+  (define columns (list-transpose (map string-split lines)))
+  (for/list ([col (in-list columns)])
+    (match-define (list nums ... op) col)
     (cons op (map string->number nums))))
 
 (define (parse2 lines)
-  (define char-columns
-    (~> rows (map string->list lines)
-        (list-transpose rows)))
-  (define char-columns-no-whitespace
-    (for/list ([col char-columns])
-      (filter-not (curry eq? #\space) col)))
-  (define columns
-    (list-split char-columns-no-whitespace '()))
+  (define character-columns (list-transpose (map string->list lines)))
+  (define no-space-char-columns
+    (for/list ([col (in-list character-columns)])
+      (filter-not (λ (ch) (eq? ch #\space)) col)))
+  (define expr-groups
+    (list-split no-space-char-columns '()))
 
-  (for/list ([col (in-list columns)])
-    ; `col` is each column without whitespace
-    (match col
-      [(cons (list digits ... op) operands)
+  (for/list ([expr-group (in-list expr-groups)])
+    ; `expr-group` is each column without whitespace
+    (match expr-group
+      [(cons (list digit-chars ... op) operand-digit-lists)
        (cons (string op)
-             (cons (compose-number digits)
-                   (map compose-number operands)))])))
+             (cons (compose-number digit-chars)
+                   (map compose-number operand-digit-lists)))])))
 
-(define (compose-number digits)
-  (string->number (list->string digits)))
+(define (compose-number digit-chars)
+  (string->number (list->string digit-chars)))
