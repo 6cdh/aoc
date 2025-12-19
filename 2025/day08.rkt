@@ -14,6 +14,7 @@
   (b1 b2 dist)
   #:transparent)
 
+;; omit sqrt for performance, and it does not affect the result
 (define (pair-dist b1 b2)
   (+ (sqr (- (Box-x b1) (Box-x b2)))
      (sqr (- (Box-y b1) (Box-y b2)))
@@ -23,10 +24,15 @@
   (define boxes
     (for/vector ([line (in-list (port->lines in))]
                  [i (in-naturals)])
-      (define nums (map string->number (string-split line ",")))
-      (match-define (list x y z) nums)
+      (match-define (list x y z) (read-sep-numbers line ","))
       (Box x y z (uf-new i))))
   (define n (vector-length boxes))
+
+  (time (for*/vector ([j (in-range n)]
+                      [i (in-range j)])
+          (define b1 (vector-ref boxes i))
+          (define b2 (vector-ref boxes j))
+          (Pair b1 b2 (pair-dist b1 b2))))
 
   (define sorted-pairs
     (for*/vector ([j (in-range n)]
