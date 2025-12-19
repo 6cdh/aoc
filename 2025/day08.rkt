@@ -28,12 +28,6 @@
       (Box x y z (uf-new i))))
   (define n (vector-length boxes))
 
-  (time (for*/vector ([j (in-range n)]
-                      [i (in-range j)])
-          (define b1 (vector-ref boxes i))
-          (define b2 (vector-ref boxes j))
-          (Pair b1 b2 (pair-dist b1 b2))))
-
   (define sorted-pairs
     (for*/vector ([j (in-range n)]
                   [i (in-range j)])
