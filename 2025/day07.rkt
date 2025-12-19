@@ -9,23 +9,27 @@
   (define S (vector2d-find grid #\S))
   (values (count^ S grid) (count-timelines-dp S grid)))
 
-(define (valid? pos grid)
+(define (valid-pos? pos grid)
   (define-values (m n) (vector2d-size grid))
   (and (< -1 (Position-row pos) m)
        (< -1 (Position-col pos) n)))
 
 (define (count^ beam grid)
-  (define next (move-down beam))
-  (if (not (valid? next grid))
-      0
-      (match (vector2d-ref grid next)
-        [#\.
-         (vector2d-set! grid next #\|)
-         (count^ next grid)]
-        [#\| 0]
-        [#\^ (+ 1
-                (count^ (move-left next) grid)
-                (count^ (move-right next) grid))])))
+  (define below (move-down beam))
+  (if (valid-pos? below grid)
+      (count^-rec beam below grid)
+      0))
+
+(define (count^-rec beam below grid)
+  (match (vector2d-ref grid below)
+    [#\| 0]
+    [#\.
+     (vector2d-set! grid below #\|)
+     (count^ below grid)]
+    [#\^
+     (+ 1
+        (count^ (move-left below) grid)
+        (count^ (move-right below) grid))]))
 
 ;; == part 2: dynamic programming (top down style) ==
 
@@ -34,20 +38,20 @@
 
   (define/cache-vec (count-rec particle)
     #:vector (m n #f)
-    #:cache ((Position-row particle) (Position-col particle))
+    #:cache [(Position-row particle) (Position-col particle)]
 
-    (define next (move-down particle))
-    (if (not (valid? next grid))
+    (define below (move-down particle))
+    (if (not (valid-pos? below grid))
         1
-        (match (vector2d-ref grid next)
+        (match (vector2d-ref grid below)
           [#\.
-           (vector2d-set! grid next #\|)
-           (count-rec next)]
+           (vector2d-set! grid below #\|)
+           (count-rec below)]
           [#\|
-           (count-rec next)]
+           (count-rec below)]
           [#\^
-           (+ (count-rec (move-left next))
-              (count-rec (move-right next)))])))
+           (+ (count-rec (move-left below))
+              (count-rec (move-right below)))])))
 
   (count-rec S))
 
@@ -57,19 +61,18 @@
 ; scan line by line.
 (define (count-timelines-bfs S grid)
   (define-values (m n) (vector2d-size grid))
-  ; `worlds` stores how many worlds the particle can reach it
-  ; for each position.
+  ; `worlds` stores how many worlds exists when the particle reachs at each position.
   (define worlds (make-array m n 0))
   (vector2d-set! worlds S 1)
 
-  ; increase `many` worlds where the particle can reach `pos`.
+  ; At position `pos`, increase `many` worlds where the particle can reach.
   (define (increase! pos many)
     (vector2d-update! worlds pos (λ (old) (+ old many))))
 
   (define (bfs)
-    (for* ([i (in-range (sub1 m))]
-           [j (in-range n)])
-      (define pos (Position i j))
+    (for* ([r (in-range (sub1 m))]
+           [c (in-range n)])
+      (define pos (Position r c))
       (define below (move-down pos))
       (define w (vector2d-ref worlds pos))
       (match (vector2d-ref grid below)
