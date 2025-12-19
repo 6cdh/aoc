@@ -13,6 +13,7 @@
 (define (run arg)
   (match-define (CLI-Arg day mode) arg)
   (define solve (get-solver day))
+  (collect-garbage)
   (time (execute-mode day mode solve)))
 
 (define (execute-mode day mode solve)
