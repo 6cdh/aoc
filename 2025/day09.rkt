@@ -183,13 +183,7 @@
                      #:when (rectangle-inside-polygon/range-sum? rect area-sum2d x->rankx y->ranky))
           (area rect)))))
   (for/max 0 ([th (in-list threads)])
-    (thread-wait th))
-  #;
-  (for*/max 0 ([j (in-range (vector-length pos-vec))]
-               [i (in-range j)]
-               [rect (in-value (Rect (vector-ref pos-vec i) (vector-ref pos-vec j)))]
-               #:when (rectangle-inside-polygon/range-sum? rect area-sum2d x->rankx y->ranky))
-    (area rect)))
+    (thread-wait th)))
 
 ;; convert rect to left-top and right-bottom representation
 (define (normalize-rect rect)
