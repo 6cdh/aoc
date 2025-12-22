@@ -49,9 +49,9 @@
 (define (part2 m)
   (define buttons (Machine-buttons m))
   (define joltage (Machine-joltage m))
-  (solve-part2 buttons joltage))
+  (rosette:solve-part2 buttons joltage))
 
-;; rosette solver for part 2
+;; == part 2: rosette solver (use z3) ==
 
 (module rosette-solver rosette
   (provide solve-part2)
@@ -90,5 +90,7 @@
 
     (evaluate (apply + answers) model)))
 
-(require 'rosette-solver)
+(require (prefix-in rosette: 'rosette-solver))
+
+
 

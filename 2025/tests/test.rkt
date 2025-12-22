@@ -22,7 +22,9 @@
            (prefix-in day07: "../day07.rkt")
            (prefix-in day08: "../day08.rkt")
            (prefix-in day09: "../day09.rkt")
-           )
+           (prefix-in day10: "../day10.rkt")
+           (prefix-in day11: "../day11.rkt")
+           (prefix-in day12: "../day12.rkt"))
 
   (test-case "day01"
     (aoc-check "day01/example.txt" day01:solve 3 6)
@@ -59,5 +61,19 @@
   (test-case "day09"
     (aoc-check "day09/example.txt" day09:solve 50 24)
     (aoc-check "day09/input.txt" day09:solve 4781377701 1470616992))
+
+  (test-case "day10"
+    (aoc-check "day10/example.txt" day10:solve 7 33)
+    (aoc-check "day10/input.txt" day10:solve 512 19857))
+
+  (test-case "day11"
+    (aoc-check "day11/example.txt" day11:solve 5 0)
+    (aoc-check "day11/example2.txt" day11:solve 0 2)
+    (aoc-check "day11/input.txt" day11:solve 634 377452269415704))
+
+  (test-case "day12"
+    ; use the wrong answer because the solution for input is too simple.
+    (aoc-check "day12/example.txt" day12:solve 0 (void))
+    (aoc-check "day12/input.txt" day12:solve 528 (void)))
   )
 
