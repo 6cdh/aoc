@@ -168,7 +168,7 @@
 ;; the area of the rectangle (0, 0) -- (x, y).
 ;; And the area of the rectangle (x1, y1) -- (x2, y2) [x1 <= x2, y1 <= y2] is
 ;; prefix2d[x2][y2] - prefix2d[x2][y1-1] - prefix2d[x1][y2-1] + prefix2d[x1-1][y1-1].
-;; Another optimization is iterate each rectangle in parallel.
+;; Another optimization is iterate rectangles in parallel.
 
 (define (part2/ccrs pos-vec)
   (define-values (x->rankx y->ranky area-sum2d) (area-sum2d-querier pos-vec))
