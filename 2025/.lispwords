@@ -1,4 +1,5 @@
 (for/max 2)
+(for*/max 2)
 (for/min 2)
 (for*/min 2)
 (define/cache 1)

@@ -11,6 +11,7 @@
          vector-range-sum
          decimal-digits-count
          for/max
+         for*/max
          for/min
          for*/min
          for/count
@@ -29,6 +30,8 @@
          Position
          Position-row
          Position-col
+         Position-x
+         Position-y
          aref
          aset!
          read-vector2d
@@ -143,6 +146,15 @@
     last-expr)
   (for/fold ([ans init])
             clauses
+    body ...
+    (max ans last-expr)))
+
+(define-syntax-rule
+  (for*/max init clauses
+    body ...
+    last-expr)
+  (for*/fold ([ans init])
+             clauses
     body ...
     (max ans last-expr)))
 
@@ -279,6 +291,8 @@
 (define Position make-rectangular)
 (define Position-row real-part)
 (define Position-col imag-part)
+(define Position-x real-part)
+(define Position-y imag-part)
 
 (define (read-vector2d in)
   (~> lines (port->lines in)
