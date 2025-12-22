@@ -2,7 +2,7 @@
 
 These solutions are written in [Racket](https://racket-lang.org/).
 
-Require Racket 9.0
+Require Racket 9.0 and rosette package
 
 # Run
 
